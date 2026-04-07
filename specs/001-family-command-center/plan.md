@@ -124,10 +124,12 @@ Sonas/                              # Xcode project root
 │   │   ├── PhotoGalleryView.swift  # Auto-rotating TimelineView carousel
 │   │   ├── PhotoViewModel.swift
 │   │   └── PhotoService.swift      # PhotoKit iCloud Shared Album
-│   └── SpotifyJam/
-│       ├── JamPanelView.swift
-│       ├── JamViewModel.swift
-│       └── SpotifyJamService.swift # Spotify iOS SDK + CoreImage QR
+│   ├── SpotifyJam/
+│   │   ├── JamPanelView.swift
+│   │   ├── JamViewModel.swift
+│   │   └── SpotifyJamService.swift # Spotify iOS SDK + CoreImage QR
+│   └── Settings/
+│       └── SettingsView.swift          # Home location, account connections, album/project selection
 │
 ├── Shared/
 │   ├── Components/
@@ -152,10 +154,6 @@ Sonas/                              # Xcode project root
 │   │   └── JamServiceMock.swift
 │   └── Extensions/
 │       └── View+Accessibility.swift
-│
-├── Features/ (continued)
-│   └── Settings/
-│       └── SettingsView.swift          # Home location, account connections, album/project selection
 │
 ├── Platform/
 │   ├── Watch/

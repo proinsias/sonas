@@ -88,8 +88,9 @@
 - [ ] T041 [US1] Implement `DashboardView` single-column iPhone layout hosting `ClockPanelView`, `LocationPanelView`, and `EventsPanelView` in a vertical `ScrollView` in `Sonas/Features/Dashboard/DashboardView.swift`
 - [ ] T042 [P] [US1] Implement `LocationCloudKitTests` in `SonasTests/Integration/LocationCloudKitTests.swift`: (a) write one `FamilyLocation` record to CloudKit test container; assert `LocationService.refresh()` returns that member with correct `placeName`; (b) simulate a second device writing an updated `FamilyLocation` record; assert `familyLocations` `AsyncStream` emits the updated member within 60 s via `CKQuerySubscription` — covers FR-017
 - [ ] T043 [US1] Implement `DashboardIntegrationTests` (all-mock service injection; assert dashboard renders all three US1 panels within 500ms; assert "Location unavailable" panel renders when mock returns nil location) in `SonasTests/Integration/DashboardIntegrationTests.swift`
+- [ ] T093 [US1] Implement minimal `SettingsView` shell in `Sonas/Features/Settings/SettingsView.swift` with: (a) home location search + coordinate picker stored to `AppConfiguration.homeLocation` (prerequisite for WeatherService in Phase 4); (b) Google Calendar connect/disconnect wrapping `CalendarService.connectGoogleAccount()`; wire as a modal sheet from `DashboardView` toolbar button in `Sonas/Features/Dashboard/DashboardView.swift`
 
-**Checkpoint**: MVP dashboard (clock + location + events) is fully functional and independently testable. Deploy to TestFlight for family validation.
+**Checkpoint**: MVP dashboard (clock + location + events) is fully functional and independently testable. Settings shell allows real-device configuration for subsequent phases. Deploy to TestFlight for family validation.
 
 ---
 
@@ -205,7 +206,6 @@
 
 **Purpose**: Background refresh, offline degradation, integration tests, and quality gates across all user stories
 
-- [ ] T081 [P] Implement `BGAppRefreshTask` handler in `SonasApp.swift`: on task execution fetch weather snapshot, AQI, and Todoist tasks; write results to `CacheService`; schedule next task via `BGTaskScheduler.submit`; expiry handler cancels in-flight work in `Sonas/App/SonasApp.swift`
 - [ ] T082 [P] Implement offline degraded mode in `PanelView`: when `CacheService` returns stale data, display the cached value overlaid with a "Last updated [timestamp]" badge and a retry affordance; assert all panels remain functional when one source throws `networkUnavailable` in `Sonas/Shared/Components/PanelView.swift`
 - [ ] T083 [P] Implement `WeatherIntegrationTests` (requires WeatherKit entitlement; fetch real `WeatherSnapshot` for a hard-coded coordinate in CI; assert `snapshot` is non-nil and `forecast.count == 7`) in `SonasTests/Integration/WeatherIntegrationTests.swift`
 - [ ] T084 [P] Implement `CalendarServiceTests` (unit; EventKit mock + Google Calendar URLProtocol stub; assert deduplication removes one event when title+startDate match across sources; assert sort order ascending; assert `isGoogleConnected == false` after `disconnectGoogleAccount`) in `SonasTests/Unit/CalendarServiceTests.swift`
@@ -216,7 +216,8 @@
 - [ ] T089 Implement `BGAppRefreshTask` full handler in `SonasApp.swift` (replacing the no-op from T025): on task execution fetch weather snapshot, AQI, and Todoist tasks; write results to `CacheService`; schedule next task via `BGTaskScheduler.submit`; expiry handler cancels in-flight work in `Sonas/App/SonasApp.swift`
 - [ ] T090 [P] Implement performance verification tests in `SonasTests/Performance/PerformanceTests.swift`: use `XCTestCase.measure {}` to assert (a) cached-data dashboard render ≤ 500 ms — inject pre-populated `CacheService` and measure `DashboardView` body evaluation; (b) `WeatherViewModel` cache-load path ≤ 500 ms; (c) UI transition from tap to next screen ≤ 100 ms *(Constitution §IV — baselines MUST be verified in task checklist)*
 - [ ] T091 [P] Profile memory for all four polling/subscription services using Instruments Leaks + Allocations on a real device or simulator; document peak RSS measurements in plan.md Complexity Tracking table; confirm total ≤ 150 MB peak with all services active *(Constitution §IV — memory MUST be profiled for polling services)*
-- [ ] T092 [P] Implement `SettingsView` (home location search + picker, Google Calendar connect/disconnect, Todoist API token entry with validation, Spotify connect/disconnect, photo album picker, temperature unit toggle) in `Sonas/Features/Settings/SettingsView.swift`; wire entry point from `DashboardView` toolbar/settings button in `Sonas/Features/Dashboard/DashboardView.swift`
+- [ ] T092 [P] Expand `SettingsView` (built in T093) with remaining account management: Todoist API token entry with validation, Spotify connect/disconnect, photo album picker, temperature unit toggle in `Sonas/Features/Settings/SettingsView.swift`
+- [ ] T094 [P] Implement `SettingsUITests` in `SonasUITests/SettingsUITests.swift`: (a) assert home location picker saves coordinate to `AppConfiguration` and the saved value is reflected in `WeatherPanelView` on next launch; (b) assert Todoist token entry invokes `TaskService.connectTodoist` and panel transitions from "Connect Todoist" to task list; (c) assert photo album picker selection persists after app restart *(Constitution §II — every user-facing feature MUST have at least one acceptance/integration test)*
 
 ---
 
@@ -233,7 +234,7 @@
 ### User Story Dependencies
 
 - **US1 (P1)**: Start after Phase 2 — no dependency on other stories — **this is the MVP**
-- **US2 (P2)**: Start after Phase 2 — independent of US1; final task T052 appends to `DashboardView`
+- **US2 (P2)**: Start after Phase 2 — independent of US1; **T049 (WeatherViewModel) requires `AppConfiguration.homeLocation` to be settable — complete T093 (minimal SettingsView) before real-device US2 testing**; final task T052 appends to `DashboardView`
 - **US3 (P3)**: Start after Phase 2 — independent of US1/US2; final task T060 appends to `DashboardView`
 - **US4 (P4)**: Start after Phase 2 — independent of all previous stories; final task T068 appends to `DashboardView`
 - **US5 (P5)**: Start after Phase 2 — independent of all previous stories; final task T076 appends to `DashboardView`
@@ -257,7 +258,7 @@
 - Within each user story: protocol + mock + contract tests can all run in parallel with **each other**; the real service implementation MUST follow the contract tests being confirmed failing
 - US2, US3, US4, US5 can all start in parallel once Phase 2 is complete (if team capacity allows)
 - T078 (Watch) and T079 (TV) in Phase 8 are always parallel
-- T081–T085 in Phase 9 are all parallel
+- T082–T085 in Phase 9 are all parallel; T089–T092, T094 are also parallel with each other
 
 ---
 
