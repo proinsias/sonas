@@ -230,8 +230,10 @@ correctly at the larger screen size with an adapted layout that makes use of the
   temperature and a representative weather condition icon.
 - **FR-008**: The app MUST display open tasks from designated shared Todoist projects and allow
   family members to mark tasks as complete from within the app.
-- **FR-009**: The app MUST automatically refresh Todoist tasks at least every 5 minutes and
-  support manual refresh via pull-to-refresh.
+- **FR-009**: The app MUST automatically refresh Todoist tasks at least every 5 minutes when the
+  app is in the foreground (via a Timer), and support manual refresh via pull-to-refresh. When the
+  app is in the background, refresh is best-effort via `BGAppRefreshTask`; iOS may schedule this
+  at intervals of 15 minutes or longer and this is outside the app's control.
 - **FR-010**: The app MUST display a rotating gallery of the most recent photos from a single
   designated iCloud Shared Album, advancing automatically between images every 10–30 seconds.
 - **FR-011**: The app MUST allow a family member to initiate a Spotify Jam session and display

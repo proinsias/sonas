@@ -141,8 +141,21 @@ Sonas/                              # Xcode project root
 │   │   └── Icons.swift             # SF Symbols aliases
 │   ├── Cache/
 │   │   └── CacheService.swift      # SwiftData-backed panel cache
+│   ├── Logging/
+│   │   └── SonasLogger.swift       # OSLog wrapper with PII-scrubbing guard
+│   ├── Mocks/                      # Protocol mock implementations (never linked in Release)
+│   │   ├── LocationServiceMock.swift
+│   │   ├── CalendarServiceMock.swift
+│   │   ├── WeatherServiceMock.swift
+│   │   ├── TaskServiceMock.swift
+│   │   ├── PhotoServiceMock.swift
+│   │   └── JamServiceMock.swift
 │   └── Extensions/
 │       └── View+Accessibility.swift
+│
+├── Features/ (continued)
+│   └── Settings/
+│       └── SettingsView.swift          # Home location, account connections, album/project selection
 │
 ├── Platform/
 │   ├── Watch/
@@ -152,14 +165,22 @@ Sonas/                              # Xcode project root
 │
 SonasTests/
 ├── Contract/
+│   ├── CacheContractTests.swift         # SwiftData in-memory ModelContainer
+│   ├── LocationContractTests.swift      # CloudKit container stub
 │   ├── TodoistContractTests.swift       # URLProtocol stub — Todoist REST v2
 │   ├── GoogleCalendarContractTests.swift
 │   ├── SpotifyContractTests.swift
-│   └── AQIContractTests.swift
+│   ├── AQIContractTests.swift
+│   ├── WeatherContractTests.swift
+│   └── PhotoContractTests.swift         # mock PHAssetCollection
 ├── Integration/
 │   ├── LocationCloudKitTests.swift      # CloudKit test container
 │   ├── WeatherIntegrationTests.swift
+│   ├── PhotoIntegrationTests.swift      # mock album → carousel renders
+│   ├── JamIntegrationTests.swift        # mock SDK → QR Image renders
 │   └── DashboardIntegrationTests.swift
+├── Performance/
+│   └── PerformanceTests.swift           # XCTest measure{} — load time + UI response
 └── Unit/
     ├── WeatherServiceTests.swift
     ├── CalendarServiceTests.swift

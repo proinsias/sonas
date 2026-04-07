@@ -21,9 +21,9 @@
 
 - [ ] T001 Create Xcode project `Sonas.xcodeproj` with targets: `Sonas` (iOS 17+ deployment), `SonasTests`, `SonasUITests`, `WatchSonas` (watchOS 11+), `TVSonas` (tvOS 18+) at repo root
 - [ ] T002 Configure `Sonas` target capabilities: WeatherKit, CloudKit (container `iCloud.com.yourteam.sonas`), Background Modes (Background fetch, Remote notifications) in Xcode Signing & Capabilities
-- [ ] T003 [P] Add SPM/SDK package dependencies to `Sonas.xcodeproj`: `GoogleSignIn-iOS` (7.x) and `SpotifyiOS`
+- [ ] T003 [P] Add SPM/SDK package dependencies to `Sonas.xcodeproj`: `GoogleSignIn-iOS` and `SpotifyiOS` pinned to **exact SemVer versions** (e.g., `GoogleSignIn-iOS 7.1.0`; resolve latest stable at time of addition); commit `Package.resolved` to version control *(Constitution §Quality — exact version pinning required)*
 - [ ] T004 [P] Add required `Info.plist` keys to `Sonas/Info.plist`: `NSLocationWhenInUseUsageDescription`, `NSLocationAlwaysAndWhenInUseUsageDescription`, `NSPhotoLibraryUsageDescription`, `SPTClientID`, `SPTRedirectURL`, `com.googleusercontent.apps.{CLIENT_ID}` URL scheme, and `sonas` URL scheme
-- [ ] T005 [P] Configure `.swiftlint.yml` at repo root aligned to Swift API design guidelines; add SwiftLint run-script build phase to the `Sonas` target
+- [ ] T005 [P] Configure `.swiftlint.yml` at repo root aligned to Swift API design guidelines; add SwiftLint run-script build phase to the `Sonas` target; include a custom `identifier_name` or `function_body_length` rule and a `custom_rules` entry enforcing the `given_.*_when_.*_then_.*` pattern for test function names in `SonasTests/` *(Constitution §II — test names MUST follow `given_<state>_when_<action>_then_<outcome>`)*
 - [ ] T006 Configure `SonasTests` and `SonasUITests` schemes with `-enableCodeCoverage YES`; add a CI build script that fails if `Sonas/` source coverage drops below 80%
 
 ---
@@ -86,7 +86,7 @@
 - [ ] T039 [US1] Implement `EventsPanelView` (next 3 events with title, date/time, attendees; "Nothing scheduled" empty state; per-account Google reconnect prompt) in `Sonas/Features/Calendar/EventsPanelView.swift`
 - [ ] T040 [US1] Implement `DashboardViewModel` (`@Observable`; owns all service instances or receives them via injection; exposes per-panel loading/error/data state; coordinates service start and refresh) in `Sonas/Features/Dashboard/DashboardViewModel.swift`
 - [ ] T041 [US1] Implement `DashboardView` single-column iPhone layout hosting `ClockPanelView`, `LocationPanelView`, and `EventsPanelView` in a vertical `ScrollView` in `Sonas/Features/Dashboard/DashboardView.swift`
-- [ ] T042 [P] [US1] Implement `LocationCloudKitTests` (CloudKit test container; write one `FamilyLocation` record; assert `LocationService.refresh()` returns that member with correct `placeName`) in `SonasTests/Integration/LocationCloudKitTests.swift`
+- [ ] T042 [P] [US1] Implement `LocationCloudKitTests` in `SonasTests/Integration/LocationCloudKitTests.swift`: (a) write one `FamilyLocation` record to CloudKit test container; assert `LocationService.refresh()` returns that member with correct `placeName`; (b) simulate a second device writing an updated `FamilyLocation` record; assert `familyLocations` `AsyncStream` emits the updated member within 60 s via `CKQuerySubscription` — covers FR-017
 - [ ] T043 [US1] Implement `DashboardIntegrationTests` (all-mock service injection; assert dashboard renders all three US1 panels within 500ms; assert "Location unavailable" panel renders when mock returns nil location) in `SonasTests/Integration/DashboardIntegrationTests.swift`
 
 **Checkpoint**: MVP dashboard (clock + location + events) is fully functional and independently testable. Deploy to TestFlight for family validation.
@@ -155,6 +155,7 @@
 - [ ] T066 [US4] Implement `PhotoGalleryView` (`TimelineView` carousel with 15-second auto-advance interval at 60fps; full-screen modal sheet on tap with swipe-through navigation; "Select a shared album" prompt when none configured; "Add photos" prompt when album is empty) in `Sonas/Features/Photos/PhotoGalleryView.swift`
 - [ ] T067 [P] [US4] Implement `PhotoServiceTests` (unit; assert sort order is `creationDate` descending; assert limit of 20 is enforced; assert `PHPhotoLibraryChangeObserver` triggers re-fetch that omits a deleted photo ID) in `SonasTests/Unit/PhotoServiceTests.swift`
 - [ ] T068 [US4] Integrate `PhotoGalleryView` into `DashboardView` below the US3 panel in `Sonas/Features/Dashboard/DashboardView.swift`
+- [ ] T068-I [P] [US4] Implement `PhotoIntegrationTests` (mock `PHAssetCollection` with 5 assets injected via `PhotoServiceMock`; assert `PhotoGalleryView` renders ≥1 thumbnail within 500 ms; assert `PHPhotoLibraryChangeObserver` callback removes a deleted photo from the carousel without crash) in `SonasTests/Integration/PhotoIntegrationTests.swift` *(Constitution §II — every user-facing feature MUST have an integration test)*
 
 **Checkpoint**: Photo gallery independently functional. Auto-rotation and graceful deleted-photo handling verified in tests.
 
@@ -177,6 +178,7 @@
 - [ ] T074 [US5] Implement `JamPanelView` (QR code via `CIFilter.qrCodeGenerator` scaled to 200×200pt from `JamSession.joinURL`; "Start Jam" / "End Jam" buttons; "Install Spotify" App Store deep-link prompt when not installed; "Connect Spotify" OAuth prompt when not connected) in `Sonas/Features/SpotifyJam/JamPanelView.swift`
 - [ ] T075 [P] [US5] Implement `JamServiceTests` (unit; assert `joinURL` string encodes correctly as QR CIImage data; assert state machine transitions none→active→ending→ended; assert `appRemoteDisconnected` forces `.ended` from `.active` without calling `endJam`) in `SonasTests/Unit/JamServiceTests.swift`
 - [ ] T076 [US5] Integrate `JamPanelView` into `DashboardView` below the US4 panel in `Sonas/Features/Dashboard/DashboardView.swift`
+- [ ] T076-I [P] [US5] Implement `JamIntegrationTests` (`JamServiceMock` injected; assert `JamPanelView` renders a non-nil `Image` from `CIFilter.qrCodeGenerator` output within 500 ms of `startJam()` resolving; assert QR `Image` accessibility identifier disappears after `endJam()`) in `SonasTests/Integration/JamIntegrationTests.swift` *(Constitution §II — every user-facing feature MUST have an integration test)*
 
 **Checkpoint**: Jam panel independently functional. QR generation and all state machine transitions verified in tests.
 
@@ -193,7 +195,7 @@
 - [ ] T077 [US6] Update `DashboardView` to implement `AdaptiveLayout` using `horizontalSizeClass` / `verticalSizeClass`: `.compact` → 1-column scroll (iPhone portrait); `.regular`/`.compact` → 2-column (iPhone landscape); `.regular`/`.regular` → 3-column `LazyVGrid` (iPad/Mac) matching the panel grid defined in research.md §Decision 8 in `Sonas/Features/Dashboard/DashboardView.swift`
 - [ ] T078 [P] [US6] Implement `WatchDashboardView` (`TimelineView` live clock, first-name-only labels for ≤2 family members, next event title, `.containerBackground` for Watch complication registration) in `Sonas/Platform/Watch/WatchDashboardView.swift`
 - [ ] T079 [P] [US6] Implement `TVDashboardView` (full-screen `LazyVGrid` with focus-engine navigation via `focusable()`, passive read-only layout — no task completion or Jam initiation) in `Sonas/Platform/TV/TVDashboardView.swift`
-- [ ] T080 [US6] Implement `DashboardUITests` (assert 3-column grid renders on iPad Pro 13-inch simulator with all panel accessibility identifiers visible; assert all interactive controls are reachable via keyboard on Mac Designed for iPad) in `SonasUITests/DashboardUITests.swift`
+- [ ] T080 [US6] Implement `DashboardUITests` in `SonasUITests/DashboardUITests.swift`: (a) assert 3-column grid renders on iPad Pro 13-inch simulator with all panel accessibility identifiers visible; (b) assert all interactive controls are reachable via keyboard on Mac Designed for iPad; (c) assert that tapping "Start Jam" from the dashboard home requires ≤ 5 `XCUIElement` tap calls before the QR code accessibility identifier is visible — covers SC-005
 
 **Checkpoint**: App runs on iPhone, iPad, Mac, Apple Watch, and Apple TV with platform-appropriate layouts verified by UI tests.
 
@@ -214,6 +216,7 @@
 - [ ] T089 Implement `BGAppRefreshTask` full handler in `SonasApp.swift` (replacing the no-op from T025): on task execution fetch weather snapshot, AQI, and Todoist tasks; write results to `CacheService`; schedule next task via `BGTaskScheduler.submit`; expiry handler cancels in-flight work in `Sonas/App/SonasApp.swift`
 - [ ] T090 [P] Implement performance verification tests in `SonasTests/Performance/PerformanceTests.swift`: use `XCTestCase.measure {}` to assert (a) cached-data dashboard render ≤ 500 ms — inject pre-populated `CacheService` and measure `DashboardView` body evaluation; (b) `WeatherViewModel` cache-load path ≤ 500 ms; (c) UI transition from tap to next screen ≤ 100 ms *(Constitution §IV — baselines MUST be verified in task checklist)*
 - [ ] T091 [P] Profile memory for all four polling/subscription services using Instruments Leaks + Allocations on a real device or simulator; document peak RSS measurements in plan.md Complexity Tracking table; confirm total ≤ 150 MB peak with all services active *(Constitution §IV — memory MUST be profiled for polling services)*
+- [ ] T092 [P] Implement `SettingsView` (home location search + picker, Google Calendar connect/disconnect, Todoist API token entry with validation, Spotify connect/disconnect, photo album picker, temperature unit toggle) in `Sonas/Features/Settings/SettingsView.swift`; wire entry point from `DashboardView` toolbar/settings button in `Sonas/Features/Dashboard/DashboardView.swift`
 
 ---
 
@@ -328,4 +331,5 @@ Each developer's final task (`DashboardView` integration) must be **serialized**
 - Set all `USE_MOCK_*=1` environment variables in the Xcode debug scheme from day 1 — enables fully offline development with no real credentials
 - All `DashboardView` integration tasks (T041, T052, T060, T068, T076, T077) touch the **same file** — serialize these commits to avoid merge conflicts
 - WeatherKit entitlement activation can take hours on Apple Developer portal — start T002 on the first day of Phase 1
+- **PR requirement (Constitution §III)**: Every PR that touches a view file MUST include at least one simulator screenshot or screen recording in the PR description; reviewers MUST reject UI PRs without visual evidence
 - CloudKit schema is auto-created on first run in development containers; export and promote to production before TestFlight submission (see quickstart.md §8)
