@@ -14,6 +14,7 @@ WatchOS, and tvOS."
 ### Session 2026-04-07
 
 - Q: How does Sonas obtain family member location data — via Apple Family Sharing / Find My, or independent GPS tracking? → A: Apple Family Sharing / Find My (Option A); Sonas reads existing Apple-managed location data, no proprietary GPS tracking.
+- Q: How is the Sonas family group formed and managed — mirrored from Apple Family Sharing, Sonas-managed, or hybrid? → A: Mirror Apple Family Sharing (Option A); whoever belongs to the Apple Family Sharing group is automatically a Sonas family member; no in-app invite, admin role, or membership management needed.
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -244,8 +245,10 @@ correctly at the larger screen size with an adapted layout that makes use of the
 
 ### Key Entities
 
-- **Family Member**: A person belonging to the household; has a display name, an optional
-  avatar, and an opt-in location-sharing status.
+- **Family Member**: Any person who belongs to the Apple Family Sharing group associated with
+  the device running Sonas. Membership is read directly from Apple Family Sharing; Sonas does
+  not maintain its own member list, invite flow, or admin roles. Each member has a display name
+  and avatar inherited from their Apple ID.
 - **Location Snapshot**: The most recent known position of a family member, represented as a
   human-readable place label and a timestamp indicating data freshness.
 - **Calendar Event**: A scheduled event with a title, start/end date-time, optional location,
@@ -310,6 +313,9 @@ correctly at the larger screen size with an adapted layout that makes use of the
   of scope.
 - Location data is sourced exclusively from Apple Family Sharing / Find My; all family members
   must be part of the same Apple Family Sharing group to appear on the location panel.
+- Family group membership is determined entirely by Apple Family Sharing; Sonas has no in-app
+  invite system, admin role, or membership management. Adding or removing a family member
+  in Apple Family Sharing is reflected in Sonas automatically.
 - All family members physically share a household or close family unit; the app is not designed
   for general social networks.
 - Network connectivity is expected for initial data fetch; the offline/cache mode is a
