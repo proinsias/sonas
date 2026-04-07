@@ -17,6 +17,7 @@ WatchOS, and tvOS."
 - Q: How is the Sonas family group formed and managed — mirrored from Apple Family Sharing, Sonas-managed, or hybrid? → A: Mirror Apple Family Sharing (Option A); whoever belongs to the Apple Family Sharing group is automatically a Sonas family member; no in-app invite, admin role, or membership management needed.
 - Q: What is the privacy/compliance posture for minors who use the app? → A: Apple Family Sharing delegates compliance (Option B); app targets a "9+" App Store age rating; all sensitive data for minors (location, photos) flows exclusively through Apple's consented infrastructure; Sonas MUST NOT independently store personal data about any family member.
 - Q: Which shared photo service provides the gallery? → A: iCloud Shared Album (Option A); a single designated iCloud Shared Album that all family members contribute to, accessible natively across all Apple platforms without a third-party account.
+- Q: Which calendar services does Sonas display? → A: iCloud + Google Calendar (Option B); events from all iCloud calendars accessible on the device (including the iCloud Family Shared Calendar) plus any connected Google Calendar accounts; Outlook and other providers are out of scope for v1.
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -201,6 +202,9 @@ correctly at the larger screen size with an adapted layout that makes use of the
   timezone within 60 seconds.
 - What happens when a Todoist project has more than 100 open tasks? The panel MUST paginate or
   group tasks and not render an unbounded list.
+- What happens when a connected Google Calendar account's OAuth token expires or is revoked?
+  The events panel MUST display iCloud calendar events normally, show a per-account
+  reconnection prompt for the affected Google account, and not block the rest of the dashboard.
 
 ## Requirements *(mandatory)*
 
@@ -211,8 +215,11 @@ correctly at the larger screen size with an adapted layout that makes use of the
 - **FR-002**: The app MUST display each family member's location by reading data from Apple Family
   Sharing / Find My; Sonas MUST NOT perform independent GPS tracking. Location is shown as a
   human-readable place label rather than raw coordinates.
-- **FR-003**: The app MUST display upcoming calendar events from all connected family calendars
-  for at least the next 48 hours, including event title, date/time, and attendees.
+- **FR-003**: The app MUST display upcoming calendar events for at least the next 48 hours,
+  including event title, date/time, and attendees, aggregated from two sources:
+  (a) all iCloud calendars the device user has access to (including the iCloud Family Shared
+  Calendar), and (b) any Google Calendar accounts explicitly connected by a family member
+  within Sonas. Outlook and other calendar providers are out of scope for v1.
 - **FR-004**: The app MUST display current weather for the family's configured home location,
   including: temperature, sky description, humidity, wind speed and direction, atmospheric
   pressure, and air quality index.
@@ -261,7 +268,10 @@ correctly at the larger screen size with an adapted layout that makes use of the
 - **Location Snapshot**: The most recent known position of a family member, represented as a
   human-readable place label and a timestamp indicating data freshness.
 - **Calendar Event**: A scheduled event with a title, start/end date-time, optional location,
-  and a list of attendees; sourced from one or more connected family calendars.
+  and a list of attendees. Events are aggregated from iCloud calendars (accessed natively on
+  the device) and Google Calendar accounts (connected via OAuth within Sonas). Each event
+  carries a source label (iCloud or Google) to aid debugging but this label is not surfaced
+  to the user.
 - **Weather Snapshot**: A point-in-time capture of atmospheric conditions for a configured
   location, including all displayed attributes (temperature, humidity, wind, pressure, AQI,
   moon phase, sunrise/sunset).
@@ -309,8 +319,9 @@ correctly at the larger screen size with an adapted layout that makes use of the
 
 - Family members all use Apple devices and have Apple ID accounts; non-Apple devices are out of
   scope for v1.
-- The family has an existing shared calendar (e.g., iCloud Family Sharing calendar) that can be
-  surfaced; creating or editing events is out of scope for v1.
+- Calendar events are sourced from iCloud (natively on-device) and Google Calendar (via OAuth);
+  creating or editing events is out of scope for v1. Outlook, Exchange, and other calendar
+  providers are explicitly out of scope for v1.
 - The configured "home location" for weather is a single fixed address; per-member or
   GPS-following weather is out of scope for v1.
 - Todoist integration requires each family member who wishes to see tasks to have or share access
