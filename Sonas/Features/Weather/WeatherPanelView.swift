@@ -25,12 +25,12 @@ struct WeatherPanelView: View {
         if viewModel.isLoading && viewModel.snapshot == nil {
             LoadingStateView(rows: 4, showsLargeBlock: true)
         } else if let error = viewModel.error, viewModel.snapshot == nil {
-            ErrorStateView(error: error) { Task { await viewModel.refresh() } }
+            ErrorStateView(error: error) { Swift.Task { await viewModel.refresh() } }
         } else if let snapshot = viewModel.snapshot {
             weatherContent(snapshot: snapshot)
                 .staleDataBadge(
                     lastUpdated: viewModel.lastUpdated ?? .now,
-                    onRetry: { Task { await viewModel.refresh() } }
+                    onRetry: { Swift.Task { await viewModel.refresh() } }
                 )
         }
     }

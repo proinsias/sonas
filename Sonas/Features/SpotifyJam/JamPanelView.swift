@@ -44,7 +44,7 @@ struct JamPanelView: View {
 
     private var startJamButton: some View {
         Button {
-            Task { await viewModel.startJam() }
+            Swift.Task { await viewModel.startJam() }
         } label: {
             Label("Start Jam", systemImage: Icon.spotifyPlay)
                 .font(.buttonLabel)
@@ -76,7 +76,7 @@ struct JamPanelView: View {
             }
 
             Button {
-                Task { await viewModel.endJam() }
+                Swift.Task { await viewModel.endJam() }
             } label: {
                 Label("End Jam", systemImage: Icon.spotifyStop)
                     .font(.buttonLabel)
@@ -100,7 +100,7 @@ struct JamPanelView: View {
                 .font(.headline)
                 .foregroundStyle(Color.panelForeground)
             Button("Connect") {
-                Task { await viewModel.connectSpotify() }
+                Swift.Task { await viewModel.connectSpotify() }
             }
             .font(.buttonLabel)
             .foregroundStyle(Color.accent)

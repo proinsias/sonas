@@ -26,7 +26,7 @@ final class PerformanceTests: XCTestCase {
         options.iterationCount = 5
         measure(options: options) {
             let exp = expectation(description: "load")
-            Task { @MainActor in
+            Swift.Task { @MainActor in
                 let vm = DashboardViewModel(
                     locationService: LocationServiceMock(),
                     calendarService: CalendarServiceMock()
@@ -46,7 +46,7 @@ final class PerformanceTests: XCTestCase {
         options.iterationCount = 5
         measure(options: options) {
             let exp = expectation(description: "weather load")
-            Task { @MainActor in
+            Swift.Task { @MainActor in
                 let vm = WeatherViewModel(service: WeatherServiceMock())
                 await vm.start()
                 exp.fulfill()
@@ -62,7 +62,7 @@ final class PerformanceTests: XCTestCase {
         options.iterationCount = 10
         measure(options: options) {
             let exp = expectation(description: "jam transition")
-            Task { @MainActor in
+            Swift.Task { @MainActor in
                 let vm = JamViewModel(service: JamServiceMock())
                 await vm.startJam()
                 await vm.endJam()

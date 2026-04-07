@@ -19,7 +19,9 @@ struct WatchDashboardView: View {
                 eventRow(event: event)
             }
         }
-        .containerBackground(Color.dashboardBackground.gradient, for: .watch)
+        #if os(watchOS)
+        .containerBackground(Color.dashboardBackground.gradient, for: .tabView)
+        #endif
     }
 
     // MARK: - Clock

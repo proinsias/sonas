@@ -77,7 +77,7 @@ final class TodoistService: TaskServiceProtocol {
         var allTasks: [Task] = []
 
         for projectID in projectIDs {
-            try await Task.sleep(nanoseconds: 300_000_000)  // 300ms inter-request delay
+            try await Swift.Task.sleep(nanoseconds: 300_000_000)  // 300ms inter-request delay
             let tasks = try await fetchTasksForProject(id: projectID, token: token)
             allTasks.append(contentsOf: tasks)
         }

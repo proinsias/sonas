@@ -14,7 +14,7 @@ final class LocationViewModel {
 
     // MARK: Dependencies
     private let service: any LocationServiceProtocol
-    private var streamTask: Task<Void, Never>?
+    private var streamTask: Swift.Task<Void, Never>?
 
     init(service: any LocationServiceProtocol) {
         self.service = service
@@ -26,9 +26,9 @@ final class LocationViewModel {
         isLoading = true
         error = nil
         await service.startPublishing()
-        streamTask = Task { [weak self] in
+        streamTask = Swift.Task { [weak self] in
             for await updated in service.familyLocations {
-                guard !Task.isCancelled else { break }
+                guard !Swift.Task<Never, Never>.isCancelled else { break }
                 await MainActor.run {
                     self?.members = updated.sorted { $0.displayName < $1.displayName }
                     self?.isLoading = false

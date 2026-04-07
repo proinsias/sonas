@@ -20,9 +20,9 @@ final class TasksViewModel {
 
     var isConnected: Bool { service.isConnected }
 
-    init(service: any TaskServiceProtocol, cache: CacheServiceProtocol = CacheService.shared) {
+    init(service: any TaskServiceProtocol, cache: CacheServiceProtocol? = nil) {
         self.service = service
-        self.cache = cache
+        self.cache = cache ?? CacheService.shared
     }
 
     static func makeDefault() -> TasksViewModel {
@@ -110,7 +110,7 @@ final class TasksViewModel {
 
     private func startRefreshTimer() {
         refreshTimer = Timer.scheduledTimer(withTimeInterval: 5 * 60, repeats: true) { [weak self] _ in
-            Task { @MainActor in await self?.fetchLive() }
+            Swift.Task { @MainActor in await self?.fetchLive() }
         }
     }
 }

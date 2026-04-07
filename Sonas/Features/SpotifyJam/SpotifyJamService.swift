@@ -64,7 +64,7 @@ final class SpotifyJamService: JamServiceProtocol {
 
     func startJam() async throws -> JamSession {
         guard isSpotifyInstalled else { throw JamServiceError.spotifyNotInstalled }
-        guard isSpotifyConnected else {
+        if !isSpotifyConnected {
             try await connectSpotify()
             guard isSpotifyConnected else {
                 throw JamServiceError.spotifyAuthFailed(

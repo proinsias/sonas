@@ -23,7 +23,7 @@ struct PhotoGalleryView: View {
             LoadingStateView(rows: 1, showsLargeBlock: true)
                 .frame(height: 200)
         } else if let error = viewModel.error {
-            ErrorStateView(error: error) { Task { await viewModel.reload() } }
+            ErrorStateView(error: error) { Swift.Task { await viewModel.reload() } }
         } else if viewModel.photos.isEmpty && viewModel.selectedAlbumName == nil {
             selectAlbumPrompt
         } else if viewModel.photos.isEmpty {

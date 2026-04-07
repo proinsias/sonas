@@ -76,7 +76,6 @@ In Terminal:
 ```bash
 git clone https://github.com/proinsias/sonas.git
 cd sonas
-git checkout 001-implement-family-command-center
 ```
 
 ---

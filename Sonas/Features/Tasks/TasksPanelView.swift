@@ -29,7 +29,7 @@ struct TasksPanelView: View {
         } else if viewModel.isLoading && viewModel.tasksByProject.isEmpty {
             LoadingStateView(rows: 3)
         } else if let error = viewModel.error {
-            ErrorStateView(error: error) { Task { await viewModel.refresh() } }
+            ErrorStateView(error: error) { Swift.Task { await viewModel.refresh() } }
         } else if viewModel.tasksByProject.isEmpty {
             emptyState
         } else {
@@ -57,7 +57,7 @@ struct TasksPanelView: View {
 
             ForEach(viewModel.tasksByProject[project] ?? []) { task in
                 TaskRow(task: task) {
-                    Task { await viewModel.completeTask(task) }
+                    Swift.Task { await viewModel.completeTask(task) }
                 }
             }
         }

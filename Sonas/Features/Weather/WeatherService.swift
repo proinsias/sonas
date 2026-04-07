@@ -73,7 +73,7 @@ final class WeatherService: WeatherServiceProtocol {
             aiqCategory: aqiValue.map { AQICategory(usAQI: $0) },
             sunriseTime: wk.daily[0].sun.sunrise ?? .now,
             sunsetTime: wk.daily[0].sun.sunset ?? .now,
-            moonPhase: MoonPhase(fraction: wk.daily[0].moon.phase.rawValue),
+            moonPhase: MoonPhase(weatherKit: wk.daily[0].moon.phase),
             fetchedAt: .now
         )
 
@@ -176,6 +176,24 @@ private extension WeatherKit.Wind.CompassDirection {
         case .northwest:      return "NW"
         case .northNorthwest: return "NNW"
         @unknown default:     return "—"
+        }
+    }
+}
+
+// MARK: - MoonPhase mapping from WeatherKit
+
+private extension MoonPhase {
+    init(weatherKit phase: WeatherKit.MoonPhase) {
+        switch phase {
+        case .new:             self = .newMoon
+        case .waxingCrescent:  self = .waxingCrescent
+        case .firstQuarter:    self = .firstQuarter
+        case .waxingGibbous:   self = .waxingGibbous
+        case .full:            self = .fullMoon
+        case .waningGibbous:   self = .waningGibbous
+        case .lastQuarter:     self = .lastQuarter
+        case .waningCrescent:  self = .waningCrescent
+        @unknown default:      self = .newMoon
         }
     }
 }

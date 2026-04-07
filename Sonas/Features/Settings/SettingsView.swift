@@ -38,13 +38,13 @@ struct SettingsView: View {
 
     private var homeLocationSection: some View {
         Section("Home Location") {
-            if let name = config.homeLocationName, !name.isEmpty {
+            if !config.homeLocationName.isEmpty {
                 HStack {
                     Image(systemName: Icon.location)
                         .foregroundStyle(Color.accent)
                         .accessibilityHidden(true)
                     VStack(alignment: .leading, spacing: 2) {
-                        Text(name)
+                        Text(config.homeLocationName)
                             .font(.body)
                         if let coord = config.homeLocation {
                             Text(String(format: "%.4f, %.4f", coord.latitude, coord.longitude))

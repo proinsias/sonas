@@ -23,11 +23,11 @@ final class WeatherViewModel {
 
     init(
         service: any WeatherServiceProtocol,
-        cache: CacheServiceProtocol = CacheService.shared,
+        cache: CacheServiceProtocol? = nil,
         config: AppConfiguration = .shared
     ) {
         self.service = service
-        self.cache = cache
+        self.cache = cache ?? CacheService.shared
         self.config = config
     }
 
@@ -99,7 +99,7 @@ final class WeatherViewModel {
 
     private func startRefreshTimer() {
         refreshTimer = Timer.scheduledTimer(withTimeInterval: 15 * 60, repeats: true) { [weak self] _ in
-            Task { @MainActor in await self?.fetchLive() }
+            Swift.Task { @MainActor in await self?.fetchLive() }
         }
     }
 }

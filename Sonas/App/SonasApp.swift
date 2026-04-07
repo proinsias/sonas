@@ -35,7 +35,7 @@ struct SonasApp: App {
             // Fetches weather snapshot, AQI, and Todoist tasks; writes to CacheService.
             SonasLogger.app.info("BGAppRefreshTask: handler invoked")
 
-            let refreshTask = Task {
+            let refreshTask = Swift.Task {
                 do {
                     // Weather + AQI (concurrent)
                     if let coord = AppConfiguration.shared.homeLocation {

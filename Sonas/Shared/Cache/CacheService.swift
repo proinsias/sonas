@@ -36,7 +36,7 @@ protocol CacheServiceProtocol: Sendable {
 @MainActor
 final class CacheService: CacheServiceProtocol {
 
-    private let modelContainer: ModelContainer
+    let modelContainer: ModelContainer
 
     static var shared: CacheService = {
         do {

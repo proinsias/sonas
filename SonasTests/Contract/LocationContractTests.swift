@@ -36,7 +36,7 @@ struct LocationContractTests {
 
         // Act: collect one emission from the AsyncStream
         var received: [FamilyMember] = []
-        let task = Task {
+        let task = Swift.Task {
             for await members in service.familyLocations {
                 received = members
                 break  // Take first emission

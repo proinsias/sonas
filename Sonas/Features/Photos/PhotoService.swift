@@ -34,8 +34,8 @@ enum PhotoServiceError: LocalizedError {
 @MainActor
 final class PhotoService: NSObject, PhotoServiceProtocol, PHPhotoLibraryChangeObserver {
 
-    private(set) var selectedAlbumName: String? { AppConfiguration.shared.selectedAlbumName }
-    private var changeObservationTask: Task<Void, Never>?
+    var selectedAlbumName: String? { AppConfiguration.shared.selectedAlbumName }
+    private var changeObservationTask: Swift.Task<Void, Never>?
     private var onAlbumChanged: (() -> Void)?
 
     override init() {
@@ -129,7 +129,7 @@ final class PhotoService: NSObject, PhotoServiceProtocol, PHPhotoLibraryChangeOb
     // MARK: - PHPhotoLibraryChangeObserver
 
     nonisolated func photoLibraryDidChange(_ changeInstance: PHChange) {
-        Task { @MainActor in
+        Swift.Task { @MainActor in
             SonasLogger.photos.info("PhotoService: library changed — triggering re-fetch")
             onAlbumChanged?()
         }

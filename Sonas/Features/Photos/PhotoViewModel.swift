@@ -19,7 +19,7 @@ final class PhotoViewModel {
         selectedAlbumName = service.selectedAlbumName
         if let photoService = service as? PhotoService {
             photoService.onAlbumChanged { [weak self] in
-                Task { await self?.reload() }
+                Swift.Task { await self?.reload() }
             }
         }
     }
