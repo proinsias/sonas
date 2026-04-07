@@ -188,7 +188,8 @@ SonasTests/
     └── JamServiceTests.swift
 
 SonasUITests/
-└── DashboardUITests.swift
+├── DashboardUITests.swift
+└── SettingsUITests.swift
 ```
 
 **Structure Decision**: Single Xcode project with feature-module folder structure. No separate

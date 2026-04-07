@@ -330,7 +330,7 @@ Each developer's final task (`DashboardView` integration) must be **serialized**
 - [P] tasks = different files, no incomplete dependencies — safe to run in parallel
 - [USn] label maps each task to its spec.md user story for traceability
 - Set all `USE_MOCK_*=1` environment variables in the Xcode debug scheme from day 1 — enables fully offline development with no real credentials
-- All `DashboardView` integration tasks (T041, T052, T060, T068, T076, T077) touch the **same file** — serialize these commits to avoid merge conflicts
+- All `DashboardView` integration tasks (T041, T052, T060, T068, T076, T077) and the T093 toolbar-button wire-up touch the **same file** — serialize these commits to avoid merge conflicts
 - WeatherKit entitlement activation can take hours on Apple Developer portal — start T002 on the first day of Phase 1
 - **PR requirement (Constitution §III)**: Every PR that touches a view file MUST include at least one simulator screenshot or screen recording in the PR description; reviewers MUST reject UI PRs without visual evidence
 - CloudKit schema is auto-created on first run in development containers; export and promote to production before TestFlight submission (see quickstart.md §8)
