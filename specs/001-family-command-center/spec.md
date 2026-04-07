@@ -9,6 +9,16 @@ weather (today/this week, sunrise/set, moon phase, wind, humidity, pressure, air
 jam QR, and other family matters. Ensure that the application can later be ported to iPadOS, macOS,
 WatchOS, and tvOS."
 
+## Clarifications
+
+### Session 2026-04-07
+
+- Q: How does Sonas obtain family member location data — via Apple Family Sharing / Find My, or independent GPS tracking? → A: Apple Family Sharing / Find My (Option A); Sonas reads existing Apple-managed location data, no proprietary GPS tracking.
+- Q: How is the Sonas family group formed and managed — mirrored from Apple Family Sharing, Sonas-managed, or hybrid? → A: Mirror Apple Family Sharing (Option A); whoever belongs to the Apple Family Sharing group is automatically a Sonas family member; no in-app invite, admin role, or membership management needed.
+- Q: What is the privacy/compliance posture for minors who use the app? → A: Apple Family Sharing delegates compliance (Option B); app targets a "9+" App Store age rating; all sensitive data for minors (location, photos) flows exclusively through Apple's consented infrastructure; Sonas MUST NOT independently store personal data about any family member.
+- Q: Which shared photo service provides the gallery? → A: iCloud Shared Album (Option A); a single designated iCloud Shared Album that all family members contribute to, accessible natively across all Apple platforms without a third-party account.
+- Q: Which calendar services does Sonas display? → A: iCloud + Google Calendar (Option B); events from all iCloud calendars accessible on the device (including the iCloud Family Shared Calendar) plus any connected Google Calendar accounts; Outlook and other providers are out of scope for v1.
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 — At-a-Glance Family Dashboard (Priority: P1)
@@ -192,6 +202,9 @@ correctly at the larger screen size with an adapted layout that makes use of the
   timezone within 60 seconds.
 - What happens when a Todoist project has more than 100 open tasks? The panel MUST paginate or
   group tasks and not render an unbounded list.
+- What happens when a connected Google Calendar account's OAuth token expires or is revoked?
+  The events panel MUST display iCloud calendar events normally, show a per-account
+  reconnection prompt for the affected Google account, and not block the rest of the dashboard.
 
 ## Requirements *(mandatory)*
 
@@ -199,10 +212,14 @@ correctly at the larger screen size with an adapted layout that makes use of the
 
 - **FR-001**: The app MUST display the current local date and time, updating every second, on
   the primary dashboard screen.
-- **FR-002**: The app MUST show the real-time location of each family member who has granted
-  location-sharing consent, using a human-readable place label rather than raw coordinates.
-- **FR-003**: The app MUST display upcoming calendar events from all connected family calendars
-  for at least the next 48 hours, including event title, date/time, and attendees.
+- **FR-002**: The app MUST display each family member's location by reading data from Apple Family
+  Sharing / Find My; Sonas MUST NOT perform independent GPS tracking. Location is shown as a
+  human-readable place label rather than raw coordinates.
+- **FR-003**: The app MUST display upcoming calendar events for at least the next 48 hours,
+  including event title, date/time, and attendees, aggregated from two sources:
+  (a) all iCloud calendars the device user has access to (including the iCloud Family Shared
+  Calendar), and (b) any Google Calendar accounts explicitly connected by a family member
+  within Sonas. Outlook and other calendar providers are out of scope for v1.
 - **FR-004**: The app MUST display current weather for the family's configured home location,
   including: temperature, sky description, humidity, wind speed and direction, atmospheric
   pressure, and air quality index.
@@ -215,8 +232,8 @@ correctly at the larger screen size with an adapted layout that makes use of the
   family members to mark tasks as complete from within the app.
 - **FR-009**: The app MUST automatically refresh Todoist tasks at least every 5 minutes and
   support manual refresh via pull-to-refresh.
-- **FR-010**: The app MUST display a rotating gallery of recent shared family photos, advancing
-  automatically between images every 10–30 seconds.
+- **FR-010**: The app MUST display a rotating gallery of the most recent photos from a single
+  designated iCloud Shared Album, advancing automatically between images every 10–30 seconds.
 - **FR-011**: The app MUST allow a family member to initiate a Spotify Jam session and display
   the resulting joinable QR code on the dashboard.
 - **FR-012**: The app MUST allow a family member to end an active Spotify Jam session, removing
@@ -229,19 +246,32 @@ correctly at the larger screen size with an adapted layout that makes use of the
 - **FR-015**: The app MUST be structured so that its user interface and layout system can be
   adapted for iPadOS, macOS, watchOS, and tvOS without rewriting core business logic or data
   retrieval behaviour.
-- **FR-016**: The app MUST require explicit opt-in consent from each family member before
-  sharing their location with other family members.
-- **FR-017**: The app MUST allow each family member to independently revoke their location
-  sharing at any time without affecting other family members' visibility.
+- **FR-016**: Location sharing consent is governed by Apple Family Sharing; Sonas MUST surface
+  a clear prompt directing family members to enable location sharing via Apple's native settings
+  if their location is not available. Sonas MUST NOT implement a parallel consent mechanism.
+- **FR-017**: A family member's location visibility in Sonas MUST update within 60 seconds of
+  that member changing their Apple Family Sharing location-sharing preference.
+- **FR-018**: Sonas MUST NOT persistently store any personal data about family members on its
+  own servers or in third-party analytics services. All data displayed in the app (location,
+  calendar events, photos, tasks) MUST be fetched at runtime from their respective source
+  systems and held only transiently in the device's local cache.
+- **FR-019**: The app MUST target a "9+" App Store age rating. No age-verification gate or
+  separate parental-consent screen is required within Sonas itself, as consent for minor
+  family members is governed by Apple Family Sharing.
 
 ### Key Entities
 
-- **Family Member**: A person belonging to the household; has a display name, an optional
-  avatar, and an opt-in location-sharing status.
+- **Family Member**: Any person who belongs to the Apple Family Sharing group associated with
+  the device running Sonas. Membership is read directly from Apple Family Sharing; Sonas does
+  not maintain its own member list, invite flow, or admin roles. Each member has a display name
+  and avatar inherited from their Apple ID.
 - **Location Snapshot**: The most recent known position of a family member, represented as a
   human-readable place label and a timestamp indicating data freshness.
 - **Calendar Event**: A scheduled event with a title, start/end date-time, optional location,
-  and a list of attendees; sourced from one or more connected family calendars.
+  and a list of attendees. Events are aggregated from iCloud calendars (accessed natively on
+  the device) and Google Calendar accounts (connected via OAuth within Sonas). Each event
+  carries a source label (iCloud or Google) to aid debugging but this label is not surfaced
+  to the user.
 - **Weather Snapshot**: A point-in-time capture of atmospheric conditions for a configured
   location, including all displayed attributes (temperature, humidity, wind, pressure, AQI,
   moon phase, sunrise/sunset).
@@ -249,8 +279,9 @@ correctly at the larger screen size with an adapted layout that makes use of the
   predicted high/low temperature and a condition label.
 - **Task**: A Todoist task belonging to a shared family project, with a title, optional due date,
   assignee, and completion status.
-- **Photo**: A shared image from the family's configured photo source, with a capture date and
-  optional caption.
+- **Photo**: A shared image sourced from a single designated iCloud Shared Album, with a capture
+  date and optional caption. All family members contribute to and view the same album; Sonas
+  displays photos read-only and does not support uploading or deleting photos from within the app.
 - **Jam Session**: An active Spotify Jam, represented by a unique joinable QR code and a status
   (active/ended).
 - **App Configuration**: Household-level settings including home location for weather, connected
@@ -288,18 +319,32 @@ correctly at the larger screen size with an adapted layout that makes use of the
 
 - Family members all use Apple devices and have Apple ID accounts; non-Apple devices are out of
   scope for v1.
-- The family has an existing shared calendar (e.g., iCloud Family Sharing calendar) that can be
-  surfaced; creating or editing events is out of scope for v1.
+- Calendar events are sourced from iCloud (natively on-device) and Google Calendar (via OAuth);
+  creating or editing events is out of scope for v1. Outlook, Exchange, and other calendar
+  providers are explicitly out of scope for v1.
 - The configured "home location" for weather is a single fixed address; per-member or
   GPS-following weather is out of scope for v1.
 - Todoist integration requires each family member who wishes to see tasks to have or share access
   to a Todoist account; the app does not host its own task storage.
-- The shared photo source is a single album accessible to all family members; multi-album
-  selection is a future enhancement.
+- The shared photo source is a single designated iCloud Shared Album; multi-album selection
+  and third-party photo services (Google Photos, etc.) are out of scope for v1.
+- Sonas displays photos read-only; adding or deleting photos is done outside the app via the
+  iOS Photos app or any other iCloud-capable device.
 - Spotify Jam requires at least one family member to have an active Spotify account; the QR code
   is generated by Spotify and displayed by Sonas (Sonas does not host the session).
 - The app targets the current major iOS version and one version back; older iOS versions are out
   of scope.
+- Location data is sourced exclusively from Apple Family Sharing / Find My; all family members
+  must be part of the same Apple Family Sharing group to appear on the location panel.
+- Family group membership is determined entirely by Apple Family Sharing; Sonas has no in-app
+  invite system, admin role, or membership management. Adding or removing a family member
+  in Apple Family Sharing is reflected in Sonas automatically.
+- Sonas targets a "9+" App Store age rating. Privacy compliance for minor family members is
+  delegated to Apple Family Sharing; Sonas stores no personal data about any family member
+  independently (no backend database of users, locations, or events).
+- COPPA and GDPR-Kids obligations are not directly borne by Sonas because all sensitive data
+  flows through Apple's own consented infrastructure. The app must not add any analytics,
+  advertising SDKs, or third-party data collection that would alter this posture.
 - All family members physically share a household or close family unit; the app is not designed
   for general social networks.
 - Network connectivity is expected for initial data fetch; the offline/cache mode is a
