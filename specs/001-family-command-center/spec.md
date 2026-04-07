@@ -292,7 +292,8 @@ correctly at the larger screen size with an adapted layout that makes use of the
 ### Measurable Outcomes
 
 - **SC-001**: A family member can open the app and see current location, time, and the next event
-  for every family member within 3 seconds of the dashboard appearing on screen.
+  for every family member within 2 seconds of the dashboard appearing on screen. (Aligns with
+  constitution §IV ≤ 2 s initial load requirement; cached data renders in ≤ 500 ms.)
 - **SC-002**: All eight weather attributes (temperature, description, humidity, wind, pressure,
   air quality, sunrise/set, moon phase) are visible simultaneously on the dashboard without any
   scroll or tap, on a standard phone screen.
@@ -309,8 +310,9 @@ correctly at the larger screen size with an adapted layout that makes use of the
 - **SC-008**: The same core experience (dashboard, weather, tasks, photos, Jam) is available on
   iPad in a layout that takes advantage of the larger screen without horizontal scrolling or
   empty space exceeding 30% of the viewport.
-- **SC-009**: Location sharing cannot be enabled for a family member without their explicit
-  in-app consent; revoking consent takes effect within 60 seconds.
+- **SC-009**: A family member whose Apple Family Sharing location-sharing preference changes will
+  see that change reflected in Sonas within 60 seconds. (Consent is governed entirely by Apple
+  Family Sharing; Sonas MUST NOT implement a parallel in-app consent mechanism — FR-016.)
 - **SC-010**: 90% of first-time users can identify the location of all family members and the
   next upcoming event within 30 seconds of opening the app for the first time, without any
   tutorial or onboarding assistance.

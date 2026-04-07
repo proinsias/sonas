@@ -50,9 +50,11 @@
 - [ ] T020 [P] Define `Photo`, `JamSession`, and `JamStatus` structs/enums in `Sonas/Shared/Models/MediaModels.swift`
 - [ ] T021 Define SwiftData `@Model` cache classes (`CachedWeatherSnapshot`, `CachedLocationSnapshot`, `CachedCalendarEvent`, `CachedTask`, `CachedJamSession`) each with a `lastUpdated: Date` field in `Sonas/Shared/Cache/CachedModels.swift`
 - [ ] T022 [P] Define `CacheServiceProtocol` (save/load per panel type, `evictStaleEntries`) in `Sonas/Shared/Cache/CacheService.swift`
-- [ ] T023 Implement `CacheService` conforming to `CacheServiceProtocol` with per-type TTL eviction (Weather 1h, Location 5min, CalendarEvent past end-time, Task 24h, JamSession on `.ended`) in `Sonas/Shared/Cache/CacheService.swift`
-- [ ] T024 [P] Implement `CacheContractTests` (in-memory `ModelContainer`; save/load round-trip; `evictStaleEntries` removes entries older than TTL) in `SonasTests/Contract/CacheContractTests.swift`
-- [ ] T025 Implement `SonasApp.swift` with `ModelContainer` initialisation, service environment injection via `.environment`, `BGTaskScheduler.register` for `com.sonas.refresh`, and `ScenePhase.active` eviction hook in `Sonas/App/SonasApp.swift`
+- [ ] T023 [P] Implement `CacheContractTests` (in-memory `ModelContainer`; save/load round-trip; `evictStaleEntries` removes entries older than TTL) in `SonasTests/Contract/CacheContractTests.swift`
+  > 🔴 **TEST-FIRST GATE**: Confirm T023 FAILS before writing T024 implementation.
+- [ ] T024 Implement `CacheService` conforming to `CacheServiceProtocol` with per-type TTL eviction (Weather 1h, Location 5min, CalendarEvent past end-time, Task 24h, JamSession on `.ended`) in `Sonas/Shared/Cache/CacheService.swift`
+- [ ] T025 Implement `SonasApp.swift` with `ModelContainer` initialisation, service environment injection via `.environment`, `BGTaskScheduler.register` + **no-op placeholder handler** for `com.sonas.refresh` (full handler implemented in T089), and `ScenePhase.active` eviction hook in `Sonas/App/SonasApp.swift`
+- [ ] T025-L [P] Implement `SonasLogger` using `OSLog` with one subsystem per feature module (`location`, `weather`, `calendar`, `tasks`, `photos`, `jam`, `cache`); PII-scrubbing guard that omits precise coordinates and display names at non-local-only environments in `Sonas/Shared/Logging/SonasLogger.swift` *(Constitution §Quality Logging — all service implementations in Phases 3–7 MUST call `SonasLogger` for key data events)*
 
 **Checkpoint**: Foundation ready — design system, all domain models, cache layer, and app entry point are complete. User story implementation can now begin.
 
@@ -70,11 +72,13 @@
 - [ ] T027 [P] [US1] Define `CalendarServiceProtocol` (`fetchUpcomingEvents(hours:)`, `connectGoogleAccount`, `disconnectGoogleAccount`, `isGoogleConnected`) in `Sonas/Features/Calendar/CalendarService.swift`
 - [ ] T028 [P] [US1] Implement `LocationServiceMock` (returns fixture `[FamilyMember]` via `AsyncStream`; respects `USE_MOCK_LOCATION` env flag) in `Sonas/Shared/Mocks/LocationServiceMock.swift`
 - [ ] T029 [P] [US1] Implement `CalendarServiceMock` (returns fixture `[CalendarEvent]`; respects `USE_MOCK_CALENDAR` env flag) in `Sonas/Shared/Mocks/CalendarServiceMock.swift`
-- [ ] T030 [US1] Implement `LocationService` conforming to `LocationServiceProtocol` (CLLocationManager for own device, reverse-geocoding `placeName` before CloudKit write, `CKQuerySubscription` for push-based family member updates, 60s/50m write throttle) in `Sonas/Features/Location/LocationService.swift`
 - [ ] T031 [P] [US1] Implement `LocationContractTests` (CloudKit container stub returning 2 `FamilyLocation` records; assert `familyLocations` emits 2 `FamilyMember` values with correct `placeName` and `recordedAt`) in `SonasTests/Contract/LocationContractTests.swift`
+  > 🔴 **TEST-FIRST GATE**: Run T031 — confirm it FAILS — before writing T030.
+- [ ] T030 [US1] Implement `LocationService` conforming to `LocationServiceProtocol` (CLLocationManager for own device, reverse-geocoding `placeName` before CloudKit write, `CKQuerySubscription` for push-based family member updates, 60s/50m write throttle) in `Sonas/Features/Location/LocationService.swift`
+- [ ] T034 [P] [US1] Implement `GoogleCalendarContractTests` (URLProtocol stub returning Google Calendar JSON fixture; assert returned events include both EventKit mock events and Google-sourced events; assert sort order ascending; assert duplicate title+startDate appears only once) in `SonasTests/Contract/GoogleCalendarContractTests.swift`
+  > 🔴 **TEST-FIRST GATE**: Run T034 — confirm it FAILS — before writing T032 and T033.
 - [ ] T032 [US1] Implement `GoogleCalendarClient` (Google Calendar REST v3 fetch with `timeMin`/`timeMax`, OAuth token refresh via GoogleSignIn SDK, Keychain token storage, `needsGoogleReconnect` flag on 401) in `Sonas/Features/Calendar/CalendarService.swift`
 - [ ] T033 [US1] Implement `CalendarService` conforming to `CalendarServiceProtocol` (EventKit `EKEventStore.requestFullAccessToEvents`, `GoogleCalendarClient` for Google accounts, deduplication by title+startDate, 48-hour window, ascending sort) in `Sonas/Features/Calendar/CalendarService.swift`
-- [ ] T034 [P] [US1] Implement `GoogleCalendarContractTests` (URLProtocol stub returning Google Calendar JSON fixture; assert returned events include both EventKit mock events and Google-sourced events; assert sort order ascending; assert duplicate title+startDate appears only once) in `SonasTests/Contract/GoogleCalendarContractTests.swift`
 - [ ] T035 [US1] Implement `ClockPanelView` (TimelineView updating every second, prominent date and local time display) in `Sonas/Features/Clock/ClockPanelView.swift`
 - [ ] T036 [US1] Implement `LocationViewModel` (`@Observable`; subscribes to `LocationService.familyLocations`; computes staleness labels; handles "Location unavailable" for stale/nil snapshots) in `Sonas/Features/Location/LocationViewModel.swift`
 - [ ] T037 [US1] Implement `LocationPanelView` (name + `placeName` label per member; "Location unavailable" for stale/nil; scrollable list supporting >10 members; "Enable location in Settings" prompt when permission denied) in `Sonas/Features/Location/LocationPanelView.swift`
@@ -99,9 +103,10 @@
 
 - [ ] T044 [P] [US2] Define `WeatherServiceProtocol` (`fetchWeather(for:) -> (current: WeatherSnapshot, forecast: [DayForecast])`) in `Sonas/Features/Weather/WeatherService.swift`
 - [ ] T045 [P] [US2] Implement `WeatherServiceMock` (returns fixture `WeatherSnapshot` with all fields populated + 7-element `[DayForecast]`; respects `USE_MOCK_WEATHER` env flag) in `Sonas/Shared/Mocks/WeatherServiceMock.swift`
-- [ ] T046 [US2] Implement `WeatherService` conforming to `WeatherServiceProtocol` (concurrent `async let` for WeatherKit `.current`+`.daily` and Open-Meteo `/v1/air-quality?current=us_aqi`; maps all WeatherKit fields to `WeatherSnapshot`; `airQualityIndex = nil` when AQI fetch fails) in `Sonas/Features/Weather/WeatherService.swift`
 - [ ] T047 [P] [US2] Implement `AQIContractTests` (URLProtocol stub returning `{"current":{"us_aqi":42}}`; assert `WeatherSnapshot.airQualityIndex == 42`; assert `airQualityIndex == nil` when stub returns HTTP 500) in `SonasTests/Contract/AQIContractTests.swift`
 - [ ] T048 [P] [US2] Implement `WeatherContractTests` (WeatherKit mock + AQI URLProtocol stub; assert `snapshot.airQualityIndex == 42`; assert `forecast.count == 7`; assert `forecast[0].id` equals today midnight) in `SonasTests/Contract/WeatherContractTests.swift`
+  > 🔴 **TEST-FIRST GATE**: Run T047 + T048 — confirm both FAIL — before writing T046.
+- [ ] T046 [US2] Implement `WeatherService` conforming to `WeatherServiceProtocol` (concurrent `async let` for WeatherKit `.current`+`.daily` and Open-Meteo `/v1/air-quality?current=us_aqi`; maps all WeatherKit fields to `WeatherSnapshot`; `airQualityIndex = nil` when AQI fetch fails) in `Sonas/Features/Weather/WeatherService.swift`
 - [ ] T049 [US2] Implement `WeatherViewModel` (`@Observable`; loads cached `WeatherSnapshot` on init for ≤500ms first frame; 15-min foreground `Timer` refresh; "Last updated" timestamp from cache; retry control on error) in `Sonas/Features/Weather/WeatherViewModel.swift`
 - [ ] T050 [US2] Implement `WeatherPanelView` (current conditions section with all 8 attributes visible without scroll on standard iPhone; horizontal 7-day forecast strip with high/low + SF Symbol per day) in `Sonas/Features/Weather/WeatherPanelView.swift`
 - [ ] T051 [P] [US2] Implement `WeatherServiceTests` (unit; assert correct `MoonPhase` enum from WeatherKit phase value; assert `airQualityIndex == nil` and no throw when AQI fetch fails; assert `WeatherServiceError.locationNotConfigured` when home coordinate is nil) in `SonasTests/Unit/WeatherServiceTests.swift`
@@ -121,8 +126,9 @@
 
 - [ ] T053 [P] [US3] Define `TaskServiceProtocol` (`fetchTasks`, `completeTask(id:)`, `connectTodoist(apiToken:)`, `disconnectTodoist`, `isConnected`) in `Sonas/Features/Tasks/TodoistService.swift`
 - [ ] T054 [P] [US3] Implement `TaskServiceMock` (returns fixture `[Task]` grouped by project; `completeTask` succeeds immediately; respects `USE_MOCK_TASKS` env flag) in `Sonas/Shared/Mocks/TaskServiceMock.swift`
-- [ ] T055 [US3] Implement `TodoistService` conforming to `TaskServiceProtocol` (GET /projects + GET /tasks per project; POST /tasks/{id}/close; cursor pagination via `X-Next-Cursor`; 300ms inter-request delay; 429 back-off with `Retry-After`; Keychain API token) in `Sonas/Features/Tasks/TodoistService.swift`
 - [ ] T056 [P] [US3] Implement `TodoistContractTests` (URLProtocol stubs for GET /projects, GET /tasks, POST /close 204, POST /close 429 with `Retry-After: 60`; assert tasks grouped by `projectName`; assert `completeTask` succeeds on 204; assert `TaskServiceError.rateLimitExceeded` on 429) in `SonasTests/Contract/TodoistContractTests.swift`
+  > 🔴 **TEST-FIRST GATE**: Run T056 — confirm it FAILS — before writing T055.
+- [ ] T055 [US3] Implement `TodoistService` conforming to `TaskServiceProtocol` (GET /projects + GET /tasks per project; POST /tasks/{id}/close; cursor pagination via `X-Next-Cursor`; 300ms inter-request delay; 429 back-off with `Retry-After`; Keychain API token) in `Sonas/Features/Tasks/TodoistService.swift`
 - [ ] T057 [US3] Implement `TasksViewModel` (`@Observable`; foreground 5-min `Timer`; optimistic `isCompleting = true` on checkbox tap; rollback `isCompleting = false` + error toast on API error; pull-to-refresh; exposes paginated task list grouped by project) in `Sonas/Features/Tasks/TasksViewModel.swift`
 - [ ] T058 [US3] Implement `TasksPanelView` (tasks grouped by `projectName` in `List`; completion checkbox with optimistic state; "Show more" pagination affordance at 100-task boundary; "Connect Todoist" empty state; connection-error state with reconnect button) in `Sonas/Features/Tasks/TasksPanelView.swift`
 - [ ] T059 [P] [US3] Implement `TodoistServiceTests` (unit; assert cursor pagination accumulates tasks across pages; assert optimistic rollback when `completeTask` throws; assert `TaskServiceError.authenticationFailed` on 401) in `SonasTests/Unit/TodoistServiceTests.swift`
@@ -142,8 +148,9 @@
 
 - [ ] T061 [P] [US4] Define `PhotoServiceProtocol` (`fetchRecentPhotos(limit:)`, `loadThumbnail(for:size:)`, `loadFullImage(for:)`, `selectSharedAlbum()`, `selectedAlbumName`) in `Sonas/Features/Photos/PhotoService.swift`
 - [ ] T062 [P] [US4] Implement `PhotoServiceMock` (returns 5 fixture `Photo` items; `loadThumbnail` returns a bundled test image; respects `USE_MOCK_PHOTOS` env flag) in `Sonas/Shared/Mocks/PhotoServiceMock.swift`
-- [ ] T063 [US4] Implement `PhotoService` conforming to `PhotoServiceProtocol` (`PHAssetCollection.fetchAssetCollections` with `.albumCloudShared`; `PHFetchOptions` sorted `creationDate` descending, limit 20; `PHImageManager.requestImage` with `.opportunistic` delivery; `PHPhotoLibraryChangeObserver` for real-time change detection) in `Sonas/Features/Photos/PhotoService.swift`
 - [ ] T064 [P] [US4] Implement `PhotoContractTests` (mock `PHAssetCollection` with 5 `PHAsset` stubs; assert `fetchRecentPhotos` returns 5 photos sorted by `creationDate` descending; assert `PhotoServiceError.albumEmpty` when album has no assets) in `SonasTests/Contract/PhotoContractTests.swift`
+  > 🔴 **TEST-FIRST GATE**: Run T064 — confirm it FAILS — before writing T063.
+- [ ] T063 [US4] Implement `PhotoService` conforming to `PhotoServiceProtocol` (`PHAssetCollection.fetchAssetCollections` with `.albumCloudShared`; `PHFetchOptions` sorted `creationDate` descending, limit 20; `PHImageManager.requestImage` with `.opportunistic` delivery; `PHPhotoLibraryChangeObserver` for real-time change detection) in `Sonas/Features/Photos/PhotoService.swift`
 - [ ] T065 [US4] Implement `PhotoViewModel` (`@Observable`; fetches 20 most-recent photos on init; `PHPhotoLibraryChangeObserver` removes deleted photos without crash; exposes `selectedAlbumName` for empty-state prompt) in `Sonas/Features/Photos/PhotoViewModel.swift`
 - [ ] T066 [US4] Implement `PhotoGalleryView` (`TimelineView` carousel with 15-second auto-advance interval at 60fps; full-screen modal sheet on tap with swipe-through navigation; "Select a shared album" prompt when none configured; "Add photos" prompt when album is empty) in `Sonas/Features/Photos/PhotoGalleryView.swift`
 - [ ] T067 [P] [US4] Implement `PhotoServiceTests` (unit; assert sort order is `creationDate` descending; assert limit of 20 is enforced; assert `PHPhotoLibraryChangeObserver` triggers re-fetch that omits a deleted photo ID) in `SonasTests/Unit/PhotoServiceTests.swift`
@@ -163,8 +170,9 @@
 
 - [ ] T069 [P] [US5] Define `JamServiceProtocol` (`currentSession`, `startJam()`, `endJam()`, `connectSpotify()`, `isSpotifyConnected`, `isSpotifyInstalled`) in `Sonas/Features/SpotifyJam/SpotifyJamService.swift`
 - [ ] T070 [P] [US5] Implement `JamServiceMock` (`startJam` returns fixture `JamSession` with `joinURL = "https://spotify.com/jam/abc123"`; `endJam` sets `status = .ended`; respects `USE_MOCK_JAM` env flag) in `Sonas/Shared/Mocks/JamServiceMock.swift`
-- [ ] T071 [US5] Implement `SpotifyJamService` conforming to `JamServiceProtocol` (`SPTConfiguration` with `clientID` and `redirectURL` from Info.plist; `SPTSessionManager` for OAuth via `ASWebAuthenticationSession`; `SPTAppRemote.playerAPI.startGroupSession` returning `joinURL`; Keychain token storage; `appRemoteDisconnected` sets `status = .ended`) in `Sonas/Features/SpotifyJam/SpotifyJamService.swift`
 - [ ] T072 [P] [US5] Implement `SpotifyContractTests` (mock `SPTSessionManager` returning valid token; mock `SPTAppRemote` returning `joinURL = "https://spotify.com/jam/abc123"`; assert `startJam()` returns `JamSession.status == .active` and `joinURL` matches; assert `startJam()` throws `JamServiceError.spotifyNotInstalled` when `isSpotifyInstalled == false`) in `SonasTests/Contract/SpotifyContractTests.swift`
+  > 🔴 **TEST-FIRST GATE**: Run T072 — confirm it FAILS — before writing T071.
+- [ ] T071 [US5] Implement `SpotifyJamService` conforming to `JamServiceProtocol` (`SPTConfiguration` with `clientID` and `redirectURL` from Info.plist; `SPTSessionManager` for OAuth via `ASWebAuthenticationSession`; `SPTAppRemote.playerAPI.startGroupSession` returning `joinURL`; Keychain token storage; `appRemoteDisconnected` sets `status = .ended`) in `Sonas/Features/SpotifyJam/SpotifyJamService.swift`
 - [ ] T073 [US5] Implement `JamViewModel` (`@Observable`; state machine: none → active → ending → ended; exposes `currentSession` and `isLoading`; handles `appRemoteDisconnected` by transitioning to `.ended` and removing QR) in `Sonas/Features/SpotifyJam/JamViewModel.swift`
 - [ ] T074 [US5] Implement `JamPanelView` (QR code via `CIFilter.qrCodeGenerator` scaled to 200×200pt from `JamSession.joinURL`; "Start Jam" / "End Jam" buttons; "Install Spotify" App Store deep-link prompt when not installed; "Connect Spotify" OAuth prompt when not connected) in `Sonas/Features/SpotifyJam/JamPanelView.swift`
 - [ ] T075 [P] [US5] Implement `JamServiceTests` (unit; assert `joinURL` string encodes correctly as QR CIImage data; assert state machine transitions none→active→ending→ended; assert `appRemoteDisconnected` forces `.ended` from `.active` without calling `endJam`) in `SonasTests/Unit/JamServiceTests.swift`
@@ -203,6 +211,9 @@
 - [ ] T086 Run the quickstart.md §6 first-launch checklist on iPhone 16 Pro simulator with all `USE_MOCK_*=1` flags set; resolve any rendering failures or missing permission prompts across `Sonas/`
 - [ ] T087 Run SwiftLint across `Sonas/` and resolve all violations; confirm zero-warning CI build with the `.swiftlint.yml` gate
 - [ ] T088 Run `xcodebuild test -enableCodeCoverage YES` on `SonasTests`; identify files below 80% coverage and add targeted unit tests in `SonasTests/Unit/` to meet the gate
+- [ ] T089 Implement `BGAppRefreshTask` full handler in `SonasApp.swift` (replacing the no-op from T025): on task execution fetch weather snapshot, AQI, and Todoist tasks; write results to `CacheService`; schedule next task via `BGTaskScheduler.submit`; expiry handler cancels in-flight work in `Sonas/App/SonasApp.swift`
+- [ ] T090 [P] Implement performance verification tests in `SonasTests/Performance/PerformanceTests.swift`: use `XCTestCase.measure {}` to assert (a) cached-data dashboard render ≤ 500 ms — inject pre-populated `CacheService` and measure `DashboardView` body evaluation; (b) `WeatherViewModel` cache-load path ≤ 500 ms; (c) UI transition from tap to next screen ≤ 100 ms *(Constitution §IV — baselines MUST be verified in task checklist)*
+- [ ] T091 [P] Profile memory for all four polling/subscription services using Instruments Leaks + Allocations on a real device or simulator; document peak RSS measurements in plan.md Complexity Tracking table; confirm total ≤ 150 MB peak with all services active *(Constitution §IV — memory MUST be profiled for polling services)*
 
 ---
 
@@ -229,8 +240,8 @@
 
 1. Define protocol (can be done in parallel with other story protocols)
 2. Implement mock (parallel with protocol definition — same interface, different file)
-3. Implement real service (depends on protocol)
-4. Contract tests (parallel with service implementation — different file, same protocol)
+3. **Write contract tests** (parallel with mock — both depend only on the protocol) — **🔴 run and confirm FAILING before next step**
+4. Implement real service (depends on step 3 tests being confirmed red)
 5. ViewModel (depends on service protocol)
 6. View (depends on ViewModel)
 7. Integration into `DashboardView` (last task of each story — **serialize to avoid merge conflicts**)
@@ -239,8 +250,8 @@
 
 - T003, T004, T005 in Phase 1 can run simultaneously
 - T007–T020 in Phase 2 (design system + models) can all run simultaneously
-- T022 and T024 (CacheService protocol + contract test) can run in parallel with T023 (implementation)
-- Within each user story: protocol + mock + contract tests can all run in parallel with the real service implementation
+- T022 (CacheServiceProtocol) and T023 (CacheContractTests) can run in parallel; T024 (CacheService impl) MUST follow T023 being confirmed red
+- Within each user story: protocol + mock + contract tests can all run in parallel with **each other**; the real service implementation MUST follow the contract tests being confirmed failing
 - US2, US3, US4, US5 can all start in parallel once Phase 2 is complete (if team capacity allows)
 - T078 (Watch) and T079 (TV) in Phase 8 are always parallel
 - T081–T085 in Phase 9 are all parallel
@@ -250,25 +261,27 @@
 ## Parallel Example: User Story 1
 
 ```
-# Parallel — Phase 3 kickoff:
+# Step 1 — Parallel protocol + mock kickoff:
 T026: Define LocationServiceProtocol        T027: Define CalendarServiceProtocol
 T028: Implement LocationServiceMock         T029: Implement CalendarServiceMock
 
-# After T026 complete — parallel:
-T030: Implement LocationService             T031: LocationContractTests
+# Step 2 — Write contract tests (parallel with each other; both depend only on protocol):
+T031: LocationContractTests                 T034: GoogleCalendarContractTests
+       ↓ RUN + CONFIRM FAILS                       ↓ RUN + CONFIRM FAILS
 
-# After T027 complete — sequential then parallel:
+# Step 3 — Implement real services (ONLY after tests are red):
+T030: Implement LocationService
 T032: Implement GoogleCalendarClient
-T033: Implement CalendarService             T034: GoogleCalendarContractTests
+T033: Implement CalendarService
 
-# After T030 + T033 complete — parallel:
+# Step 4 — After T030 + T033 complete — parallel:
 T035: ClockPanelView                        T036: LocationViewModel
                                             T038: EventsViewModel
 
-# After T036:                              After T038:
+# Step 5 — After T036 / T038:
 T037: LocationPanelView                     T039: EventsPanelView
 
-# After T037 + T039:
+# Step 6 — After T037 + T039:
 T040: DashboardViewModel
 T041: DashboardView (US1 shell)             T042: LocationCloudKitTests (parallel)
 T043: DashboardIntegrationTests
