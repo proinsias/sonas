@@ -15,6 +15,7 @@ WatchOS, and tvOS."
 
 - Q: How does Sonas obtain family member location data — via Apple Family Sharing / Find My, or independent GPS tracking? → A: Apple Family Sharing / Find My (Option A); Sonas reads existing Apple-managed location data, no proprietary GPS tracking.
 - Q: How is the Sonas family group formed and managed — mirrored from Apple Family Sharing, Sonas-managed, or hybrid? → A: Mirror Apple Family Sharing (Option A); whoever belongs to the Apple Family Sharing group is automatically a Sonas family member; no in-app invite, admin role, or membership management needed.
+- Q: What is the privacy/compliance posture for minors who use the app? → A: Apple Family Sharing delegates compliance (Option B); app targets a "9+" App Store age rating; all sensitive data for minors (location, photos) flows exclusively through Apple's consented infrastructure; Sonas MUST NOT independently store personal data about any family member.
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -242,6 +243,13 @@ correctly at the larger screen size with an adapted layout that makes use of the
   if their location is not available. Sonas MUST NOT implement a parallel consent mechanism.
 - **FR-017**: A family member's location visibility in Sonas MUST update within 60 seconds of
   that member changing their Apple Family Sharing location-sharing preference.
+- **FR-018**: Sonas MUST NOT persistently store any personal data about family members on its
+  own servers or in third-party analytics services. All data displayed in the app (location,
+  calendar events, photos, tasks) MUST be fetched at runtime from their respective source
+  systems and held only transiently in the device's local cache.
+- **FR-019**: The app MUST target a "9+" App Store age rating. No age-verification gate or
+  separate parental-consent screen is required within Sonas itself, as consent for minor
+  family members is governed by Apple Family Sharing.
 
 ### Key Entities
 
@@ -316,6 +324,12 @@ correctly at the larger screen size with an adapted layout that makes use of the
 - Family group membership is determined entirely by Apple Family Sharing; Sonas has no in-app
   invite system, admin role, or membership management. Adding or removing a family member
   in Apple Family Sharing is reflected in Sonas automatically.
+- Sonas targets a "9+" App Store age rating. Privacy compliance for minor family members is
+  delegated to Apple Family Sharing; Sonas stores no personal data about any family member
+  independently (no backend database of users, locations, or events).
+- COPPA and GDPR-Kids obligations are not directly borne by Sonas because all sensitive data
+  flows through Apple's own consented infrastructure. The app must not add any analytics,
+  advertising SDKs, or third-party data collection that would alter this posture.
 - All family members physically share a household or close family unit; the app is not designed
   for general social networks.
 - Network connectivity is expected for initial data fetch; the offline/cache mode is a
