@@ -30,6 +30,20 @@ playground.xcworkspace
 # .swiftpm
 
 .build/
+DerivedData/
+*.xcuserstate
+*.xccheckout
+*.moved-aside
+*.swp
+*.lock
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# xcodegen
+project.yml.resolved
 
 # CocoaPods
 #
