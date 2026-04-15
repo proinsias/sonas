@@ -32,29 +32,29 @@ protocol CacheServiceProtocol: Sendable {
 // MARK: - CacheService (T024)
 
 /// SwiftData-backed on-device cache for all dashboard panels.
-/// All mutations happen on a background context; reads return cached structs synchronously.
+/// When SwiftData is unavailable the service runs as a no-op cache so the app still launches.
 @MainActor
 final class CacheService: CacheServiceProtocol {
 
-    let modelContainer: ModelContainer
+    private let modelContainer: ModelContainer?
 
     static var shared: CacheService = {
         do {
-            let schema = Schema([
-                CachedWeatherSnapshot.self,
-                CachedLocationSnapshot.self,
-                CachedCalendarEvent.self,
-                CachedTask.self,
-                CachedJamSession.self
-            ])
-            let container = try ModelContainer(for: schema)
+            let container = try ModelContainer(
+                for: CachedWeatherSnapshot.self,
+                     CachedLocationSnapshot.self,
+                     CachedCalendarEvent.self,
+                     CachedTask.self,
+                     CachedJamSession.self
+            )
             return CacheService(container: container)
         } catch {
-            fatalError("CacheService: Failed to initialise ModelContainer: \(error)")
+            SonasLogger.app.error("CacheService: ModelContainer unavailable (\(error)) — running without cache")
+            return CacheService(container: nil)
         }
     }()
 
-    init(container: ModelContainer) {
+    init(container: ModelContainer?) {
         self.modelContainer = container
     }
 
@@ -70,6 +70,7 @@ final class CacheService: CacheServiceProtocol {
     // MARK: - Weather
 
     func saveWeather(_ snapshot: WeatherSnapshot, forecast: [DayForecast]) async throws {
+        guard let modelContainer else { return }
         let context = modelContainer.mainContext
         try context.delete(model: CachedWeatherSnapshot.self)
         let forecastData = try JSONEncoder().encode(forecast.map(DayForecastCodable.init))
@@ -96,6 +97,7 @@ final class CacheService: CacheServiceProtocol {
     }
 
     func loadWeather() async -> WeatherSnapshot? {
+        guard let modelContainer else { return nil }
         let context = modelContainer.mainContext
         guard let cached = try? context.fetch(FetchDescriptor<CachedWeatherSnapshot>()).first else {
             return nil
@@ -107,6 +109,7 @@ final class CacheService: CacheServiceProtocol {
     }
 
     func loadForecast() async -> [DayForecast] {
+        guard let modelContainer else { return [] }
         let context = modelContainer.mainContext
         guard let cached = try? context.fetch(FetchDescriptor<CachedWeatherSnapshot>()).first,
               let forecasts = try? JSONDecoder().decode([DayForecastCodable].self, from: cached.forecastJSON)
@@ -117,6 +120,7 @@ final class CacheService: CacheServiceProtocol {
     // MARK: - Location
 
     func saveLocations(_ members: [FamilyMember]) async throws {
+        guard let modelContainer else { return }
         let context = modelContainer.mainContext
         try context.delete(model: CachedLocationSnapshot.self)
         for member in members {
@@ -136,6 +140,7 @@ final class CacheService: CacheServiceProtocol {
     }
 
     func loadLocations() async -> [FamilyMember] {
+        guard let modelContainer else { return [] }
         let context = modelContainer.mainContext
         guard let snapshots = try? context.fetch(FetchDescriptor<CachedLocationSnapshot>()) else {
             return []
@@ -146,6 +151,7 @@ final class CacheService: CacheServiceProtocol {
     // MARK: - Calendar
 
     func saveEvents(_ events: [CalendarEvent]) async throws {
+        guard let modelContainer else { return }
         let context = modelContainer.mainContext
         try context.delete(model: CachedCalendarEvent.self)
         for event in events {
@@ -168,6 +174,7 @@ final class CacheService: CacheServiceProtocol {
     }
 
     func loadEvents() async -> [CalendarEvent] {
+        guard let modelContainer else { return [] }
         let context = modelContainer.mainContext
         guard let cached = try? context.fetch(FetchDescriptor<CachedCalendarEvent>()) else {
             return []
@@ -178,6 +185,7 @@ final class CacheService: CacheServiceProtocol {
     // MARK: - Tasks
 
     func saveTasks(_ tasks: [Task]) async throws {
+        guard let modelContainer else { return }
         let context = modelContainer.mainContext
         try context.delete(model: CachedTask.self)
         for task in tasks {
@@ -201,6 +209,7 @@ final class CacheService: CacheServiceProtocol {
     }
 
     func loadTasks() async -> [Task] {
+        guard let modelContainer else { return [] }
         let context = modelContainer.mainContext
         guard let cached = try? context.fetch(FetchDescriptor<CachedTask>()) else {
             return []
@@ -211,6 +220,7 @@ final class CacheService: CacheServiceProtocol {
     // MARK: - Jam
 
     func saveJamSession(_ session: JamSession?) async throws {
+        guard let modelContainer else { return }
         let context = modelContainer.mainContext
         try context.delete(model: CachedJamSession.self)
         if let session, let joinURL = Optional(session.joinURL.absoluteString) {
@@ -227,6 +237,7 @@ final class CacheService: CacheServiceProtocol {
     }
 
     func loadJamSession() async -> JamSession? {
+        guard let modelContainer else { return nil }
         let context = modelContainer.mainContext
         guard let cached = try? context.fetch(FetchDescriptor<CachedJamSession>()).first else {
             return nil
@@ -237,6 +248,7 @@ final class CacheService: CacheServiceProtocol {
     // MARK: - Eviction (research.md §Decision 9)
 
     func evictStaleEntries() async throws {
+        guard let modelContainer else { return }
         let context = modelContainer.mainContext
 
         // Weather: evict if > 1 hour old

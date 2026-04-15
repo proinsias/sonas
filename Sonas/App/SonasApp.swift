@@ -12,7 +12,6 @@ struct SonasApp: App {
     var body: some Scene {
         WindowGroup {
             DashboardView()
-                .modelContainer(CacheService.shared.modelContainer)
         }
         .onChange(of: scenePhase) { _, newPhase in
             if newPhase == .background {
