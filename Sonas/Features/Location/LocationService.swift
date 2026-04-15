@@ -4,6 +4,7 @@ import CloudKit
 
 // MARK: - LocationServiceProtocol (T026)
 
+@MainActor
 protocol LocationServiceProtocol: AnyObject, Sendable {
     /// Continuous stream of the current family member list (all members, including own device).
     var familyLocations: AsyncStream<[FamilyMember]> { get }

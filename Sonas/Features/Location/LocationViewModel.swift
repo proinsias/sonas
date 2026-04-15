@@ -26,7 +26,7 @@ final class LocationViewModel {
         isLoading = true
         error = nil
         await service.startPublishing()
-        streamTask = Swift.Task { [weak self] in
+        streamTask = Swift.Task { [weak self, service] in
             for await updated in service.familyLocations {
                 guard !Swift.Task<Never, Never>.isCancelled else { break }
                 await MainActor.run {

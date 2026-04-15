@@ -3,6 +3,7 @@ import EventKit
 
 // MARK: - CalendarServiceProtocol (T027)
 
+@MainActor
 protocol CalendarServiceProtocol: AnyObject, Sendable {
     /// Fetch upcoming calendar events within the specified hour window (default: 48h).
     func fetchUpcomingEvents(hours: Int) async throws -> [CalendarEvent]

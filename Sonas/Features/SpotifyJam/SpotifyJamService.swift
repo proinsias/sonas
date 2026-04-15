@@ -3,6 +3,7 @@ import UIKit
 
 // MARK: - JamServiceProtocol (T069)
 
+@MainActor
 protocol JamServiceProtocol: AnyObject, Sendable {
     var currentSession: JamSession? { get }
     func startJam() async throws -> JamSession

@@ -91,7 +91,7 @@ struct SettingsView: View {
                     .accessibilityHidden(true)
                 Text("Google Calendar")
                 Spacer()
-                Text(config.homeLocationName != nil ? "Connected" : "Not Connected")
+                Text(!config.homeLocationName.isEmpty ? "Connected" : "Not Connected")
                     .font(.caption)
                     .foregroundStyle(Color.secondaryLabel)
             }

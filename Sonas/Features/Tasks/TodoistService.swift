@@ -2,6 +2,7 @@ import Foundation
 
 // MARK: - TaskServiceProtocol (T053)
 
+@MainActor
 protocol TaskServiceProtocol: AnyObject, Sendable {
     func fetchTasks() async throws -> [Task]
     func completeTask(id: String) async throws

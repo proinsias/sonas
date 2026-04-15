@@ -3,6 +3,7 @@ import Photos
 
 // MARK: - PhotoServiceProtocol (T061)
 
+@MainActor
 protocol PhotoServiceProtocol: AnyObject, Sendable {
     func fetchRecentPhotos(limit: Int) async throws -> [Photo]
     func loadThumbnail(for photo: Photo, size: CGSize) async throws -> Data
