@@ -40,12 +40,14 @@ final class CacheService: CacheServiceProtocol {
 
     static var shared: CacheService = {
         do {
+            let config = ModelConfiguration(cloudKitDatabase: .none)
             let container = try ModelContainer(
                 for: CachedWeatherSnapshot.self,
                      CachedLocationSnapshot.self,
                      CachedCalendarEvent.self,
                      CachedTask.self,
-                     CachedJamSession.self
+                     CachedJamSession.self,
+                configurations: config
             )
             return CacheService(container: container)
         } catch {

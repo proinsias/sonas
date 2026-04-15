@@ -45,6 +45,10 @@
 	<string></string>
 	<key>SPTRedirectURL</key>
 	<string>sonas://spotify-callback</string>
+	<key>BGTaskSchedulerPermittedIdentifiers</key>
+	<array>
+		<string>com.sonas.refresh</string>
+	</array>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>

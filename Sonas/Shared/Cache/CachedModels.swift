@@ -5,22 +5,22 @@ import SwiftData
 
 @Model
 final class CachedWeatherSnapshot {
-    var temperature: Double
-    var feelsLike: Double
-    var conditionDescription: String
-    var conditionSymbolName: String
-    var humidity: Double
-    var windSpeed: Double
-    var windDirection: Double
-    var windCompassLabel: String
-    var pressure: Double
-    var pressureTrendRaw: String
+    var temperature: Double = 0
+    var feelsLike: Double = 0
+    var conditionDescription: String = ""
+    var conditionSymbolName: String = ""
+    var humidity: Double = 0
+    var windSpeed: Double = 0
+    var windDirection: Double = 0
+    var windCompassLabel: String = ""
+    var pressure: Double = 0
+    var pressureTrendRaw: String = ""
     var airQualityIndex: Int?
-    var sunriseTime: Date
-    var sunsetTime: Date
-    var moonPhaseRaw: String
-    var forecastJSON: Data   // Encoded [DayForecast] via JSONEncoder
-    var lastUpdated: Date
+    var sunriseTime: Date = Date.distantPast
+    var sunsetTime: Date = Date.distantPast
+    var moonPhaseRaw: String = ""
+    var forecastJSON: Data = Data()   // Encoded [DayForecast] via JSONEncoder
+    var lastUpdated: Date = Date.distantPast
 
     init(
         temperature: Double, feelsLike: Double,
@@ -45,13 +45,13 @@ final class CachedWeatherSnapshot {
 
 @Model
 final class CachedLocationSnapshot {
-    var memberID: String
-    var displayName: String
-    var latitude: Double
-    var longitude: Double
-    var placeName: String
-    var recordedAt: Date
-    var lastUpdated: Date
+    var memberID: String = ""
+    var displayName: String = ""
+    var latitude: Double = 0
+    var longitude: Double = 0
+    var placeName: String = ""
+    var recordedAt: Date = Date.distantPast
+    var lastUpdated: Date = Date.distantPast
 
     init(memberID: String, displayName: String,
          latitude: Double, longitude: Double,
@@ -66,16 +66,16 @@ final class CachedLocationSnapshot {
 
 @Model
 final class CachedCalendarEvent {
-    var eventID: String
-    var title: String
-    var startDate: Date
-    var endDate: Date
-    var isAllDay: Bool
-    var calendarName: String
-    var sourceRaw: String
-    var attendeesJSON: Data   // Encoded [String] via JSONEncoder
+    var eventID: String = ""
+    var title: String = ""
+    var startDate: Date = Date.distantPast
+    var endDate: Date = Date.distantPast
+    var isAllDay: Bool = false
+    var calendarName: String = ""
+    var sourceRaw: String = ""
+    var attendeesJSON: Data = Data()   // Encoded [String] via JSONEncoder
     var calendarColorHex: String?
-    var lastUpdated: Date
+    var lastUpdated: Date = Date.distantPast
 
     init(eventID: String, title: String, startDate: Date, endDate: Date,
          isAllDay: Bool, calendarName: String, sourceRaw: String,
@@ -92,18 +92,18 @@ final class CachedCalendarEvent {
 
 @Model
 final class CachedTask {
-    var taskID: String
-    var content: String
-    var taskDescription: String
-    var projectID: String
-    var projectName: String
-    var priorityRaw: Int
-    var isCompleted: Bool
+    var taskID: String = ""
+    var content: String = ""
+    var taskDescription: String = ""
+    var projectID: String = ""
+    var projectName: String = ""
+    var priorityRaw: Int = 0
+    var isCompleted: Bool = false
     var dueDate: Date?
     var dueString: String?
-    var isRecurring: Bool
-    var orderIndex: Int
-    var lastUpdated: Date
+    var isRecurring: Bool = false
+    var orderIndex: Int = 0
+    var lastUpdated: Date = Date.distantPast
 
     init(taskID: String, content: String, taskDescription: String,
          projectID: String, projectName: String, priorityRaw: Int,
@@ -120,11 +120,11 @@ final class CachedTask {
 
 @Model
 final class CachedJamSession {
-    var sessionID: String
-    var joinURLString: String
-    var statusRaw: String
-    var startedAt: Date
-    var lastUpdated: Date
+    var sessionID: String = ""
+    var joinURLString: String = ""
+    var statusRaw: String = ""
+    var startedAt: Date = Date.distantPast
+    var lastUpdated: Date = Date.distantPast
 
     init(sessionID: String, joinURLString: String, statusRaw: String,
          startedAt: Date, lastUpdated: Date) {

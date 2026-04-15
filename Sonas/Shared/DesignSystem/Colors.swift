@@ -6,33 +6,33 @@ extension Color {
 
     // MARK: Semantic panel colours
     /// Primary background for all panels — deep navy (4.5:1 on .panelForeground)
-    static let panelBackground = Color("PanelBackground", bundle: nil)
+    static let panelBackground = Color(hex: "#1A2B4A")
 
     /// Primary text on panel backgrounds — near-white (#F0F4FF, 4.5:1 on .panelBackground)
-    static let panelForeground = Color("PanelForeground", bundle: nil)
+    static let panelForeground = Color(hex: "#F0F4FF")
 
     /// Accent colour for interactive elements — warm amber (#FFAA2C, 4.7:1 on .panelBackground)
-    static let accent = Color("Accent", bundle: nil)
+    static let accent = Color(hex: "#FFAA2C")
 
     /// Muted secondary text — slate blue (#8B9DBF, 3.1:1; used for labels only, not body text)
-    static let secondaryLabel = Color("SecondaryLabel", bundle: nil)
+    static let secondaryLabel = Color(hex: "#8B9DBF")
 
     // MARK: Status colours
     /// Error/stale indicator — coral red (#E05858, 4.6:1 on .panelBackground)
-    static let errorRed = Color("ErrorRed", bundle: nil)
+    static let errorRed = Color(hex: "#E05858")
 
     /// Success / active indicator — leaf green (#4CAF82, 4.5:1 on .panelBackground)
-    static let successGreen = Color("SuccessGreen", bundle: nil)
+    static let successGreen = Color(hex: "#4CAF82")
 
     /// Informational badge — sky blue (#5BADFF, 4.5:1 on .panelBackground)
-    static let infoBadge = Color("InfoBadge", bundle: nil)
+    static let infoBadge = Color(hex: "#5BADFF")
 
     // MARK: Structural
     /// Divider colour between panels
-    static let divider = Color("Divider", bundle: nil)
+    static let divider = Color(hex: "#2A3B5A")
 
     /// Dashboard background (behind all panels)
-    static let dashboardBackground = Color("DashboardBackground", bundle: nil)
+    static let dashboardBackground = Color(hex: "#0D1B2A")
 }
 
 // MARK: - Gradient helpers

@@ -38,7 +38,7 @@ struct LoadingStateView: View {
         LinearGradient(
             stops: [
                 .init(color: Color.secondaryLabel.opacity(0.2), location: 0),
-                .init(color: Color.secondaryLabel.opacity(0.4), location: phase - 0.2),
+                .init(color: Color.secondaryLabel.opacity(0.4), location: max(0, phase - 0.2)),
                 .init(color: Color.secondaryLabel.opacity(0.2), location: phase)
             ],
             startPoint: .leading,
