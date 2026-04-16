@@ -40,6 +40,16 @@ final class CacheService: CacheServiceProtocol {
 
     static var shared: CacheService = {
         do {
+            // Pre-create Application Support so SwiftData/CoreData doesn't need to self-recover.
+            // Without this, CoreData logs several pages of filesystem diagnostics before creating
+            // the directory itself; the store still opens successfully but the noise is misleading.
+            if let appSupport = FileManager.default.urls(
+                for: .applicationSupportDirectory, in: .userDomainMask
+            ).first {
+                try? FileManager.default.createDirectory(
+                    at: appSupport, withIntermediateDirectories: true
+                )
+            }
             let config = ModelConfiguration(cloudKitDatabase: .none)
             let container = try ModelContainer(
                 for: CachedWeatherSnapshot.self,
