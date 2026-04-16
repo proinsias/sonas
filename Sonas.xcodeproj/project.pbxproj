@@ -16,7 +16,6 @@
 		0EBC842498C8F46270F1EF33 /* RefreshControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53404220C93822AE17EC3819 /* RefreshControl.swift */; };
 		0F225FB1B5BA0507B72F324B /* JamServiceMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 019F1FD19024AA0C650139A3 /* JamServiceMock.swift */; };
 		10D061F1AA1A069560B2A515 /* SonasApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F94807E53DB41C8B75553B02 /* SonasApp.swift */; };
-
 		15EF1E75C194D5B9FF430B9A /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A978496995B52DCE83355BDE /* SettingsView.swift */; };
 		17F66C41E7AFC4FF477C3C91 /* GoogleCalendarContractTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 329022253542EFABF692B06B /* GoogleCalendarContractTests.swift */; };
 		180EB24C9ACAB3E8A20890AB /* WeatherServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D4AB79F069F84908A03D4B2 /* WeatherServiceTests.swift */; };
@@ -83,7 +82,7 @@
 		B443EF63FC3AB7BC383909B2 /* PerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C9D0ED089176713E865C32C /* PerformanceTests.swift */; };
 		B470FFC0B4B7A0AD5E7ECA07 /* LocationModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 891CD1258EC3A54F324AAD59 /* LocationModels.swift */; };
 		B5720571EF30C30E2C5D201F /* EventsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEFD0FE06D30A1A8301D207E /* EventsViewModel.swift */; };
-		B6F52D594D5086729429B570 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = C4147B4F306DCEF9150D68AA /* GoogleSignIn */; };
+
 		B923D1F0D0B7D9BE612CA855 /* WatchDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D76020BFE9ED3BC077F40941 /* WatchDashboardView.swift */; };
 		C02BDB1EEA9FFB41CE84B49B /* PanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78853EBCA8EDD090436CC596 /* PanelView.swift */; };
 		C2E5ED677B166E2EF7928EBB /* LoadingStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C07D5C09815B1C6CF4F284EB /* LoadingStateView.swift */; };
@@ -217,8 +216,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B6F52D594D5086729429B570 /* GoogleSignIn in Frameworks */,
-
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -634,8 +631,6 @@
 			);
 			name = Sonas;
 			packageProductDependencies = (
-				C4147B4F306DCEF9150D68AA /* GoogleSignIn */,
-
 			);
 			productName = Sonas;
 			productReference = 454672D38077E14E7AE9D96C /* Sonas.app */;
@@ -648,7 +643,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 1600;
+				LastUpgradeCheck = 2640;
 				TargetAttributes = {
 					DCCF2A98405836E41FEF6E14 = {
 						TestTargetID = F15AC927B80CB82EB8FD6E06;
@@ -665,8 +660,6 @@
 			mainGroup = 3F770201568A5C61BFBE4617;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				F5598F361CFA4028415B543F /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
-
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 39DE683049A1F6AED2AEFEDF /* Products */;
@@ -844,7 +837,6 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Sonas/Sonas.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				DEVELOPMENT_TEAM = S3HDTP6Y63;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Sonas/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -862,6 +854,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -893,10 +886,12 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = S3HDTP6Y63;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -917,6 +912,7 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.10;
@@ -931,7 +927,6 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Sonas/Sonas.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				DEVELOPMENT_TEAM = S3HDTP6Y63;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Sonas/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -950,7 +945,6 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				DEVELOPMENT_TEAM = S3HDTP6Y63;
 				INFOPLIST_FILE = TVSonas/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -967,6 +961,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -998,10 +993,12 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = S3HDTP6Y63;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -1015,6 +1012,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.10;
@@ -1027,7 +1025,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				DEVELOPMENT_TEAM = S3HDTP6Y63;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1046,7 +1043,6 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				DEVELOPMENT_TEAM = S3HDTP6Y63;
 				INFOPLIST_FILE = TVSonas/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1063,7 +1059,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				DEVELOPMENT_TEAM = S3HDTP6Y63;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1081,7 +1076,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = S3HDTP6Y63;
 				INFOPLIST_FILE = WatchSonas/Info.plist;
 				PRODUCT_BUNDLE_IDENTIFIER = com.anindependentmind.sonas.watch;
 				SDKROOT = watchos;
@@ -1095,7 +1089,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				DEVELOPMENT_TEAM = S3HDTP6Y63;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1113,7 +1106,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				DEVELOPMENT_TEAM = S3HDTP6Y63;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1131,7 +1123,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = S3HDTP6Y63;
 				INFOPLIST_FILE = WatchSonas/Info.plist;
 				PRODUCT_BUNDLE_IDENTIFIER = com.anindependentmind.sonas.watch;
 				SDKROOT = watchos;
@@ -1201,24 +1192,9 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-
-		F5598F361CFA4028415B543F /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
-			requirement = {
-				kind = exactVersion;
-				version = 7.1.0;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-
-		C4147B4F306DCEF9150D68AA /* GoogleSignIn */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = F5598F361CFA4028415B543F /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
-			productName = GoogleSignIn;
-		};
 /* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 47FE35110653945301D4CC5B /* Project object */;

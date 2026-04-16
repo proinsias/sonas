@@ -16,16 +16,18 @@ settings:
     CURRENT_PROJECT_VERSION: "1"
     DEVELOPMENT_TEAM: ""  # Set your Apple Developer Team ID here
 
-packages:
-  GoogleSignIn:
-    url: https://github.com/google/GoogleSignIn-iOS
-    exactVersion: "7.1.0"
-  # SpotifyiOS is NOT linked — its binary runs static initializers at launch even when never
-  # imported, producing fopen errors and UIColor out-of-range warnings. Re-add once the real
-  # Spotify integration is implemented and the framework is actually imported.
-  # SpotifyiOS:
-  #   url: https://github.com/spotify/ios-sdk
-  #   exactVersion: "1.2.3"
+# packages: (none linked yet)
+# GoogleSignIn: AppAuth inside it initialises ASWebAuthenticationSession via ViewBridge at launch
+#   even when never imported → "ViewBridge to RemoteViewService Terminated" noise on every run.
+#   Re-add when import GoogleSignIn appears in CalendarService.swift.
+#   GoogleSignIn:
+#     url: https://github.com/google/GoogleSignIn-iOS
+#     exactVersion: "7.1.0"
+# SpotifyiOS: static initializers run at launch even when never imported → fopen errors and
+#   UIColor out-of-range warnings. Re-add when import SpotifyiOS appears in SpotifyJamService.swift.
+#   SpotifyiOS:
+#     url: https://github.com/spotify/ios-sdk
+#     exactVersion: "1.2.3"
 
 targets:
 
@@ -62,6 +64,18 @@ targets:
         UIBackgroundModes:
           - fetch
           - remote-notification
+        # Orientation support (iPad requires all 4; iPhone excludes upside-down)
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+        UISupportedInterfaceOrientations~ipad:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationPortraitUpsideDown
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+        # Plist-based launch screen (iOS 14+; no storyboard file required)
+        UILaunchScreen: {}
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.anindependentmind.sonas
@@ -74,10 +88,7 @@ targets:
     # Re-enable once a paid account is available:
     #   entitlements properties: com.apple.developer.weatherkit, com.apple.developer.icloud-services, com.apple.developer.icloud-container-identifiers
     #   capabilities: WeatherKit, CloudKit
-    dependencies:
-      - package: GoogleSignIn
-        product: GoogleSignIn
-      # SpotifyiOS removed until the real integration is implemented — see packages comment above
+    # dependencies: (none — GoogleSignIn and SpotifyiOS unlinked until actually imported; see packages comment above)
     scheme:
       environmentVariables:
         USE_MOCK_LOCATION: "0"
