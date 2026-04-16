@@ -1,6 +1,6 @@
 name: Sonas
 options:
-  bundleIdPrefix: com.yourteam
+  bundleIdPrefix: com.anindependentmind
   deploymentTarget:
     iOS: "17.0"
     watchOS: "11.0"
@@ -20,9 +20,12 @@ packages:
   GoogleSignIn:
     url: https://github.com/google/GoogleSignIn-iOS
     exactVersion: "7.1.0"
-  SpotifyiOS:
-    url: https://github.com/spotify/ios-sdk
-    exactVersion: "1.2.3"
+  # SpotifyiOS is NOT linked — its binary runs static initializers at launch even when never
+  # imported, producing fopen errors and UIColor out-of-range warnings. Re-add once the real
+  # Spotify integration is implemented and the framework is actually imported.
+  # SpotifyiOS:
+  #   url: https://github.com/spotify/ios-sdk
+  #   exactVersion: "1.2.3"
 
 targets:
 
@@ -61,25 +64,20 @@ targets:
           - remote-notification
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.yourteam.sonas
+        PRODUCT_BUNDLE_IDENTIFIER: com.anindependentmind.sonas
         ENABLE_HARDENED_RUNTIME: YES
     entitlements:
       path: Sonas/Sonas.entitlements
-      properties:
-        com.apple.developer.weatherkit: true
-        com.apple.developer.icloud-services:
-          - CloudKit
-        com.apple.developer.icloud-container-identifiers:
-          - iCloud.com.yourteam.sonas
     capabilities:
-      - WeatherKit
-      - CloudKit
       - BackgroundModes
+    # WeatherKit and CloudKit/iCloud capabilities require a paid Apple Developer account.
+    # Re-enable once a paid account is available:
+    #   entitlements properties: com.apple.developer.weatherkit, com.apple.developer.icloud-services, com.apple.developer.icloud-container-identifiers
+    #   capabilities: WeatherKit, CloudKit
     dependencies:
       - package: GoogleSignIn
         product: GoogleSignIn
-      - package: SpotifyiOS
-        product: SpotifyiOS
+      # SpotifyiOS removed until the real integration is implemented — see packages comment above
     scheme:
       environmentVariables:
         USE_MOCK_LOCATION: "0"
@@ -98,7 +96,7 @@ targets:
       - path: SonasTests
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.yourteam.sonas.tests
+        PRODUCT_BUNDLE_IDENTIFIER: com.anindependentmind.sonas.tests
     dependencies:
       - target: Sonas
 
@@ -111,7 +109,7 @@ targets:
       - path: SonasUITests
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.yourteam.sonas.uitests
+        PRODUCT_BUNDLE_IDENTIFIER: com.anindependentmind.sonas.uitests
     dependencies:
       - target: Sonas
 
@@ -134,7 +132,7 @@ targets:
         CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.yourteam.sonas.watch
+        PRODUCT_BUNDLE_IDENTIFIER: com.anindependentmind.sonas.watch
 
   # ─── tvOS App ─────────────────────────────────────────────────────────────────
   TVSonas:
@@ -155,7 +153,7 @@ targets:
         CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.yourteam.sonas.tv
+        PRODUCT_BUNDLE_IDENTIFIER: com.anindependentmind.sonas.tv
 
 schemes:
   Sonas:

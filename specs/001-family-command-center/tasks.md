@@ -20,7 +20,7 @@
 **Purpose**: Xcode project initialisation and build tooling
 
 - [x] T001 Create Xcode project `Sonas.xcodeproj` with targets: `Sonas` (iOS 17+ deployment), `SonasTests`, `SonasUITests`, `WatchSonas` (watchOS 11+), `TVSonas` (tvOS 18+) at repo root
-- [x] T002 Configure `Sonas` target capabilities: WeatherKit, CloudKit (container `iCloud.com.yourteam.sonas`), Background Modes (Background fetch, Remote notifications) in Xcode Signing & Capabilities
+- [x] T002 Configure `Sonas` target capabilities: WeatherKit, CloudKit (container `iCloud.com.anindependentmind.sonas`), Background Modes (Background fetch, Remote notifications) in Xcode Signing & Capabilities
 - [x] T003 [P] Add SPM/SDK package dependencies to `Sonas.xcodeproj`: `GoogleSignIn-iOS` and `SpotifyiOS` pinned to **exact SemVer versions** (e.g., `GoogleSignIn-iOS 7.1.0`; resolve latest stable at time of addition); commit `Package.resolved` to version control *(Constitution §Quality — exact version pinning required)*
 - [x] T004 [P] Add required `Info.plist` keys to `Sonas/Info.plist`: `NSLocationWhenInUseUsageDescription`, `NSLocationAlwaysAndWhenInUseUsageDescription`, `NSPhotoLibraryUsageDescription`, `SPTClientID`, `SPTRedirectURL`, `com.googleusercontent.apps.{CLIENT_ID}` URL scheme, and `sonas` URL scheme
 - [x] T005 [P] Configure `.swiftlint.yml` at repo root aligned to Swift API design guidelines; add SwiftLint run-script build phase to the `Sonas` target; include a custom `identifier_name` or `function_body_length` rule and a `custom_rules` entry enforcing the `given_.*_when_.*_then_.*` pattern for test function names in `SonasTests/` *(Constitution §II — test names MUST follow `given_<state>_when_<action>_then_<outcome>`)*

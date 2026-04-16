@@ -34,6 +34,10 @@ struct SonasApp: App {
             // Fetches weather snapshot, AQI, and Todoist tasks; writes to CacheService.
             SonasLogger.app.info("BGAppRefreshTask: handler invoked")
 
+            // Guard against setTaskCompleted being called twice (once from the task body
+            // on success/error, and once from the expiration handler on timeout).
+            var completed = false
+
             let refreshTask = Swift.Task {
                 do {
                     // Weather + AQI (concurrent)
@@ -53,16 +57,19 @@ struct SonasApp: App {
                     // Evict stale entries
                     try await CacheService.shared.evictStaleEntries()
 
-                    task.setTaskCompleted(success: true)
+                    if !completed { completed = true; task.setTaskCompleted(success: true) }
                 } catch {
                     SonasLogger.error(SonasLogger.app, "BGAppRefreshTask: refresh failed", error: error)
-                    task.setTaskCompleted(success: false)
+                    if !completed { completed = true; task.setTaskCompleted(success: false) }
                 }
             }
 
-            // Expiry handler cancels in-flight work
+            // Expiry handler: cancel in-flight work AND immediately mark the task done.
+            // Calling setTaskCompleted here (not only from the async body) is required because
+            // cooperative Swift Task cancellation may not propagate before the OS watchdog fires.
             task.expirationHandler = {
                 refreshTask.cancel()
+                if !completed { completed = true; task.setTaskCompleted(success: false) }
                 SonasLogger.app.warning("BGAppRefreshTask: expired — in-flight work cancelled")
             }
         }

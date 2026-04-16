@@ -15,7 +15,7 @@ struct LocationCloudKitTests {
 
     @Test("given FamilyLocation record written when refresh called then service returns that member")
     func given_recordWritten_when_refresh_then_returnsMember() async throws {
-        let container = CKContainer(identifier: "iCloud.com.yourteam.sonas")
+        let container = CKContainer(identifier: "iCloud.com.anindependentmind.sonas")
         let db = container.privateCloudDatabase
 
         let record = CKRecord(recordType: "FamilyLocation")
@@ -51,7 +51,7 @@ struct LocationCloudKitTests {
         await service.startPublishing()
 
         // Simulate second-device write
-        let container = CKContainer(identifier: "iCloud.com.yourteam.sonas")
+        let container = CKContainer(identifier: "iCloud.com.anindependentmind.sonas")
         let db = container.privateCloudDatabase
 
         let record = CKRecord(recordType: "FamilyLocation")

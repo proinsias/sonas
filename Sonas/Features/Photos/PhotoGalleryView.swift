@@ -15,6 +15,13 @@ struct PhotoGalleryView: View {
             content
         }
         .task { await viewModel.load() }
+        .sheet(isPresented: $isFullScreen) {
+            FullScreenPhotoView(
+                photos: viewModel.photos,
+                selectedIndex: $selectedIndex,
+                viewModel: viewModel
+            )
+        }
     }
 
     @ViewBuilder
@@ -30,13 +37,6 @@ struct PhotoGalleryView: View {
             emptyAlbumPrompt
         } else {
             carousel
-                .sheet(isPresented: $isFullScreen) {
-                    FullScreenPhotoView(
-                        photos: viewModel.photos,
-                        selectedIndex: $selectedIndex,
-                        viewModel: viewModel
-                    )
-                }
         }
     }
 

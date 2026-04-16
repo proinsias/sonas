@@ -126,13 +126,13 @@ to use.
 4. Under **Team**, click the dropdown and select your Apple ID. If it's not listed, click
    **Add an Account…** and sign in with your Apple ID.
 5. Xcode will automatically fill in a Bundle Identifier — change
-   `com.yourteam.sonas` to something unique, like `com.yourname.sonas`.
+   `com.yourteam.sonas` to something unique, like `com.anindependentmind.sonas`.
 6. Repeat steps 2–5 for the **SonasTests**, **SonasUITests**, **WatchSonas**, and
    **TVSonas** targets, using the same Team and a matching bundle ID suffix.
 
 > **"Failed to register bundle identifier" error?** The bundle ID you chose is already
 > taken by another app on Apple's servers. Add a random number or your initials to make
-> it unique (e.g. `com.yourname.sonas42`).
+> it unique (e.g. `com.anindependentmind.sonas42`).
 
 ---
 

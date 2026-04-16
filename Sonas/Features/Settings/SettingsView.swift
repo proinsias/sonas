@@ -32,6 +32,18 @@ struct SettingsView: View {
                 }
             }
         }
+        // Sheet attached to the NavigationStack root rather than to the Section inside the Form,
+        // so SwiftUI routes the presentation from the correct hosting controller and avoids the
+        // "already presenting" warning that occurs when presenting from a Form's subview.
+        .sheet(isPresented: $isSearchingLocation) {
+            LocationSearchView(
+                onSelect: { coordinate, name in
+                    config.homeLocation = coordinate
+                    config.homeLocationName = name
+                    isSearchingLocation = false
+                }
+            )
+        }
     }
 
     // MARK: - Home Location
@@ -67,15 +79,6 @@ struct SettingsView: View {
                 }
                 .accessibilityInfo("Set Home Location", hint: "Search for your home location for weather")
             }
-        }
-        .sheet(isPresented: $isSearchingLocation) {
-            LocationSearchView(
-                onSelect: { coordinate, name in
-                    config.homeLocation = coordinate
-                    config.homeLocationName = name
-                    isSearchingLocation = false
-                }
-            )
         }
     }
 

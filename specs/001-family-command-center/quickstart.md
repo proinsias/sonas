@@ -34,10 +34,10 @@ open Sonas.xcodeproj   # (created during implementation)
 
 1. In Xcode, select the `Sonas` target → Signing & Capabilities.
 2. Set Team to your Apple Developer team.
-3. Bundle ID: `com.yourteam.sonas` (adjust to match your team).
+3. Bundle ID: `com.anindependentmind.sonas` (adjust to match your team).
 4. Enable **WeatherKit** capability (requires Apple Developer portal approval — can take
    minutes to hours; simulator fallback available via `WeatherServiceMock`).
-5. Enable **CloudKit** → container `iCloud.com.yourteam.sonas`.
+5. Enable **CloudKit** → container `iCloud.com.anindependentmind.sonas`.
 6. Enable **Background Modes** → Background fetch, Remote notifications.
 
 ---

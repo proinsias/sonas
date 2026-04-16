@@ -8,7 +8,7 @@ import OSLog
 
 enum SonasLogger {
 
-    private static let subsystem = "com.yourteam.sonas"
+    private static let subsystem = "com.anindependentmind.sonas"
 
     // MARK: Per-module loggers
     static let location = Logger(subsystem: subsystem, category: "location")
