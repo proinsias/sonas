@@ -135,12 +135,14 @@ targets:
         excludes:
           - "Mocks/**"
           - "**/*.md"
+      - path: WatchSonas/Assets.xcassets
     info:
       path: WatchSonas/Info.plist
       properties:
         CFBundleDisplayName: Sonas
         CFBundleShortVersionString: "$(MARKETING_VERSION)"
         CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
+        WKApplication: true
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.anindependentmind.sonas.watch
@@ -156,6 +158,7 @@ targets:
         excludes:
           - "Mocks/**"
           - "**/*.md"
+      - path: TVSonas/Assets.xcassets
     info:
       path: TVSonas/Info.plist
       properties:
