@@ -53,10 +53,10 @@ final class CacheService: CacheServiceProtocol {
             let config = ModelConfiguration(cloudKitDatabase: .none)
             let container = try ModelContainer(
                 for: CachedWeatherSnapshot.self,
-                     CachedLocationSnapshot.self,
-                     CachedCalendarEvent.self,
-                     CachedTask.self,
-                     CachedJamSession.self,
+                CachedLocationSnapshot.self,
+                CachedCalendarEvent.self,
+                CachedTask.self,
+                CachedJamSession.self,
                 configurations: config
             )
             return CacheService(container: container)

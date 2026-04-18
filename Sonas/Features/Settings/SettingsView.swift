@@ -36,13 +36,11 @@ struct SettingsView: View {
         // so SwiftUI routes the presentation from the correct hosting controller and avoids the
         // "already presenting" warning that occurs when presenting from a Form's subview.
         .sheet(isPresented: $isSearchingLocation) {
-            LocationSearchView(
-                onSelect: { coordinate, name in
-                    config.homeLocation = coordinate
-                    config.homeLocationName = name
-                    isSearchingLocation = false
-                }
-            )
+            LocationSearchView { coordinate, name in
+                config.homeLocation = coordinate
+                config.homeLocationName = name
+                isSearchingLocation = false
+            }
         }
     }
 

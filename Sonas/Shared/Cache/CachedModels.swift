@@ -16,11 +16,11 @@ final class CachedWeatherSnapshot {
     var pressure: Double = 0
     var pressureTrendRaw: String = ""
     var airQualityIndex: Int?
-    var sunriseTime: Date = Date.distantPast
-    var sunsetTime: Date = Date.distantPast
+    var sunriseTime = Date.distantPast
+    var sunsetTime = Date.distantPast
     var moonPhaseRaw: String = ""
-    var forecastJSON: Data = Data()   // Encoded [DayForecast] via JSONEncoder
-    var lastUpdated: Date = Date.distantPast
+    var forecastJSON = Data()   // Encoded [DayForecast] via JSONEncoder
+    var lastUpdated = Date.distantPast
 
     init(
         temperature: Double, feelsLike: Double,
@@ -50,8 +50,8 @@ final class CachedLocationSnapshot {
     var latitude: Double = 0
     var longitude: Double = 0
     var placeName: String = ""
-    var recordedAt: Date = Date.distantPast
-    var lastUpdated: Date = Date.distantPast
+    var recordedAt = Date.distantPast
+    var lastUpdated = Date.distantPast
 
     init(memberID: String, displayName: String,
          latitude: Double, longitude: Double,
@@ -68,14 +68,14 @@ final class CachedLocationSnapshot {
 final class CachedCalendarEvent {
     var eventID: String = ""
     var title: String = ""
-    var startDate: Date = Date.distantPast
-    var endDate: Date = Date.distantPast
+    var startDate = Date.distantPast
+    var endDate = Date.distantPast
     var isAllDay: Bool = false
     var calendarName: String = ""
     var sourceRaw: String = ""
-    var attendeesJSON: Data = Data()   // Encoded [String] via JSONEncoder
+    var attendeesJSON = Data()   // Encoded [String] via JSONEncoder
     var calendarColorHex: String?
-    var lastUpdated: Date = Date.distantPast
+    var lastUpdated = Date.distantPast
 
     init(eventID: String, title: String, startDate: Date, endDate: Date,
          isAllDay: Bool, calendarName: String, sourceRaw: String,
@@ -103,7 +103,7 @@ final class CachedTask {
     var dueString: String?
     var isRecurring: Bool = false
     var orderIndex: Int = 0
-    var lastUpdated: Date = Date.distantPast
+    var lastUpdated = Date.distantPast
 
     init(taskID: String, content: String, taskDescription: String,
          projectID: String, projectName: String, priorityRaw: Int,
@@ -123,8 +123,8 @@ final class CachedJamSession {
     var sessionID: String = ""
     var joinURLString: String = ""
     var statusRaw: String = ""
-    var startedAt: Date = Date.distantPast
-    var lastUpdated: Date = Date.distantPast
+    var startedAt = Date.distantPast
+    var lastUpdated = Date.distantPast
 
     init(sessionID: String, joinURLString: String, statusRaw: String,
          startedAt: Date, lastUpdated: Date) {

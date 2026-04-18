@@ -1,7 +1,7 @@
 # Contract: JamService
 
-**Purpose**: Authenticate with Spotify via the iOS SDK; create and end a Spotify Jam (Group
-Session); expose the join URL for QR code rendering.
+**Purpose**: Authenticate with Spotify via the iOS SDK; create and end a Spotify
+Jam (Group Session); expose the join URL for QR code rendering.
 
 ```swift
 protocol JamServiceProtocol {
@@ -29,14 +29,19 @@ protocol JamServiceProtocol {
 ```
 
 **Spotify iOS SDK integration**:
-- `SPTConfiguration(clientID:redirectURL:)` — registered in Apple Developer portal + Spotify Dashboard
+
+- `SPTConfiguration(clientID:redirectURL:)` — registered in Apple Developer
+  portal + Spotify Dashboard
 - `SPTSessionManager` — handles auth, token storage, refresh
-- Scopes: `user-read-playback-state`, `user-modify-playback-state`, `streaming`, `app-remote-control`
-- Group Session (Jam) initiation: `SPTAppRemote.playerAPI.startGroupSession` — SDK communicates
-  with Spotify app via IPC; returns `joinURL` in callback
-- Jam join URL format: `https://spotify.com/jam/{token}` (or `spotify://jam/{token}` deep link)
+- Scopes: `user-read-playback-state`, `user-modify-playback-state`, `streaming`,
+  `app-remote-control`
+- Group Session (Jam) initiation: `SPTAppRemote.playerAPI.startGroupSession` —
+  SDK communicates with Spotify app via IPC; returns `joinURL` in callback
+- Jam join URL format: `https://spotify.com/jam/{token}` (or
+  `spotify://jam/{token}` deep link)
 
 **QR Code generation** (in `JamPanelView`, not in service):
+
 ```swift
 let filter = CIFilter.qrCodeGenerator()
 filter.message = Data(joinURL.absoluteString.utf8)
@@ -45,14 +50,17 @@ let outputImage = filter.outputImage!.transformed(by: CGAffineTransform(scaleX: 
 ```
 
 **Error cases**:
-- `JamServiceError.spotifyNotInstalled` — `isSpotifyInstalled == false`; panel shows
-  App Store deep-link prompt.
-- `JamServiceError.notConnected` — no Spotify token; panel shows "Connect Spotify" button.
+
+- `JamServiceError.spotifyNotInstalled` — `isSpotifyInstalled == false`; panel
+  shows App Store deep-link prompt.
+- `JamServiceError.notConnected` — no Spotify token; panel shows "Connect
+  Spotify" button.
 - `JamServiceError.sessionCreationFailed` — SDK error creating group session.
-- `JamServiceError.appRemoteDisconnected` — Spotify app closed mid-session; `currentSession`
-  set to `.ended`; QR removed.
+- `JamServiceError.appRemoteDisconnected` — Spotify app closed mid-session;
+  `currentSession` set to `.ended`; QR removed.
 
 **Contract test fixtures** (`SpotifyContractTests.swift`):
+
 ```swift
 // Given: mock SPTSessionManager returning valid token
 //        mock SPTAppRemote returning joinURL "https://spotify.com/jam/abc123"

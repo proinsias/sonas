@@ -29,9 +29,8 @@ struct WeatherPanelView: View {
         } else if let snapshot = viewModel.snapshot {
             weatherContent(snapshot: snapshot)
                 .staleDataBadge(
-                    lastUpdated: viewModel.lastUpdated ?? .now,
-                    onRetry: { Swift.Task { await viewModel.refresh() } }
-                )
+                    lastUpdated: viewModel.lastUpdated ?? .now
+                ) { Swift.Task { await viewModel.refresh() } }
         }
     }
 
@@ -198,9 +197,9 @@ private struct ForecastDayCell: View {
         .accessibilityElement(children: .combine)
         .accessibilityLabel(
             "\(day.date.formatted(.dateTime.weekday(.wide))): "
-            + "high \(String(format: "%.0f", day.highTemperature)) "
-            + "low \(String(format: "%.0f", day.lowTemperature)) degrees, "
-            + day.conditionDescription
+                + "high \(String(format: "%.0f", day.highTemperature)) "
+                + "low \(String(format: "%.0f", day.lowTemperature)) degrees, "
+                + day.conditionDescription
         )
     }
 }

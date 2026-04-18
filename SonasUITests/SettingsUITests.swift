@@ -13,11 +13,11 @@ final class SettingsUITests: XCTestCase {
         app = XCUIApplication()
         app.launchEnvironment = [
             "USE_MOCK_LOCATION": "1",
-            "USE_MOCK_WEATHER":  "1",
+            "USE_MOCK_WEATHER": "1",
             "USE_MOCK_CALENDAR": "1",
-            "USE_MOCK_TASKS":    "1",
-            "USE_MOCK_PHOTOS":   "1",
-            "USE_MOCK_JAM":      "1"
+            "USE_MOCK_TASKS": "1",
+            "USE_MOCK_PHOTOS": "1",
+            "USE_MOCK_JAM": "1"
         ]
         app.launch()
     }

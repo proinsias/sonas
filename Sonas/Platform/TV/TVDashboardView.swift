@@ -105,7 +105,7 @@ private struct TVEventsPanel: View {
         TVEventFixture(title: "School Run",
                        time: Calendar.current.date(byAdding: .hour, value: 8, to: .now)!),
         TVEventFixture(title: "Weekend Hiking",
-                       time: Calendar.current.date(byAdding: .day, value: 1, to: .now)!),
+                       time: Calendar.current.date(byAdding: .day, value: 1, to: .now)!)
     ]
 
     var body: some View {

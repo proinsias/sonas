@@ -73,7 +73,7 @@ final class PhotoService: NSObject, PhotoServiceProtocol, PHPhotoLibraryChangeOb
         fetchOptions.fetchLimit = limit
         let assets = PHAsset.fetchAssets(in: album, options: fetchOptions)
 
-        guard assets.count > 0 else {
+        guard !assets.isEmpty else {
             throw PhotoServiceError.albumEmpty
         }
 

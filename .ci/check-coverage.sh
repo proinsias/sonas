@@ -16,40 +16,40 @@ THRESHOLD=80
 COVERAGE_JSON="${1:-}"
 TARGET="Sonas"
 
-if [[ -z "$COVERAGE_JSON" ]]; then
-  echo "Usage: $0 <coverage.json>" >&2
-  exit 1
+if [[ -z "${COVERAGE_JSON}" ]]; then
+    echo "Usage: $0 <coverage.json>" >&2
+    exit 1
 fi
 
-if [[ ! -f "$COVERAGE_JSON" ]]; then
-  echo "ERROR: Coverage file not found: $COVERAGE_JSON" >&2
-  exit 1
+if [[ ! -f "${COVERAGE_JSON}" ]]; then
+    echo "ERROR: Coverage file not found: ${COVERAGE_JSON}" >&2
+    exit 1
 fi
 
 # Extract coverage percentage for the Sonas target using jq
 if ! command -v jq &>/dev/null; then
-  echo "ERROR: jq is required. Install with: brew install jq" >&2
-  exit 1
+    echo "ERROR: jq is required. Install with: brew install jq" >&2
+    exit 1
 fi
 
-COVERAGE=$(jq -r --arg target "$TARGET" '
+COVERAGE=$(jq -r --arg target "${TARGET}" '
   .targets[]
   | select(.name == $target)
   | (.coveredLines / .executableLines * 100)
   | floor
-' "$COVERAGE_JSON" 2>/dev/null || echo "")
+' "${COVERAGE_JSON}" 2>/dev/null || echo "")
 
-if [[ -z "$COVERAGE" ]]; then
-  echo "WARNING: Could not extract coverage for target '$TARGET'. Check the JSON structure." >&2
-  exit 0  # Non-fatal: may be a different xcresulttool format
+if [[ -z "${COVERAGE}" ]]; then
+    echo "WARNING: Could not extract coverage for target '${TARGET}'. Check the JSON structure." >&2
+    exit 0 # Non-fatal: may be a different xcresulttool format
 fi
 
-echo "Coverage for $TARGET: ${COVERAGE}%"
+echo "Coverage for ${TARGET}: ${COVERAGE}%"
 
-if (( COVERAGE < THRESHOLD )); then
-  echo "ERROR: Coverage ${COVERAGE}% is below the required threshold of ${THRESHOLD}%." >&2
-  echo "Add unit tests in SonasTests/Unit/ to bring coverage up to ${THRESHOLD}%." >&2
-  exit 1
+if ((COVERAGE < THRESHOLD)); then
+    echo "ERROR: Coverage ${COVERAGE}% is below the required threshold of ${THRESHOLD}%." >&2
+    echo "Add unit tests in SonasTests/Unit/ to bring coverage up to ${THRESHOLD}%." >&2
+    exit 1
 fi
 
 echo "✓ Coverage gate passed (${COVERAGE}% >= ${THRESHOLD}%)"

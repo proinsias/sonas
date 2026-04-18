@@ -4,22 +4,22 @@
 **Branch**: `001-implement-family-command-center`  
 **Last updated**: 2026-04-07
 
-This guide walks you from a fresh clone to a fully running app in the iOS Simulator,
-with no real credentials required for the first run.
+This guide walks you from a fresh clone to a fully running app in the iOS
+Simulator, with no real credentials required for the first run.
 
 ---
 
 ## Before you start — what you need
 
-| What | Where to get it | Free? |
-|------|-----------------|-------|
-| A Mac running macOS 15 (Sequoia) or later | Your computer | — |
-| Xcode 16 | Mac App Store → search "Xcode" | ✅ |
-| An Apple ID (does **not** need to be a paid developer account for simulator) | appleid.apple.com | ✅ |
-| Homebrew (command-line package manager) | brew.sh | ✅ |
+| What                                                                         | Where to get it                | Free? |
+| ---------------------------------------------------------------------------- | ------------------------------ | ----- |
+| A Mac running macOS 15 (Sequoia) or later                                    | Your computer                  | —     |
+| Xcode 16                                                                     | Mac App Store → search "Xcode" | ✅    |
+| An Apple ID (does **not** need to be a paid developer account for simulator) | appleid.apple.com              | ✅    |
+| Homebrew (command-line package manager)                                      | brew.sh                        | ✅    |
 
-> **How long does Xcode take to install?** It is roughly 12 GB — allow 20–40 minutes on a
-> fast connection.
+> **How long does Xcode take to install?** It is roughly 12 GB — allow 20–40
+> minutes on a fast connection.
 
 ---
 
@@ -27,17 +27,17 @@ with no real credentials required for the first run.
 
 1. Open the **Mac App Store**.
 2. Search for **Xcode** and click **Get** → **Install**.
-3. Once installed, open Xcode once so it can finish setting up its command-line tools.
-   A dialog will appear — click **Install**.
+3. Once installed, open Xcode once so it can finish setting up its command-line
+   tools. A dialog will appear — click **Install**.
 4. Verify everything is ready by opening **Terminal** and running:
-   ```
-   xcode-select -p
-   ```
-   You should see something like `/Applications/Xcode.app/Contents/Developer`. If you
-   see an error, run:
-   ```
-   sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
-   ```
+    ```
+    xcode-select -p
+    ```
+    You should see something like `/Applications/Xcode.app/Contents/Developer`.
+    If you see an error, run:
+    ```
+    sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
+    ```
 
 ---
 
@@ -62,6 +62,7 @@ brew install xcodegen
 ```
 
 Verify it installed:
+
 ```bash
 xcodegen --version
 # Should print something like: XcodeGen Version: 2.45.3
@@ -90,6 +91,7 @@ xcodegen generate --spec project.yml
 ```
 
 You should see:
+
 ```
 ⚙️  Generating plists...
 ⚙️  Generating project...
@@ -97,8 +99,9 @@ You should see:
 Created project at .../Sonas.xcodeproj
 ```
 
-> **Do I need to run this again?** Yes, any time you add a new Swift file to the project
-> or change `project.yml`. Just run `xcodegen generate` again from the repo root.
+> **Do I need to run this again?** Yes, any time you add a new Swift file to the
+> project or change `project.yml`. Just run `xcodegen generate` again from the
+> repo root.
 
 ---
 
@@ -108,31 +111,31 @@ Created project at .../Sonas.xcodeproj
 open Sonas.xcodeproj
 ```
 
-Xcode will open. The first time it will resolve Swift package dependencies (GoogleSignIn
-and SpotifyiOS) — this takes 1–3 minutes. You will see a spinner in the top bar.
-**Wait for it to finish before doing anything else.**
+Xcode will open. The first time it will resolve Swift package dependencies
+(GoogleSignIn and SpotifyiOS) — this takes 1–3 minutes. You will see a spinner
+in the top bar. **Wait for it to finish before doing anything else.**
 
 ---
 
 ## Step 7 — Set your signing team
 
-Before the app can build (even for the simulator) you need to tell Xcode which Apple ID
-to use.
+Before the app can build (even for the simulator) you need to tell Xcode which
+Apple ID to use.
 
-1. In the Xcode navigator on the left, click the **Sonas** project (the blue icon at the
-   very top).
+1. In the Xcode navigator on the left, click the **Sonas** project (the blue
+   icon at the very top).
 2. In the main editor, click the **Sonas** target (under TARGETS).
 3. Click the **Signing & Capabilities** tab.
-4. Under **Team**, click the dropdown and select your Apple ID. If it's not listed, click
-   **Add an Account…** and sign in with your Apple ID.
+4. Under **Team**, click the dropdown and select your Apple ID. If it's not
+   listed, click **Add an Account…** and sign in with your Apple ID.
 5. Xcode will automatically fill in a Bundle Identifier — change
    `com.yourteam.sonas` to something unique, like `com.anindependentmind.sonas`.
-6. Repeat steps 2–5 for the **SonasTests**, **SonasUITests**, **WatchSonas**, and
-   **TVSonas** targets, using the same Team and a matching bundle ID suffix.
+6. Repeat steps 2–5 for the **SonasTests**, **SonasUITests**, **WatchSonas**,
+   and **TVSonas** targets, using the same Team and a matching bundle ID suffix.
 
-> **"Failed to register bundle identifier" error?** The bundle ID you chose is already
-> taken by another app on Apple's servers. Add a random number or your initials to make
-> it unique (e.g. `com.anindependentmind.sonas42`).
+> **"Failed to register bundle identifier" error?** The bundle ID you chose is
+> already taken by another app on Apple's servers. Add a random number or your
+> initials to make it unique (e.g. `com.anindependentmind.sonas42`).
 
 ---
 
@@ -141,52 +144,53 @@ to use.
 So future `xcodegen generate` runs don't reset your signing:
 
 1. In Terminal, find your Team ID:
-   ```bash
-   # In Xcode: click your project → Signing & Capabilities → Team dropdown
-   # The ID is shown in parentheses, e.g. "Francis O'Donovan (AB12CD34EF)"
-   # Copy the letters/numbers in parentheses
-   ```
+    ```bash
+    # In Xcode: click your project → Signing & Capabilities → Team dropdown
+    # The ID is shown in parentheses, e.g. "Francis O'Donovan (AB12CD34EF)"
+    # Copy the letters/numbers in parentheses
+    ```
 2. Open `project.yml` in a text editor:
-   ```bash
-   open -e project.yml
-   ```
+    ```bash
+    open -e project.yml
+    ```
 3. Find the line:
-   ```yaml
-   DEVELOPMENT_TEAM: ""  # Set your Apple Developer Team ID here
-   ```
-   Replace `""` with your Team ID in quotes:
-   ```yaml
-   DEVELOPMENT_TEAM: "AB12CD34EF"
-   ```
+    ```yaml
+    DEVELOPMENT_TEAM: "" # Set your Apple Developer Team ID here
+    ```
+    Replace `""` with your Team ID in quotes:
+    ```yaml
+    DEVELOPMENT_TEAM: "AB12CD34EF"
+    ```
 4. Save the file and regenerate:
-   ```bash
-   xcodegen generate --spec project.yml
-   ```
+    ```bash
+    xcodegen generate --spec project.yml
+    ```
 
 ---
 
 ## Step 9 — Run the app in the simulator (no real credentials needed)
 
-The app supports "mock mode" — all six data sources return realistic fake data so you
-can develop without any real accounts.
+The app supports "mock mode" — all six data sources return realistic fake data
+so you can develop without any real accounts.
 
 ### 9a — Enable mock mode in the scheme
 
-1. In Xcode, click the scheme selector at the top (next to the play/stop buttons). It
-   shows something like **Sonas > iPhone 16 Pro**.
+1. In Xcode, click the scheme selector at the top (next to the play/stop
+   buttons). It shows something like **Sonas > iPhone 16 Pro**.
 2. Click it and choose **Edit Scheme…**
 3. On the left, select **Run**.
 4. Click the **Arguments** tab.
-5. Under **Environment Variables**, click **+** and add each of these (Name + Value):
+5. Under **Environment Variables**, click **+** and add each of these (Name +
+   Value):
 
-   | Name | Value |
-   |------|-------|
-   | `USE_MOCK_LOCATION` | `1` |
-   | `USE_MOCK_WEATHER` | `1` |
-   | `USE_MOCK_CALENDAR` | `1` |
-   | `USE_MOCK_TASKS` | `1` |
-   | `USE_MOCK_PHOTOS` | `1` |
-   | `USE_MOCK_JAM` | `1` |
+    | Name                | Value |
+    | ------------------- | ----- |
+    | `USE_MOCK_LOCATION` | `1`   |
+    | `USE_MOCK_WEATHER`  | `1`   |
+    | `USE_MOCK_CALENDAR` | `1`   |
+    | `USE_MOCK_TASKS`    | `1`   |
+    | `USE_MOCK_PHOTOS`   | `1`   |
+    | `USE_MOCK_JAM`      | `1`   |
 
 6. Click **Close**.
 
@@ -209,18 +213,19 @@ The app should launch in the iOS Simulator showing all panels with sample data.
 Once the app is running, check each item:
 
 - [ ] The clock panel shows the current time and it ticks every second.
-- [ ] The Family panel shows three mock members: Alice (Dublin), Bob (Ranelagh), Carol
-      (Location unavailable — this is intentional in the mock).
+- [ ] The Family panel shows three mock members: Alice (Dublin), Bob (Ranelagh),
+      Carol (Location unavailable — this is intentional in the mock).
 - [ ] The Events panel shows three upcoming mock events.
-- [ ] The Weather panel shows temperature, humidity, wind, pressure, AQI, sunrise/sunset,
-      moon phase, and a 7-day forecast strip.
+- [ ] The Weather panel shows temperature, humidity, wind, pressure, AQI,
+      sunrise/sunset, moon phase, and a 7-day forecast strip.
 - [ ] The Tasks panel shows tasks grouped under "Home" and "Admin" projects.
 - [ ] The Photos panel shows a rotating placeholder gallery.
-- [ ] The Jam panel shows a "Start Jam" button. Tap it — a QR code should appear.
+- [ ] The Jam panel shows a "Start Jam" button. Tap it — a QR code should
+      appear.
 - [ ] Tapping the gear icon (⚙) opens a Settings sheet.
 
-If any panel shows an error instead of mock data, double-check Step 9a — the environment
-variables may not have been set correctly.
+If any panel shows an error instead of mock data, double-check Step 9a — the
+environment variables may not have been set correctly.
 
 ---
 
@@ -234,17 +239,18 @@ xcodebuild test \
   2>&1 | tail -20
 ```
 
-All unit and contract tests run without any real credentials or internet connection. A
-passing run looks like:
+All unit and contract tests run without any real credentials or internet
+connection. A passing run looks like:
 
 ```
 ** TEST SUCCEEDED **
 ```
 
-> **Seeing a build error about WeatherKit?** The `WeatherService` requires a paid Apple
-> Developer account for real data. In tests and mock mode, `WeatherServiceMock` is used
-> instead — no entitlement needed. The error only appears if you try to call the real
-> `WeatherService` on a simulator without the entitlement.
+> **Seeing a build error about WeatherKit?** The `WeatherService` requires a
+> paid Apple Developer account for real data. In tests and mock mode,
+> `WeatherServiceMock` is used instead — no entitlement needed. The error only
+> appears if you try to call the real `WeatherService` on a simulator without
+> the entitlement.
 
 ---
 
@@ -295,55 +301,69 @@ SonasUITests/                   ← Full end-to-end UI tests
 
 ## Step 13 — Connect real data sources (optional)
 
-Once the app works with mocks, remove the environment variables one at a time to connect
-real services. Each service has a clear "connect" UI in the Settings sheet.
+Once the app works with mocks, remove the environment variables one at a time to
+connect real services. Each service has a clear "connect" UI in the Settings
+sheet.
 
 ### Weather (WeatherKit)
+
 Requires a **paid** Apple Developer account ($99/year).
-1. Go to [developer.apple.com](https://developer.apple.com) → Certificates, IDs &
-   Profiles → Identifiers → your app's Bundle ID → enable **WeatherKit**.
-2. This can take a few minutes to propagate. In the meantime, keep `USE_MOCK_WEATHER=1`.
+
+1. Go to [developer.apple.com](https://developer.apple.com) → Certificates, IDs
+   & Profiles → Identifiers → your app's Bundle ID → enable **WeatherKit**.
+2. This can take a few minutes to propagate. In the meantime, keep
+   `USE_MOCK_WEATHER=1`.
 
 ### Location (CloudKit)
-Works automatically once all family members have the app installed and have granted
-Location permission. No external account needed beyond iCloud.
+
+Works automatically once all family members have the app installed and have
+granted Location permission. No external account needed beyond iCloud.
 
 ### Google Calendar
+
 1. Go to [console.cloud.google.com](https://console.cloud.google.com).
 2. Create a project → enable "Google Calendar API".
 3. Create an **OAuth 2.0 Client ID** of type "iOS app".
-4. Download `GoogleService-Info.plist` and drag it into the `Sonas/` folder in Xcode.
-5. In `project.yml`, update the `com.googleusercontent.apps.YOUR_GOOGLE_CLIENT_ID`
-   URL scheme with your actual client ID, then re-run `xcodegen generate`.
+4. Download `GoogleService-Info.plist` and drag it into the `Sonas/` folder in
+   Xcode.
+5. In `project.yml`, update the
+   `com.googleusercontent.apps.YOUR_GOOGLE_CLIENT_ID` URL scheme with your
+   actual client ID, then re-run `xcodegen generate`.
 
 ### Todoist
-No build-time setup needed. In the running app, open **Settings → Connect Todoist**
-and paste your personal API token (found at [todoist.com/app/settings/integrations](https://todoist.com/app/settings/integrations)).
+
+No build-time setup needed. In the running app, open **Settings → Connect
+Todoist** and paste your personal API token (found at
+[todoist.com/app/settings/integrations](https://todoist.com/app/settings/integrations)).
 
 ### Spotify
-1. Create an app at [developer.spotify.com/dashboard](https://developer.spotify.com/dashboard).
+
+1. Create an app at
+   [developer.spotify.com/dashboard](https://developer.spotify.com/dashboard).
 2. Copy your Client ID.
-3. In `project.yml`, set `SPTClientID` in the `Sonas` target's `info.properties`.
+3. In `project.yml`, set `SPTClientID` in the `Sonas` target's
+   `info.properties`.
 4. Re-run `xcodegen generate`.
 
 ### iCloud Shared Album (Photos)
-No extra configuration. On first launch (with `USE_MOCK_PHOTOS` removed), the app
-prompts you to select an album from your iCloud library.
+
+No extra configuration. On first launch (with `USE_MOCK_PHOTOS` removed), the
+app prompts you to select an album from your iCloud library.
 
 ---
 
 ## Common problems and fixes
 
-| Problem | Fix |
-|---------|-----|
-| `xcodegen: command not found` | Run `brew install xcodegen`, then close and reopen Terminal |
-| Packages don't resolve ("Failed to fetch") | In Xcode: File → Packages → Reset Package Caches |
-| "Signing certificate … not found" | Follow Step 7 again; make sure your Apple ID is signed in |
-| WeatherKit build error | Keep `USE_MOCK_WEATHER=1` until you have a paid developer account |
-| CloudKit "No schema" error on first real-device run | Normal — CloudKit auto-creates the schema on first launch in development. Check CloudKit Dashboard to confirm the `FamilyLocation` record type appeared |
-| `xcodegen generate` adds duplicate files | This can happen if you moved a file. Run `git status` to find the duplicate, then delete the orphan from disk |
-| Build fails after adding a new `.swift` file | Re-run `xcodegen generate` — new files are not auto-discovered |
-| "Entitlement com.apple.developer.weatherkit not found" on device | Enable WeatherKit in the Apple Developer portal for your Bundle ID |
+| Problem                                                          | Fix                                                                                                                                                     |
+| ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `xcodegen: command not found`                                    | Run `brew install xcodegen`, then close and reopen Terminal                                                                                             |
+| Packages don't resolve ("Failed to fetch")                       | In Xcode: File → Packages → Reset Package Caches                                                                                                        |
+| "Signing certificate … not found"                                | Follow Step 7 again; make sure your Apple ID is signed in                                                                                               |
+| WeatherKit build error                                           | Keep `USE_MOCK_WEATHER=1` until you have a paid developer account                                                                                       |
+| CloudKit "No schema" error on first real-device run              | Normal — CloudKit auto-creates the schema on first launch in development. Check CloudKit Dashboard to confirm the `FamilyLocation` record type appeared |
+| `xcodegen generate` adds duplicate files                         | This can happen if you moved a file. Run `git status` to find the duplicate, then delete the orphan from disk                                           |
+| Build fails after adding a new `.swift` file                     | Re-run `xcodegen generate` — new files are not auto-discovered                                                                                          |
+| "Entitlement com.apple.developer.weatherkit not found" on device | Enable WeatherKit in the Apple Developer portal for your Bundle ID                                                                                      |
 
 ---
 
@@ -351,27 +371,32 @@ prompts you to select an album from your iCloud library.
 
 The following tasks are still open (not yet implemented):
 
-- **T082** — Offline "Last updated" badge: when the network is unavailable, `PanelView`
-  should overlay a stale-data badge with a retry button. The hook point in `PanelView.swift`
-  is already documented with a comment.
+- **T082** — Offline "Last updated" badge: when the network is unavailable,
+  `PanelView` should overlay a stale-data badge with a retry button. The hook
+  point in `PanelView.swift` is already documented with a comment.
 
-- **T092** — Expand `SettingsView` with: Todoist token entry, Spotify connect/disconnect,
-  photo album picker, and temperature unit toggle. The shell is at
-  `Sonas/Features/Settings/SettingsView.swift` — look for the `// T092 sections` comment.
+- **T092** — Expand `SettingsView` with: Todoist token entry, Spotify
+  connect/disconnect, photo album picker, and temperature unit toggle. The shell
+  is at `Sonas/Features/Settings/SettingsView.swift` — look for the
+  `// T092 sections` comment.
 
-- **T091** — Memory profiling with Instruments. Once you have a real device, profile the
-  app with Leaks + Allocations while all six panels are active. Target: ≤150 MB peak RSS.
+- **T091** — Memory profiling with Instruments. Once you have a real device,
+  profile the app with Leaks + Allocations while all six panels are active.
+  Target: ≤150 MB peak RSS.
 
-- **T086–T088** — Run the quickstart checklist, SwiftLint, and code coverage gate. These
-  are manual validation steps described in `specs/001-family-command-center/quickstart.md`.
+- **T086–T088** — Run the quickstart checklist, SwiftLint, and code coverage
+  gate. These are manual validation steps described in
+  `specs/001-family-command-center/quickstart.md`.
 
 ---
 
 ## Where to get help
 
-- **Spec and architecture**: `specs/001-family-command-center/` — start with `spec.md`
-  for requirements and `plan.md` for the technical design.
-- **Task list**: `specs/001-family-command-center/tasks.md` — each task has a file path
-  and acceptance criteria.
-- **Apple documentation**: [developer.apple.com/documentation](https://developer.apple.com/documentation)
-- **SwiftUI tutorials**: [developer.apple.com/tutorials/swiftui](https://developer.apple.com/tutorials/swiftui)
+- **Spec and architecture**: `specs/001-family-command-center/` — start with
+  `spec.md` for requirements and `plan.md` for the technical design.
+- **Task list**: `specs/001-family-command-center/tasks.md` — each task has a
+  file path and acceptance criteria.
+- **Apple documentation**:
+  [developer.apple.com/documentation](https://developer.apple.com/documentation)
+- **SwiftUI tutorials**:
+  [developer.apple.com/tutorials/swiftui](https://developer.apple.com/tutorials/swiftui)

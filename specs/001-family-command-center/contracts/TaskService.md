@@ -1,6 +1,7 @@
 # Contract: TaskService
 
-**Purpose**: Fetch open tasks from designated Todoist family projects; mark tasks complete.
+**Purpose**: Fetch open tasks from designated Todoist family projects; mark
+tasks complete.
 
 ```swift
 protocol TaskServiceProtocol {
@@ -27,49 +28,51 @@ protocol TaskServiceProtocol {
 **Todoist REST v2 endpoints**:
 
 Fetch projects (to resolve names):
+
 ```
 GET https://api.todoist.com/rest/v2/projects
 Authorization: Bearer {api_token}
 ```
 
 Fetch tasks per project:
+
 ```
 GET https://api.todoist.com/rest/v2/tasks?project_id={id}
 Authorization: Bearer {api_token}
 ```
 
 Close (complete) a task:
+
 ```
 POST https://api.todoist.com/rest/v2/tasks/{task_id}/close
 Authorization: Bearer {api_token}
 → 204 No Content on success
 ```
 
-**Response mapping** (`GET /tasks` item):
-| Todoist field | `Task` field |
-|---|---|
-| `id` | `id` |
-| `project_id` | `projectId` |
-| `content` | `content` |
-| `description` | `description` |
-| `due.date` / `due.datetime` | `due.date` |
-| `due.is_recurring` | `due.isRecurring` |
-| `assignee_id` → lookup | `assigneeName` |
-| `priority` | `priority` (4=p1 … 1=p4) |
+**Response mapping** (`GET /tasks` item): | Todoist field | `Task` field |
+|---|---| | `id` | `id` | | `project_id` | `projectId` | | `content` | `content`
+| | `description` | `description` | | `due.date` / `due.datetime` | `due.date` |
+| `due.is_recurring` | `due.isRecurring` | | `assignee_id` → lookup |
+`assigneeName` | | `priority` | `priority` (4=p1 … 1=p4) |
 
-**Pagination**: If project has >100 tasks, use `?cursor={next_cursor}` from response header
-`X-Next-Cursor`. `TasksPanelView` renders pages with "Show more" affordance.
+**Pagination**: If project has >100 tasks, use `?cursor={next_cursor}` from
+response header `X-Next-Cursor`. `TasksPanelView` renders pages with "Show more"
+affordance.
 
-**Rate limiting**: 1,000 requests/15 min. `TaskService` enforces a minimum 300ms inter-request
-delay and surfaces `TaskServiceError.rateLimitExceeded` (HTTP 429) with retry-after.
+**Rate limiting**: 1,000 requests/15 min. `TaskService` enforces a minimum 300ms
+inter-request delay and surfaces `TaskServiceError.rateLimitExceeded` (HTTP 429)
+with retry-after.
 
 **Error cases**:
+
 - `TaskServiceError.notConnected` — no API token stored
-- `TaskServiceError.authenticationFailed` — HTTP 401; token invalid; prompts reconnect
+- `TaskServiceError.authenticationFailed` — HTTP 401; token invalid; prompts
+  reconnect
 - `TaskServiceError.rateLimitExceeded` — HTTP 429; backs off and retries
 - `TaskServiceError.networkUnavailable` — returns cached tasks
 
 **Contract test fixtures** (`TodoistContractTests.swift`):
+
 ```swift
 // Given: URLProtocol stub returning fixture /projects and /tasks JSON
 // When: fetchTasks() called

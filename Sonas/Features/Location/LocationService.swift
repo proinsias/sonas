@@ -50,7 +50,7 @@ final class LocationService: NSObject, LocationServiceProtocol {
         static let containerID  = "iCloud.com.anindependentmind.sonas"
         static let zoneID       = CKRecordZone.default().zoneID
         static let minDistance: CLLocationDistance = 50   // metres
-        static let maxInterval: TimeInterval        = 60  // seconds
+        static let maxInterval: TimeInterval = 60  // seconds
         static let subscriptionID = "sonas-family-location-sub"
     }
 
@@ -182,7 +182,7 @@ extension LocationService: CLLocationManagerDelegate {
     nonisolated func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
         Swift.Task { @MainActor in
             if manager.authorizationStatus == .authorizedWhenInUse ||
-               manager.authorizationStatus == .authorizedAlways {
+                manager.authorizationStatus == .authorizedAlways {
                 manager.startUpdatingLocation()
             }
         }

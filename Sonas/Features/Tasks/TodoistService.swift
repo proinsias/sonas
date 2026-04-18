@@ -127,7 +127,7 @@ final class TodoistService: TaskServiceProtocol {
 
     private func fetchTasksForProject(id: String, token: String) async throws -> [Task] {
         var tasks: [Task] = []
-        var cursor: String? = nil
+        var cursor: String?
         var orderIndex = 0
 
         repeat {
@@ -186,7 +186,7 @@ private struct TodoistTask: Decodable {
         let taskDue: TaskDue? = due.map {
             let date = $0.date.flatMap {
                 ISO8601DateFormatter().date(from: $0) ??
-                DateFormatter.todoistDate.date(from: $0)
+                    DateFormatter.todoistDate.date(from: $0)
             }
             return TaskDue(date: date, string: $0.string, isRecurring: $0.is_recurring)
         }

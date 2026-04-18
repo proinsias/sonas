@@ -1,7 +1,7 @@
 # Contract: LocationService
 
-**Purpose**: Publish own device location to CloudKit; subscribe to all family members' location
-snapshots from the same CloudKit container.
+**Purpose**: Publish own device location to CloudKit; subscribe to all family
+members' location snapshots from the same CloudKit container.
 
 ```swift
 protocol LocationServiceProtocol: AnyObject {
@@ -22,22 +22,24 @@ protocol LocationServiceProtocol: AnyObject {
 }
 ```
 
-**CloudKit Record Schema** (`FamilyLocation`):
-| Field | Type | Notes |
-|---|---|---|
-| `recordName` | String | Stable per iCloud account; used as `FamilyMember.id` |
-| `displayName` | String | From CloudKit `CKCurrentUserDefaultName` |
-| `latitude` | Double | Raw coordinate; reverse-geocoded on read |
-| `longitude` | Double | Raw coordinate |
-| `placeName` | String | Reverse-geocoded label; computed on writing device |
-| `recordedAt` | Date | When the position was captured |
+**CloudKit Record Schema** (`FamilyLocation`): | Field | Type | Notes |
+|---|---|---| | `recordName` | String | Stable per iCloud account; used as
+`FamilyMember.id` | | `displayName` | String | From CloudKit
+`CKCurrentUserDefaultName` | | `latitude` | Double | Raw coordinate;
+reverse-geocoded on read | | `longitude` | Double | Raw coordinate | |
+`placeName` | String | Reverse-geocoded label; computed on writing device | |
+`recordedAt` | Date | When the position was captured |
 
 **Error cases**:
+
 - `LocationServiceError.permissionDenied` — CoreLocation auth denied
-- `LocationServiceError.cloudKitUnavailable` — iCloud account not signed in or CloudKit quota exceeded
-- `LocationServiceError.networkUnavailable` — returns cached data; emits stale snapshots
+- `LocationServiceError.cloudKitUnavailable` — iCloud account not signed in or
+  CloudKit quota exceeded
+- `LocationServiceError.networkUnavailable` — returns cached data; emits stale
+  snapshots
 
 **Contract test fixture** (`LocationContractTests.swift`):
+
 ```swift
 // Given: a CloudKit container returning 2 FamilyLocation records
 // When: familyLocations stream is observed

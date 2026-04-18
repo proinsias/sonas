@@ -7,7 +7,7 @@ import CoreLocation
 protocol WeatherServiceProtocol: AnyObject, Sendable {
     /// Fetch current weather + 7-day forecast for the given coordinate.
     func fetchWeather(for coordinate: CLLocationCoordinate2D) async throws
-        -> (current: WeatherSnapshot, forecast: [DayForecast])
+    -> (current: WeatherSnapshot, forecast: [DayForecast])
 }
 
 // MARK: - WeatherServiceError
@@ -43,7 +43,7 @@ final class WeatherService: WeatherServiceProtocol {
     }
 
     func fetchWeather(for coordinate: CLLocationCoordinate2D) async throws
-        -> (current: WeatherSnapshot, forecast: [DayForecast]) {
+    -> (current: WeatherSnapshot, forecast: [DayForecast]) {
         guard CLLocationCoordinate2DIsValid(coordinate) else {
             throw WeatherServiceError.locationNotConfigured
         }
@@ -77,7 +77,7 @@ final class WeatherService: WeatherServiceProtocol {
             fetchedAt: .now
         )
 
-        let forecast = wk.daily.prefix(7).enumerated().map { index, day in
+        let forecast = wk.daily.prefix(7).enumerated().map { _, day in
             let calendar = Calendar.current
             let dateString = ISO8601DateFormatter().string(
                 from: calendar.startOfDay(for: day.date)
@@ -99,7 +99,7 @@ final class WeatherService: WeatherServiceProtocol {
     // MARK: - Private helpers
 
     private func fetchWeatherKit(location: CLLocation) async throws
-        -> (current: CurrentWeather, daily: Forecast<DayWeather>) {
+    -> (current: CurrentWeather, daily: Forecast<DayWeather>) {
         do {
             let weather = try await weatherService.weather(
                 for: location,

@@ -14,7 +14,7 @@ settings:
     SWIFT_VERSION: "5.10"
     MARKETING_VERSION: "1.0.0"
     CURRENT_PROJECT_VERSION: "1"
-    DEVELOPMENT_TEAM: ""  # Set your Apple Developer Team ID here
+    DEVELOPMENT_TEAM: "" # Set your Apple Developer Team ID here
 
 # packages: (none linked yet)
 # GoogleSignIn: AppAuth inside it initialises ASWebAuthenticationSession via ViewBridge at launch
@@ -30,7 +30,6 @@ settings:
 #     exactVersion: "1.2.3"
 
 targets:
-
   # ─── Main iOS App ────────────────────────────────────────────────────────────
   Sonas:
     type: application
@@ -47,10 +46,14 @@ targets:
         CFBundleShortVersionString: "$(MARKETING_VERSION)"
         CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
         # Location permissions
-        NSLocationWhenInUseUsageDescription: "Sonas shares your location with family members via CloudKit."
-        NSLocationAlwaysAndWhenInUseUsageDescription: "Sonas updates your location in the background so family members always see where you are."
+        NSLocationWhenInUseUsageDescription:
+          "Sonas shares your location with family members via CloudKit."
+        NSLocationAlwaysAndWhenInUseUsageDescription:
+          "Sonas updates your location in the background so family members
+          always see where you are."
         # Photo permissions
-        NSPhotoLibraryUsageDescription: "Sonas reads your iCloud Shared Album to display family photos."
+        NSPhotoLibraryUsageDescription:
+          "Sonas reads your iCloud Shared Album to display family photos."
         # Spotify
         SPTClientID: ""
         SPTRedirectURL: "sonas://spotify-callback"

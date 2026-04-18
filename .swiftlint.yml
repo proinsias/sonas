@@ -4,7 +4,7 @@ included:
   - SonasUITests
 
 excluded:
-  - Sonas/Shared/Mocks  # Mock files are test-only; relaxed complexity limits acceptable
+  - Sonas/Shared/Mocks # Mock files are test-only; relaxed complexity limits acceptable
 
 # Enabled rules on top of the default set
 opt_in_rules:
@@ -40,13 +40,13 @@ opt_in_rules:
   - yoda_condition
 
 disabled_rules:
-  - trailing_whitespace  # Handled by editor
-  - todo              # TODOs allowed during active development; CI gate via PR review
+  - trailing_whitespace # Handled by editor
+  - todo # TODOs allowed during active development; CI gate via PR review
 
 # Thresholds
 cyclomatic_complexity:
   warning: 8
-  error: 10            # Constitution §I — cyclomatic complexity ≤ 10
+  error: 10 # Constitution §I — cyclomatic complexity ≤ 10
 
 function_body_length:
   warning: 40
@@ -84,7 +84,9 @@ identifier_name:
 custom_rules:
   given_when_then_test_names:
     name: "Given/When/Then Test Naming"
-    message: "Test functions in SonasTests/ MUST follow the pattern: given_<state>_when_<action>_then_<outcome> (Constitution §II)"
+    message:
+      "Test functions in SonasTests/ MUST follow the pattern:
+      given_<state>_when_<action>_then_<outcome> (Constitution §II)"
     regex: "func test(?!.*given_.*_when_.*_then_)[A-Za-z]"
     match_kinds:
       - identifier
@@ -93,7 +95,9 @@ custom_rules:
 
   no_lint_suppressions_without_issue:
     name: "SwiftLint Suppression Requires Tracking Issue"
-    message: "swiftlint:disable comment MUST include a tracking issue URL or ticket ID (Constitution §I)"
+    message:
+      "swiftlint:disable comment MUST include a tracking issue URL or ticket ID
+      (Constitution §I)"
     regex: "swiftlint:disable(?!.*#|.*http|.*SONAS-)"
     match_kinds:
       - comment

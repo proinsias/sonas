@@ -1,37 +1,119 @@
+---
+default_install_hook_types:
+    - commit-msg
+    - prepare-commit-msg
+    - pre-commit
+    - pre-merge-commit
+    - pre-push
+    - pre-rebase
+    - post-checkout
+    - post-commit
+    - post-merge
+    - post-rewrite
+
 repos:
-  # ── General hygiene ────────────────────────────────────────────────────────
-  - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
-    hooks:
-      - id: trailing-whitespace
-        args: [--markdown-linebreak-ext=md]
-      - id: end-of-file-fixer
-      - id: check-yaml
-      - id: check-json
-      - id: check-merge-conflict
-      - id: check-added-large-files
-        args: [--maxkb=500]
-      - id: mixed-line-ending
-        args: [--fix=lf]
-      - id: no-commit-to-branch
-        args: [--branch, main]
+    - repo: https://github.com/Lucas-C/pre-commit-hooks
+      rev: v1.5.5
+      hooks:
+          - id: remove-crlf
+          - id: remove-tabs
+            exclude: .git/COMMIT_EDITMSG
 
-  # ── Shell scripts (.specify/scripts/bash/ and integrations) ────────────────
-  - repo: https://github.com/shellcheck-py/shellcheck-py
-    rev: v0.10.0.1
-    hooks:
-      - id: shellcheck
-        args: [--severity=warning, -x]
+    - repo: https://github.com/pre-commit/mirrors-prettier
+      rev: v4.0.0-alpha.8
+      hooks:
+          - id: prettier
+            stages: [pre-commit]
 
-  # ── Markdown (spec docs, templates, skill files, README) ───────────────────
-  - repo: https://github.com/DavidAnson/markdownlint-cli2
-    rev: v0.17.2
-    hooks:
-      - id: markdownlint-cli2
+    - repo: https://github.com/sirwart/ripsecrets
+      rev: v0.1.11 # Use latest tag on GitHub
+      hooks:
+          - id: ripsecrets
+          # uncomment to check additional patterns
+          # args:
+          # - --additional-pattern 'mytoken*'
+          # - --additional-pattern 'mykey*'
 
-  # ── Swift source files (requires SwiftLint on macOS) ──────────────────────
-  - repo: https://github.com/realm/SwiftLint
-    rev: 0.57.1
-    hooks:
-      - id: swiftlint
-        args: [--fix, --format]
+    - repo: https://github.com/sirosen/check-jsonschema
+      rev: 0.33.2
+      hooks:
+          - id: check-github-actions
+          - id: check-github-workflows
+
+    - repo: https://github.com/rhysd/actionlint
+      rev: v1.7.7
+      hooks:
+          - id: actionlint
+
+    - repo: https://github.com/pre-commit/pre-commit-hooks
+      rev: v5.0.0
+      hooks:
+          - id: check-json
+          - id: pretty-format-json # Checks that all your JSON files are pretty.
+
+    - repo: https://github.com/scop/pre-commit-shfmt
+      rev: v3.12.0-2
+      hooks:
+          - id: shfmt
+
+    # ── Shell scripts (.specify/scripts/bash/ and integrations) ────────────────
+    - repo: https://github.com/shellcheck-py/shellcheck-py
+      rev: v0.10.0.1
+      hooks:
+          - id: shellcheck
+            args:
+                [
+                    --severity=warning,
+                    --external-sources,
+                    --format=gcc,
+                    --shell=bash,
+                ]
+
+    - repo: https://github.com/adrienverge/yamllint
+      rev: v1.37.1
+      hooks:
+          - id: yamllint
+            args: [-c=.yamllint.yml]
+
+    - repo: https://github.com/pre-commit/pre-commit-hooks
+      rev: v5.0.0
+      hooks:
+          - id: check-yaml
+
+    - repo: https://github.com/editorconfig-checker/editorconfig-checker.python
+      rev: 3.2.1
+      hooks:
+          - id: editorconfig-checker
+
+    - repo: https://github.com/jorisroovers/gitlint
+      rev: v0.19.1
+      hooks:
+          - id: gitlint
+
+    - repo: https://github.com/lycheeverse/lychee.git
+      rev: lychee-v0.23.0
+      hooks:
+          - id: lychee
+            args: ["--cache", "--suggest"]
+
+    - repo: https://github.com/pre-commit/pre-commit-hooks
+      rev: v5.0.0
+      hooks:
+          - id: trailing-whitespace
+            args: [--markdown-linebreak-ext=md]
+          - id: end-of-file-fixer
+          - id: check-merge-conflict
+          - id: check-added-large-files
+          - id: mixed-line-ending
+            args: [--fix=lf]
+
+    - repo: https://github.com/DavidAnson/markdownlint-cli2
+      rev: v0.17.2
+      hooks:
+          - id: markdownlint-cli2
+
+    - repo: https://github.com/realm/SwiftLint
+      rev: 0.57.1
+      hooks:
+          - id: swiftlint
+            args: [--fix, --format]

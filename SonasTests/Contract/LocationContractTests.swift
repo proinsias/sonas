@@ -42,7 +42,7 @@ struct LocationContractTests {
                 break  // Take first emission
             }
         }
-        let _ = try await service.refresh()
+        _ = try await service.refresh()
         task.cancel()
 
         // Assert

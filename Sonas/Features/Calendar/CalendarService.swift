@@ -116,12 +116,12 @@ private struct GoogleCalendarItem: Decodable {
 
         let startDate: Date = {
             if let dt = start?.dateTime { return isoFormatter.date(from: dt) ?? .now }
-            if let d  = start?.date     { return dateFormatter.date(from: d) ?? .now }
+            if let d  = start?.date { return dateFormatter.date(from: d) ?? .now }
             return .now
         }()
         let endDate: Date = {
             if let dt = end?.dateTime { return isoFormatter.date(from: dt) ?? startDate }
-            if let d  = end?.date    { return dateFormatter.date(from: d) ?? startDate }
+            if let d  = end?.date { return dateFormatter.date(from: d) ?? startDate }
             return startDate
         }()
         let isAllDay = start?.dateTime == nil

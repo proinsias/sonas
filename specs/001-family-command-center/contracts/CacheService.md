@@ -1,7 +1,7 @@
 # Contract: CacheService
 
-**Purpose**: SwiftData-backed on-device cache for all panel data; surfaced with staleness
-timestamps; cleared per eviction policy defined in research.md.
+**Purpose**: SwiftData-backed on-device cache for all panel data; surfaced with
+staleness timestamps; cleared per eviction policy defined in research.md.
 
 ```swift
 protocol CacheServiceProtocol {
@@ -34,21 +34,26 @@ protocol CacheServiceProtocol {
 
 **TTL policy** (from research.md):
 
-| Data type | TTL | Behaviour when stale |
-|---|---|---|
-| WeatherSnapshot | 1 hour | Show with "Last updated" label |
-| LocationSnapshot | 5 minutes | Show "Last seen N min ago" or "unavailable" |
-| CalendarEvent | Until event end time | Past events evicted automatically |
-| Task | 24 hours | Force-refresh on next foreground |
-| JamSession | Until status == .ended | Cleared immediately on `endJam()` |
+| Data type        | TTL                    | Behaviour when stale                        |
+| ---------------- | ---------------------- | ------------------------------------------- |
+| WeatherSnapshot  | 1 hour                 | Show with "Last updated" label              |
+| LocationSnapshot | 5 minutes              | Show "Last seen N min ago" or "unavailable" |
+| CalendarEvent    | Until event end time   | Past events evicted automatically           |
+| Task             | 24 hours               | Force-refresh on next foreground            |
+| JamSession       | Until status == .ended | Cleared immediately on `endJam()`           |
 
 **Implementation notes**:
-- `ModelContainer` initialised in `SonasApp` and injected via SwiftUI environment.
+
+- `ModelContainer` initialised in `SonasApp` and injected via SwiftUI
+  environment.
 - All `@Model` classes stored in the same `ModelContainer`.
-- `evictStaleEntries()` is synchronous; called on `ScenePhase.active` transition.
-- Cache failures are non-fatal: logged at DEBUG level; UI falls back to empty state.
+- `evictStaleEntries()` is synchronous; called on `ScenePhase.active`
+  transition.
+- Cache failures are non-fatal: logged at DEBUG level; UI falls back to empty
+  state.
 
 **Contract test**:
+
 ```swift
 // Given: in-memory ModelContainer
 // When: saveWeather(_:forecast:) called, then loadWeather() called
