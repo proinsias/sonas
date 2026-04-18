@@ -1,0 +1,17 @@
+# markdownlint-cli2 configuration for Sonas
+# Relaxed for spec documentation which contains long lines,
+# HTML comments, and placeholder tokens.
+
+default: true
+
+# Line length — disabled; spec/plan docs have unavoidably long tables and code blocks
+MD013: false
+
+# Inline HTML — disabled; spec templates use HTML comment placeholders
+MD033: false
+
+# First-line heading — disabled; some docs start with YAML front-matter or comments
+MD041: false
+
+# No-bare-URLs — disabled; contracts and research docs include raw URLs in prose
+MD034: false
