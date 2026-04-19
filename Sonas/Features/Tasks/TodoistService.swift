@@ -194,17 +194,6 @@ private struct TodoistTask: Decodable {
         case projectID = "project_id"
     }
 
-    struct TodoistDue: Decodable {
-        let date: String?
-        let string: String
-        let isRecurring: Bool
-
-        enum CodingKeys: String, CodingKey {
-            case date, string
-            case isRecurring = "is_recurring"
-        }
-    }
-
     func toTask(orderIndex: inout Int) -> Task {
         defer { orderIndex += 1 }
         let taskDue: TaskDue? = due.map {
@@ -222,6 +211,17 @@ private struct TodoistTask: Decodable {
             isCompleted: false, isCompleting: false,
             createdAt: nil, orderIndex: orderIndex
         )
+    }
+}
+
+private struct TodoistDue: Decodable {
+    let date: String?
+    let string: String
+    let isRecurring: Bool
+
+    enum CodingKeys: String, CodingKey {
+        case date, string
+        case isRecurring = "is_recurring"
     }
 }
 

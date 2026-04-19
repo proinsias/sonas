@@ -42,6 +42,10 @@ trim_trailing_whitespace = true
 [*.json]
 quote_type = double
 
+# Auto-generated manifest files contain long SHA hashes that cannot be wrapped
+[*.manifest.json]
+max_line_length = off
+
 # YAML Based files - 2 space indent
 [*.yml]
 indent_size = 2
@@ -59,3 +63,18 @@ indent_style = space
 indent_style = space
 # tab_width = 4
 indent_size = 1
+
+[*.sh]
+indent_style = space
+indent_size = 2
+
+[*.xcscheme]
+indent_style = space
+indent_size = 1
+
+[*.xcworkspacedata]
+indent_style = space
+indent_size = 1
+
+[*.pbxproj]
+max_line_length = off

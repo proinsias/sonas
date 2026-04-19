@@ -137,13 +137,14 @@ final class WeatherService: WeatherServiceProtocol {
 // MARK: - Open-Meteo AQI response
 
 private struct OpenMeteoAQIResponse: Decodable {
-    let current: CurrentAQI
-    struct CurrentAQI: Decodable {
-        let usAQI: Int?
+    let current: OpenMeteoCurrentAQI
+}
 
-        enum CodingKeys: String, CodingKey {
-            case usAQI = "us_aqi"
-        }
+private struct OpenMeteoCurrentAQI: Decodable {
+    let usAQI: Int?
+
+    enum CodingKeys: String, CodingKey {
+        case usAQI = "us_aqi"
     }
 }
 

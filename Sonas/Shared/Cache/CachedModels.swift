@@ -53,9 +53,15 @@ final class CachedLocationSnapshot {
     var recordedAt = Date.distantPast
     var lastUpdated = Date.distantPast
 
-    init(memberID: String, displayName: String,
-         latitude: Double, longitude: Double,
-         placeName: String, recordedAt: Date, lastUpdated: Date) {
+    init(
+        memberID: String,
+        displayName: String,
+        latitude: Double,
+        longitude: Double,
+        placeName: String,
+        recordedAt: Date,
+        lastUpdated: Date
+    ) {
         self.memberID = memberID; self.displayName = displayName
         self.latitude = latitude; self.longitude = longitude
         self.placeName = placeName; self.recordedAt = recordedAt; self.lastUpdated = lastUpdated
@@ -77,9 +83,18 @@ final class CachedCalendarEvent {
     var calendarColorHex: String?
     var lastUpdated = Date.distantPast
 
-    init(eventID: String, title: String, startDate: Date, endDate: Date,
-         isAllDay: Bool, calendarName: String, sourceRaw: String,
-         attendeesJSON: Data, calendarColorHex: String?, lastUpdated: Date) {
+    init(
+        eventID: String,
+        title: String,
+        startDate: Date,
+        endDate: Date,
+        isAllDay: Bool,
+        calendarName: String,
+        sourceRaw: String,
+        attendeesJSON: Data,
+        calendarColorHex: String?,
+        lastUpdated: Date
+    ) {
         self.eventID = eventID; self.title = title
         self.startDate = startDate; self.endDate = endDate; self.isAllDay = isAllDay
         self.calendarName = calendarName; self.sourceRaw = sourceRaw
@@ -105,10 +120,20 @@ final class CachedTask {
     var orderIndex: Int = 0
     var lastUpdated = Date.distantPast
 
-    init(taskID: String, content: String, taskDescription: String,
-         projectID: String, projectName: String, priorityRaw: Int,
-         isCompleted: Bool, dueDate: Date?, dueString: String?,
-         isRecurring: Bool, orderIndex: Int, lastUpdated: Date) {
+    init(
+        taskID: String,
+        content: String,
+        taskDescription: String,
+        projectID: String,
+        projectName: String,
+        priorityRaw: Int,
+        isCompleted: Bool,
+        dueDate: Date?,
+        dueString: String?,
+        isRecurring: Bool,
+        orderIndex: Int,
+        lastUpdated: Date
+    ) {
         self.taskID = taskID; self.content = content; self.taskDescription = taskDescription
         self.projectID = projectID; self.projectName = projectName; self.priorityRaw = priorityRaw
         self.isCompleted = isCompleted; self.dueDate = dueDate; self.dueString = dueString
@@ -126,8 +151,13 @@ final class CachedJamSession {
     var startedAt = Date.distantPast
     var lastUpdated = Date.distantPast
 
-    init(sessionID: String, joinURLString: String, statusRaw: String,
-         startedAt: Date, lastUpdated: Date) {
+    init(
+        sessionID: String,
+        joinURLString: String,
+        statusRaw: String,
+        startedAt: Date,
+        lastUpdated: Date
+    ) {
         self.sessionID = sessionID; self.joinURLString = joinURLString
         self.statusRaw = statusRaw; self.startedAt = startedAt; self.lastUpdated = lastUpdated
     }

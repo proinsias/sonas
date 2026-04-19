@@ -31,14 +31,22 @@ struct CacheContractTests {
     func `given weather snapshot when saved then loadWeather returns matching snapshot`() async throws {
         let sut = try makeInMemoryService()
         let snapshot = WeatherSnapshot(
-            temperature: 18.5, feelsLike: 16.0,
-            conditionDescription: "Partly Cloudy", conditionSymbolName: "cloud.sun.fill",
-            humidity: 0.72, windSpeed: 15.0, windDirection: 270.0, windCompassLabel: "W",
-            pressure: 1013.0, pressureTrend: .steady, airQualityIndex: 42,
+            temperature: 18.5,
+            feelsLike: 16.0,
+            conditionDescription: "Partly Cloudy",
+            conditionSymbolName: "cloud.sun.fill",
+            humidity: 0.72,
+            windSpeed: 15.0,
+            windDirection: 270.0,
+            windCompassLabel: "W",
+            pressure: 1013.0,
+            pressureTrend: .steady,
+            airQualityIndex: 42,
             aiqCategory: .good,
-            sunriseTime: Date.now, sunsetTime: Date.now.addingTimeInterval(43200),
+            sunriseTime: Date.now,
+            sunsetTime: Date.now.addingTimeInterval(43200),
             moonPhase: .firstQuarter,
-            fetchedAt: Date.now,
+            fetchedAt: Date.now
         )
         let forecast: [DayForecast] = []
 

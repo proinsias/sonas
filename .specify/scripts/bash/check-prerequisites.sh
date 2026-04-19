@@ -80,7 +80,8 @@ source "${SCRIPT_DIR}/common.sh"
 
 # Get feature paths and validate branch
 # shellcheck disable=SC2154  # Variables populated by eval from get_feature_paths
-REPO_ROOT="" CURRENT_BRANCH="" HAS_GIT="" FEATURE_DIR="" FEATURE_SPEC="" IMPL_PLAN="" TASKS="" RESEARCH="" DATA_MODEL="" QUICKSTART="" CONTRACTS_DIR=""
+REPO_ROOT="" CURRENT_BRANCH="" HAS_GIT="" FEATURE_DIR="" FEATURE_SPEC="" IMPL_PLAN=""
+TASKS="" RESEARCH="" DATA_MODEL="" QUICKSTART="" CONTRACTS_DIR=""
 _paths_output=$(get_feature_paths) || {
     echo "ERROR: Failed to resolve feature paths" >&2
     exit 1
@@ -94,6 +95,9 @@ if ${PATHS_ONLY}; then
     if ${JSON_MODE}; then
         # Minimal JSON paths payload (no validation performed)
         if has_jq; then
+            jq_filter='{REPO_ROOT:${REPO_ROOT},BRANCH:$branch,'
+            jq_filter+='FEATURE_DIR:${FEATURE_DIR},FEATURE_SPEC:$feature_spec,'
+            jq_filter+='IMPL_PLAN:${IMPL_PLAN},TASKS:${TASKS}}'
             jq -cn \
                 --arg repo_root "${REPO_ROOT}" \
                 --arg branch "${CURRENT_BRANCH}" \
@@ -101,10 +105,17 @@ if ${PATHS_ONLY}; then
                 --arg feature_spec "${FEATURE_SPEC}" \
                 --arg impl_plan "${IMPL_PLAN}" \
                 --arg tasks "${TASKS}" \
-                '{REPO_ROOT:${REPO_ROOT},BRANCH:$branch,FEATURE_DIR:${FEATURE_DIR},FEATURE_SPEC:$feature_spec,IMPL_PLAN:${IMPL_PLAN},TASKS:${TASKS}}'
+                "$jq_filter"
         else
-            printf '{"REPO_ROOT":"%s","BRANCH":"%s","FEATURE_DIR":"%s","FEATURE_SPEC":"%s","IMPL_PLAN":"%s","TASKS":"%s"}\n' \
-                "$(json_escape "${REPO_ROOT}")" "$(json_escape "${CURRENT_BRANCH}")" "$(json_escape "${FEATURE_DIR}")" "$(json_escape "${FEATURE_SPEC}")" "$(json_escape "${IMPL_PLAN}")" "$(json_escape "${TASKS}")"
+            printf_fmt='{"REPO_ROOT":"%s","BRANCH":"%s","FEATURE_DIR":"%s",'
+            printf_fmt+='"FEATURE_SPEC":"%s","IMPL_PLAN":"%s","TASKS":"%s"}\n'
+            printf "$printf_fmt" \
+                "$(json_escape "${REPO_ROOT}")" \
+                "$(json_escape "${CURRENT_BRANCH}")" \
+                "$(json_escape "${FEATURE_DIR}")" \
+                "$(json_escape "${FEATURE_SPEC}")" \
+                "$(json_escape "${IMPL_PLAN}")" \
+                "$(json_escape "${TASKS}")"
         fi
     else
         echo "REPO_ROOT: ${REPO_ROOT}"

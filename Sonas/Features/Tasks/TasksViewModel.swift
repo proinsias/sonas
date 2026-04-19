@@ -72,10 +72,8 @@ final class TasksViewModel {
         } catch {
             // Rollback on failure
             var rolled = tasksByProject
-            for (project, tasks) in rolled {
-                if project == task.projectName {
-                    rolled[project] = ([task] + tasks).sorted { $0.orderIndex < $1.orderIndex }
-                }
+            for (project, tasks) in rolled where project == task.projectName {
+                rolled[project] = ([task] + tasks).sorted { $0.orderIndex < $1.orderIndex }
             }
             tasksByProject = rolled
             completionErrorToast = "Couldn't complete task. Please try again."

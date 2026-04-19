@@ -98,6 +98,8 @@ repos:
     hooks:
       - id: swiftlint
         args: [--fix]
+      - id: swiftlint
+        args: [--strict]
 
 # FIXME:
 

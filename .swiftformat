@@ -1,4 +1,4 @@
 --indent 4
 --max-width 120
---wraparguments preserve
+--wraparguments before-first
 --disable trailingCommas,wrapMultilineStatementBraces

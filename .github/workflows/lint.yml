@@ -5,27 +5,9 @@ on:
     branches: [main]
   pull_request:
 jobs:
-  # ── pre-commit (Linux) ────────────────────────────────────────────────────
-  # Runs all hooks except SwiftLint, which requires macOS and runs below.
-  pre-commit:
-    name: pre-commit
-    runs-on: ubuntu-latest
-    env:
-      SKIP: swiftlint
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.x'
-      - uses: pre-commit/action@v3.0.1
-  # ── SwiftLint (macOS) ─────────────────────────────────────────────────────
-  # SwiftLint is not available on Linux runners, so it runs in a separate job.
-  swiftlint:
-    name: SwiftLint
+  prek:
+    name: prek
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Install SwiftLint
-        run: brew install swiftlint
-      - name: Run SwiftLint
-        run: swiftlint lint --strict
+      - uses: actions/checkout@v6
+      - uses: j178/prek-action@v2

@@ -30,12 +30,16 @@
 #
 # 5. Multi-Agent Support
 #    - Handles agent-specific file paths and naming conventions
-#    - Supports: Claude, Gemini, Copilot, Cursor, Qwen, opencode, Codex, Windsurf, Junie, Kilo Code, Auggie CLI, Roo Code, CodeBuddy CLI, Qoder CLI, Amp, SHAI, Tabnine CLI, Kiro CLI, Mistral Vibe, Kimi Code, Pi Coding Agent, iFlow CLI, Forge, Antigravity or Generic
+#    - Supports: Claude, Gemini, Copilot, Cursor, Qwen, opencode, Codex, Windsurf, Junie, Kilo Code,
+#      Auggie CLI, Roo Code, CodeBuddy CLI, Qoder CLI, Amp, SHAI, Tabnine CLI, Kiro CLI, Mistral Vibe,
+#      Kimi Code, Pi Coding Agent, iFlow CLI, Forge, Antigravity or Generic
 #    - Can update single agents or all existing agent files
 #    - Creates default Claude file if no agent files exist
 #
 # Usage: ./update-agent-context.sh [agent_type]
-# Agent types: claude|gemini|copilot|cursor-agent|qwen|opencode|codex|windsurf|junie|kilocode|auggie|roo|codebuddy|amp|shai|tabnine|kiro-cli|agy|bob|vibe|qodercli|kimi|trae|pi|iflow|forge|generic
+# Agent types: claude|gemini|copilot|cursor-agent|qwen|opencode|codex|windsurf|junie|kilocode|auggie|
+#              roo|codebuddy|amp|shai|tabnine|kiro-cli|agy|bob|vibe|qodercli|kimi|trae|pi|iflow|
+#              forge|generic
 # Leave empty to update all existing agent files
 
 set -e
@@ -380,7 +384,10 @@ create_new_agent_file() {
     if [[ "$target_file" == *.mdc ]]; then
         local frontmatter_file
         frontmatter_file=$(mktemp) || return 1
-        printf '%s\n' "---" "description: Project Development Guidelines" "globs: [\"**/*\"]" "alwaysApply: true" "---" "" >"$frontmatter_file"
+        printf '%s\n' \
+            "---" "description: Project Development Guidelines" \
+            "globs: [\"**/*\"]" "alwaysApply: true" "---" "" \
+            >"$frontmatter_file"
         cat "$temp_file" >>"$frontmatter_file"
         mv "$frontmatter_file" "$temp_file"
     fi
@@ -412,7 +419,9 @@ update_existing_agent_file() {
         new_tech_entries+=("- $tech_stack ($CURRENT_BRANCH)")
     fi
 
-    if [[ -n "$NEW_DB" ]] && [[ "$NEW_DB" != "N/A" ]] && [[ "$NEW_DB" != "NEEDS CLARIFICATION" ]] && ! grep -q "$NEW_DB" "$target_file"; then
+    if [[ -n "$NEW_DB" ]] && [[ "$NEW_DB" != "N/A" ]] \
+        && [[ "$NEW_DB" != "NEEDS CLARIFICATION" ]] \
+        && ! grep -q "$NEW_DB" "$target_file"; then
         new_tech_entries+=("- $NEW_DB ($CURRENT_BRANCH)")
     fi
 
@@ -524,7 +533,10 @@ update_existing_agent_file() {
                 rm -f "$temp_file"
                 return 1
             }
-            printf '%s\n' "---" "description: Project Development Guidelines" "globs: [\"**/*\"]" "alwaysApply: true" "---" "" >"$frontmatter_file"
+            printf '%s\n' \
+            "---" "description: Project Development Guidelines" \
+            "globs: [\"**/*\"]" "alwaysApply: true" "---" "" \
+            >"$frontmatter_file"
             cat "$temp_file" >>"$frontmatter_file"
             mv "$frontmatter_file" "$temp_file"
         fi
@@ -704,7 +716,9 @@ update_specific_agent() {
         ;;
     *)
         log_error "Unknown agent type '$agent_type'"
-        log_error "Expected: claude|gemini|copilot|cursor-agent|qwen|opencode|codex|windsurf|junie|kilocode|auggie|roo|codebuddy|amp|shai|tabnine|kiro-cli|agy|bob|vibe|qodercli|kimi|trae|pi|iflow|forge|generic"
+        local expected="claude|gemini|copilot|cursor-agent|qwen|opencode|codex|windsurf|junie|kilocode|auggie"
+        expected+="|roo|codebuddy|amp|shai|tabnine|kiro-cli|agy|bob|vibe|qodercli|kimi|trae|pi|iflow|forge|generic"
+        log_error "Expected: $expected"
         exit 1
         ;;
     esac
@@ -789,7 +803,9 @@ print_summary() {
     fi
 
     echo
-    log_info "Usage: $0 [claude|gemini|copilot|cursor-agent|qwen|opencode|codex|windsurf|junie|kilocode|auggie|roo|codebuddy|amp|shai|tabnine|kiro-cli|agy|bob|vibe|qodercli|kimi|trae|pi|iflow|forge|generic]"
+    local agents="claude|gemini|copilot|cursor-agent|qwen|opencode|codex|windsurf|junie|kilocode"
+    agents+="|auggie|roo|codebuddy|amp|shai|tabnine|kiro-cli|agy|bob|vibe|qodercli|kimi|trae|pi|iflow|forge|generic"
+    log_info "Usage: $0 [$agents]"
 }
 
 #==============================================================================

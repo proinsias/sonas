@@ -77,11 +77,12 @@ struct AQIContractTests {
 
 private struct AQITestResponse: Decodable {
     let current: AQICurrent
-    struct AQICurrent: Decodable {
-        let usAQI: Int?
+}
 
-        enum CodingKeys: String, CodingKey {
-            case usAQI = "us_aqi"
-        }
+private struct AQICurrent: Decodable {
+    let usAQI: Int?
+
+    enum CodingKeys: String, CodingKey {
+        case usAQI = "us_aqi"
     }
 }

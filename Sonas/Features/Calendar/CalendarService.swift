@@ -59,7 +59,9 @@ final class GoogleCalendarClient: Sendable {
         timeMin: Date,
         timeMax: Date,
     ) async throws -> [CalendarEvent] {
-        var components = URLComponents(string: Endpoint.events)!
+        guard var components = URLComponents(string: Endpoint.events) else {
+            throw CalendarServiceError.fetchFailed(NSError(domain: "GoogleCalendar", code: -1))
+        }
         let formatter = ISO8601DateFormatter()
         formatter.formatOptions = [.withInternetDateTime]
         components.queryItems = [

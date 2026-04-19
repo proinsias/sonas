@@ -53,7 +53,8 @@ while [ $i -le $# ]; do
         USE_TIMESTAMP=true
         ;;
     --help | -h)
-        echo "Usage: $0 [--json] [--dry-run] [--allow-existing-branch] [--short-name <name>] [--number N] [--timestamp] <feature_description>"
+        echo "Usage: $0 [--json] [--dry-run] [--allow-existing-branch]" \
+            "[--short-name <name>] [--number N] [--timestamp] <feature_description>"
         echo ""
         echo "Options:"
         echo "  --json              Output in JSON format"
@@ -79,7 +80,8 @@ done
 
 FEATURE_DESCRIPTION="${ARGS[*]}"
 if [ -z "$FEATURE_DESCRIPTION" ]; then
-    echo "Usage: $0 [--json] [--dry-run] [--allow-existing-branch] [--short-name <name>] [--number N] [--timestamp] <feature_description>" >&2
+    echo "Usage: $0 [--json] [--dry-run] [--allow-existing-branch] [--short-name <name>]" \
+    "[--number N] [--timestamp] <feature_description>" >&2
     exit 1
 fi
 
@@ -141,7 +143,8 @@ get_highest_from_remote_refs() {
 
     for remote in $(git remote 2>/dev/null); do
         local remote_highest
-        remote_highest=$(GIT_TERMINAL_PROMPT=0 git ls-remote --heads "$remote" 2>/dev/null | sed 's|.*refs/heads/||' | _extract_highest_number)
+        remote_highest=$(GIT_TERMINAL_PROMPT=0 git ls-remote --heads "$remote" 2>/dev/null | \
+            sed 's|.*refs/heads/||' | _extract_highest_number)
         if [ "$remote_highest" -gt "$highest" ]; then
             highest=$remote_highest
         fi
@@ -217,7 +220,9 @@ generate_branch_name() {
     local description="$1"
 
     # Common stop words to filter out
-    local stop_words="^(i|a|an|the|to|for|of|in|on|at|by|with|from|is|are|was|were|be|been|being|have|has|had|do|does|did|will|would|should|could|can|may|might|must|shall|this|that|these|those|my|your|our|their|want|need|add|get|set)$"
+    local stop_words="^(i|a|an|the|to|for|of|in|on|at|by|with|from|is|are|was|were|be|been|being"
+    stop_words+="|have|has|had|do|does|did|will|would|should|could|can|may|might|must|shall"
+    stop_words+="|this|that|these|those|my|your|our|their|want|need|add|get|set)$"
 
     # Convert to lowercase and split into words
     local clean_name
@@ -344,14 +349,17 @@ if [ "$DRY_RUN" != true ]; then
                         :
                     # Otherwise switch to the existing branch instead of failing.
                     elif ! git checkout "$BRANCH_NAME" 2>/dev/null; then
-                        >&2 echo "Error: Failed to switch to existing branch '$BRANCH_NAME'. Please resolve any local changes or conflicts and try again."
+                        >&2 echo "Error: Failed to switch to existing branch '$BRANCH_NAME'. " \
+                        "Please resolve any local changes or conflicts and try again."
                         exit 1
                     fi
                 elif [ "$USE_TIMESTAMP" = true ]; then
-                    >&2 echo "Error: Branch '$BRANCH_NAME' already exists. Rerun to get a new timestamp or use a different --short-name."
+                    >&2 echo "Error: Branch '$BRANCH_NAME' already exists. Rerun to get a new timestamp " \
+                    "or use a different --short-name."
                     exit 1
                 else
-                    >&2 echo "Error: Branch '$BRANCH_NAME' already exists. Please use a different feature name or specify a different number with --number."
+                    >&2 echo "Error: Branch '$BRANCH_NAME' already exists. Please use a different feature " \
+                    "name or specify a different number with --number."
                     exit 1
                 fi
             else
@@ -401,9 +409,15 @@ if $JSON_MODE; then
         fi
     else
         if [ "$DRY_RUN" = true ]; then
-            printf '{"BRANCH_NAME":"%s","SPEC_FILE":"%s","FEATURE_NUM":"%s","DRY_RUN":true}\n' "$(json_escape "$BRANCH_NAME")" "$(json_escape "$SPEC_FILE")" "$(json_escape "$FEATURE_NUM")"
+            printf '{"BRANCH_NAME":"%s","SPEC_FILE":"%s","FEATURE_NUM":"%s","DRY_RUN":true}\n' \
+                "$(json_escape "$BRANCH_NAME")" \
+                "$(json_escape "$SPEC_FILE")" \
+                "$(json_escape "$FEATURE_NUM")"
         else
-            printf '{"BRANCH_NAME":"%s","SPEC_FILE":"%s","FEATURE_NUM":"%s"}\n' "$(json_escape "$BRANCH_NAME")" "$(json_escape "$SPEC_FILE")" "$(json_escape "$FEATURE_NUM")"
+            printf '{"BRANCH_NAME":"%s","SPEC_FILE":"%s","FEATURE_NUM":"%s"}\n' \
+                "$(json_escape "$BRANCH_NAME")" \
+                "$(json_escape "$SPEC_FILE")" \
+                "$(json_escape "$FEATURE_NUM")"
         fi
     fi
 else
