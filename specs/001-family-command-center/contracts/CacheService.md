@@ -1,7 +1,7 @@
 # Contract: CacheService
 
-**Purpose**: SwiftData-backed on-device cache for all panel data; surfaced with
-staleness timestamps; cleared per eviction policy defined in research.md.
+**Purpose**: SwiftData-backed on-device cache for all panel data; surfaced with staleness timestamps; cleared per
+eviction policy defined in research.md.
 
 ```swift
 protocol CacheServiceProtocol {
@@ -44,13 +44,10 @@ protocol CacheServiceProtocol {
 
 **Implementation notes**:
 
-- `ModelContainer` initialised in `SonasApp` and injected via SwiftUI
-  environment.
+- `ModelContainer` initialised in `SonasApp` and injected via SwiftUI environment.
 - All `@Model` classes stored in the same `ModelContainer`.
-- `evictStaleEntries()` is synchronous; called on `ScenePhase.active`
-  transition.
-- Cache failures are non-fatal: logged at DEBUG level; UI falls back to empty
-  state.
+- `evictStaleEntries()` is synchronous; called on `ScenePhase.active` transition.
+- Cache failures are non-fatal: logged at DEBUG level; UI falls back to empty state.
 
 **Contract test**:
 

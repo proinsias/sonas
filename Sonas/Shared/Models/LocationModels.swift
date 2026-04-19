@@ -1,10 +1,10 @@
-import Foundation
 import CoreLocation
+import Foundation
 
 // MARK: - FamilyMember
 
 /// A family member whose location is shared via the CloudKit relay.
-struct FamilyMember: Identifiable, Equatable, Sendable {
+struct FamilyMember: Identifiable, Equatable {
     /// Stable CloudKit record name
     let id: String
     /// Display name (e.g., "Alice")
@@ -22,7 +22,7 @@ struct FamilyMember: Identifiable, Equatable, Sendable {
 // MARK: - LocationSnapshot
 
 /// A single location sample for one family member at a point in time.
-struct LocationSnapshot: Equatable, Sendable {
+struct LocationSnapshot: Equatable {
     let coordinate: CLLocationCoordinate2D
     /// Human-readable place name produced by `CLGeocoder` reverse-geocoding
     let placeName: String
@@ -30,28 +30,30 @@ struct LocationSnapshot: Equatable, Sendable {
 
     /// Staleness thresholds (per research.md §Decision 9 eviction policy)
     enum Staleness {
-        case fresh        // < 5 minutes
-        case stale        // 5 – 30 minutes
-        case veryStale    // > 30 minutes
+        case fresh // < 5 minutes
+        case stale // 5 – 30 minutes
+        case veryStale // > 30 minutes
     }
 
-    var isStale: Bool { staleness != .fresh }
+    var isStale: Bool {
+        staleness != .fresh
+    }
 
     var staleness: Staleness {
         let age = Date.now.timeIntervalSince(recordedAt)
         switch age {
-        case ..<300:    return .fresh
-        case ..<1800:   return .stale
-        default:        return .veryStale
+        case ..<300: return .fresh
+        case ..<1800: return .stale
+        default: return .veryStale
         }
     }
 
     /// Human-readable age label for "Location unavailable" / stale banners
     var ageLabel: String {
         switch staleness {
-        case .fresh:     return placeName
-        case .stale:     return "Last seen \(recordedAt.formatted(.relative(presentation: .named)))"
-        case .veryStale: return "Location unavailable"
+        case .fresh: placeName
+        case .stale: "Last seen \(recordedAt.formatted(.relative(presentation: .named)))"
+        case .veryStale: "Location unavailable"
         }
     }
 }

@@ -1,16 +1,16 @@
 import Foundation
 
 // MARK: - CalendarServiceMock (T029)
+
 // Returns fixture CalendarEvent data.
 // Active when USE_MOCK_CALENDAR=1 environment variable is set.
 
 final class CalendarServiceMock: CalendarServiceProtocol, @unchecked Sendable {
-
     private(set) var isGoogleConnected: Bool = true
     private(set) var needsGoogleReconnect: Bool = false
 
-    func fetchUpcomingEvents(hours: Int = 48) async throws -> [CalendarEvent] {
-        return Self.fixtures
+    func fetchUpcomingEvents(hours _: Int = 48) async throws -> [CalendarEvent] {
+        Self.fixtures
     }
 
     func connectGoogleAccount() async throws {
@@ -34,7 +34,7 @@ final class CalendarServiceMock: CalendarServiceProtocol, @unchecked Sendable {
             calendarName: "Family",
             source: .iCloud,
             attendees: ["Alice", "Bob", "Carol"],
-            calendarColorHex: "#4A90E2"
+            calendarColorHex: "#4A90E2",
         ),
         CalendarEvent(
             id: "mock-event-2",
@@ -45,7 +45,7 @@ final class CalendarServiceMock: CalendarServiceProtocol, @unchecked Sendable {
             calendarName: "Personal",
             source: .google,
             attendees: [],
-            calendarColorHex: "#34A853"
+            calendarColorHex: "#34A853",
         ),
         CalendarEvent(
             id: "mock-event-3",
@@ -57,7 +57,7 @@ final class CalendarServiceMock: CalendarServiceProtocol, @unchecked Sendable {
             calendarName: "Family",
             source: .iCloud,
             attendees: ["Alice", "Bob"],
-            calendarColorHex: "#4A90E2"
-        )
+            calendarColorHex: "#4A90E2",
+        ),
     ]
 }

@@ -1,16 +1,17 @@
-import Testing
-import Foundation
 import CoreLocation
+import Foundation
 @testable import Sonas
+import Testing
 
 // MARK: - WeatherIntegrationTests (T083)
+
 // Requires WeatherKit entitlement; run in SonasIntegrationTests scheme.
 
 @Suite("Weather Integration Tests", .tags(.integration))
 struct WeatherIntegrationTests {
-
-    @Test("given hard-coded Dublin coordinate when fetchWeather called then snapshot is non-nil with 7-day forecast")
-    func given_dublinCoordinate_when_fetchWeather_then_snapshotNonNilWith7DayForecast() async throws {
+    @Test
+    func `given hard-coded Dublin coordinate when fetchWeather called then snapshot is non-nil with 7-day forecast`(
+    ) async throws {
         let service = WeatherService()
         let dublinCoord = CLLocationCoordinate2D(latitude: 53.3498, longitude: -6.2603)
 

@@ -1,12 +1,12 @@
-import SwiftUI
 import CoreLocation
+import SwiftUI
 
 // MARK: - SettingsView (T093 — minimal shell; expanded in T092)
+
 // T093 scope: home location search + coordinate picker + Google Calendar connect/disconnect.
 // T092 (Phase 9) adds: Todoist token, Spotify, photo album picker, temperature unit toggle.
 
 struct SettingsView: View {
-
     @State private var config = AppConfiguration.shared
     @State private var locationSearchText: String = ""
     @State private var isSearchingLocation: Bool = false

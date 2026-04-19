@@ -6,14 +6,15 @@ import Observation
 @Observable
 @MainActor
 final class EventsViewModel {
-
     // MARK: Published state
+
     private(set) var events: [CalendarEvent] = []
     private(set) var isLoading: Bool = true
     private(set) var error: PanelError?
     private(set) var needsGoogleReconnect: Bool = false
 
     // MARK: Dependencies
+
     private let service: any CalendarServiceProtocol
 
     init(service: any CalendarServiceProtocol) {
@@ -34,7 +35,7 @@ final class EventsViewModel {
             self.error = PanelError(
                 title: "Calendar Unavailable",
                 message: error.localizedDescription,
-                isRetryable: true
+                isRetryable: true,
             )
         }
         isLoading = false
@@ -53,7 +54,7 @@ final class EventsViewModel {
             self.error = PanelError(
                 title: "Google Connection Failed",
                 message: error.localizedDescription,
-                isRetryable: true
+                isRetryable: true,
             )
         }
     }

@@ -25,7 +25,7 @@ protocol CacheServiceProtocol: Sendable {
     func saveJamSession(_ session: JamSession?) async throws
     func loadJamSession() async -> JamSession?
 
-    // Maintenance
+    /// Maintenance
     func evictStaleEntries() async throws
 }
 
@@ -35,7 +35,6 @@ protocol CacheServiceProtocol: Sendable {
 /// When SwiftData is unavailable the service runs as a no-op cache so the app still launches.
 @MainActor
 final class CacheService: CacheServiceProtocol {
-
     private let modelContainer: ModelContainer?
 
     static var shared: CacheService = {
@@ -44,10 +43,10 @@ final class CacheService: CacheServiceProtocol {
             // Without this, CoreData logs several pages of filesystem diagnostics before creating
             // the directory itself; the store still opens successfully but the noise is misleading.
             if let appSupport = FileManager.default.urls(
-                for: .applicationSupportDirectory, in: .userDomainMask
+                for: .applicationSupportDirectory, in: .userDomainMask,
             ).first {
                 try? FileManager.default.createDirectory(
-                    at: appSupport, withIntermediateDirectories: true
+                    at: appSupport, withIntermediateDirectories: true,
                 )
             }
             let config = ModelConfiguration(cloudKitDatabase: .none)
@@ -57,7 +56,7 @@ final class CacheService: CacheServiceProtocol {
                 CachedCalendarEvent.self,
                 CachedTask.self,
                 CachedJamSession.self,
-                configurations: config
+                configurations: config,
             )
             return CacheService(container: container)
         } catch {
@@ -67,15 +66,15 @@ final class CacheService: CacheServiceProtocol {
     }()
 
     init(container: ModelContainer?) {
-        self.modelContainer = container
+        modelContainer = container
     }
 
     // MARK: - TTL constants (research.md §Decision 9)
 
     private enum TTL {
-        static let weather: TimeInterval   = 3600       // 1 hour
-        static let location: TimeInterval  = 300        // 5 minutes
-        static let task: TimeInterval      = 86400      // 24 hours
+        static let weather: TimeInterval = 3600 // 1 hour
+        static let location: TimeInterval = 300 // 5 minutes
+        static let task: TimeInterval = 86400 // 24 hours
         // Calendar events: evicted if past their endDate (handled in evictStaleEntries)
     }
 
@@ -102,7 +101,7 @@ final class CacheService: CacheServiceProtocol {
             sunsetTime: snapshot.sunsetTime,
             moonPhaseRaw: snapshot.moonPhase.rawValue,
             forecastJSON: forecastData,
-            lastUpdated: snapshot.fetchedAt
+            lastUpdated: snapshot.fetchedAt,
         )
         context.insert(cached)
         try context.save()
@@ -144,7 +143,7 @@ final class CacheService: CacheServiceProtocol {
                 longitude: loc.coordinate.longitude,
                 placeName: loc.placeName,
                 recordedAt: loc.recordedAt,
-                lastUpdated: .now
+                lastUpdated: .now,
             )
             context.insert(cached)
         }
@@ -178,7 +177,7 @@ final class CacheService: CacheServiceProtocol {
                 sourceRaw: event.source.rawValue,
                 attendeesJSON: attendeesData,
                 calendarColorHex: event.calendarColorHex,
-                lastUpdated: .now
+                lastUpdated: .now,
             )
             context.insert(cached)
         }
@@ -213,7 +212,7 @@ final class CacheService: CacheServiceProtocol {
                 dueString: task.due?.string,
                 isRecurring: task.due?.isRecurring ?? false,
                 orderIndex: task.orderIndex,
-                lastUpdated: .now
+                lastUpdated: .now,
             )
             context.insert(cached)
         }
@@ -241,7 +240,7 @@ final class CacheService: CacheServiceProtocol {
                 joinURLString: joinURL,
                 statusRaw: session.status.rawValue,
                 startedAt: session.startedAt,
-                lastUpdated: .now
+                lastUpdated: .now,
             )
             context.insert(cached)
         }
@@ -264,8 +263,10 @@ final class CacheService: CacheServiceProtocol {
         let context = modelContainer.mainContext
 
         // Weather: evict if > 1 hour old
-        if let weather = try? context.fetch(FetchDescriptor<CachedWeatherSnapshot>()).first,
-           Date.now.timeIntervalSince(weather.lastUpdated) > TTL.weather {
+        if let weather = try? context.fetch(
+            FetchDescriptor<CachedWeatherSnapshot>(),
+        ).first,
+            Date.now.timeIntervalSince(weather.lastUpdated) > TTL.weather {
             context.delete(weather)
         }
 
@@ -323,7 +324,7 @@ private struct DayForecastCodable: Codable {
             id: id, date: date,
             highTemperature: highTemperature, lowTemperature: lowTemperature,
             conditionSymbolName: conditionSymbolName, conditionDescription: conditionDescription,
-            precipitationChance: precipitationChance
+            precipitationChance: precipitationChance,
         )
     }
 }
@@ -343,7 +344,7 @@ private extension CachedWeatherSnapshot {
             aiqCategory: airQualityIndex.map { AQICategory(usAQI: $0) },
             sunriseTime: sunriseTime, sunsetTime: sunsetTime,
             moonPhase: MoonPhase(rawValue: moonPhaseRaw) ?? .newMoon,
-            fetchedAt: lastUpdated
+            fetchedAt: lastUpdated,
         )
     }
 }
@@ -356,8 +357,8 @@ private extension CachedLocationSnapshot {
             location: LocationSnapshot(
                 coordinate: .init(latitude: latitude, longitude: longitude),
                 placeName: placeName,
-                recordedAt: recordedAt
-            )
+                recordedAt: recordedAt,
+            ),
         )
     }
 }
@@ -370,7 +371,7 @@ private extension CachedCalendarEvent {
             startDate: startDate, endDate: endDate, isAllDay: isAllDay,
             calendarName: calendarName,
             source: CalendarSource(rawValue: sourceRaw) ?? .iCloud,
-            attendees: attendees, calendarColorHex: calendarColorHex
+            attendees: attendees, calendarColorHex: calendarColorHex,
         )
     }
 }
@@ -386,7 +387,7 @@ private extension CachedTask {
             due: due,
             priority: TaskPriority(rawValue: priorityRaw) ?? .normal,
             isCompleted: isCompleted, isCompleting: false,
-            createdAt: nil, orderIndex: orderIndex
+            createdAt: nil, orderIndex: orderIndex,
         )
     }
 }
@@ -397,7 +398,7 @@ private extension CachedJamSession {
         return JamSession(
             id: sessionID, joinURL: url,
             status: JamStatus(rawValue: statusRaw) ?? .ended,
-            startedAt: startedAt
+            startedAt: startedAt,
         )
     }
 }

@@ -1,8 +1,6 @@
 ---
 # This extends the default conf by adjusting some options.
-
 extends: default
-
 rules:
   comments:
     min-spaces-from-content: 1 # Match prettier's formatting style.
@@ -12,4 +10,4 @@ rules:
     max: 120
   # level: warning # don't fail if a line is longer.
   truthy:
-    allowed-values: ["true", "false", "on"]
+    allowed-values: ['true', 'false', 'on', 'YES']

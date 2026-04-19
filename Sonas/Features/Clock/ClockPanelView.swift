@@ -1,10 +1,10 @@
 import SwiftUI
 
 // MARK: - ClockPanelView (T035)
+
 // Live date/time display using TimelineView, updating every second.
 
 struct ClockPanelView: View {
-
     var body: some View {
         PanelView(title: "Clock", icon: Icon.clock) {
             TimelineView(.everyMinute) { context in

@@ -1,13 +1,13 @@
 import SwiftUI
 
 // MARK: - DashboardView (T041 + T093 toolbar button)
+
 // US1: single-column iPhone layout hosting ClockPanelView, LocationPanelView, EventsPanelView.
 // Additional panels (Weather T052, Tasks T060, Photos T068, Jam T076) are integrated in their
 // respective tasks. DashboardView changes MUST be serialised to avoid merge conflicts
 // (see tasks.md Notes — T041, T052, T060, T068, T076, T077, T093).
 
 struct DashboardView: View {
-
     @State private var viewModel = DashboardViewModel.makeDefault()
     @State private var weatherVM = WeatherViewModel.makeDefault()
     @State private var tasksVM = TasksViewModel.makeDefault()
@@ -33,7 +33,7 @@ struct DashboardView: View {
                 }
                 .sheet(isPresented: Binding(
                     get: { viewModel.isShowingSettings },
-                    set: { if !$0 { viewModel.hideSettings() } }
+                    set: { if !$0 { viewModel.hideSettings() } },
                 )) {
                     SettingsView()
                 }
@@ -66,7 +66,7 @@ struct DashboardView: View {
         ScrollView {
             LazyVGrid(
                 columns: [.init(.flexible()), .init(.flexible()), .init(.flexible())],
-                spacing: 16
+                spacing: 16,
             ) {
                 ClockPanelView()
                 LocationPanelView(viewModel: viewModel.locationVM).accessibilityIdentifier("LocationPanel")
@@ -86,7 +86,7 @@ struct DashboardView: View {
         ScrollView {
             LazyVGrid(
                 columns: [.init(.flexible()), .init(.flexible())],
-                spacing: 16
+                spacing: 16,
             ) {
                 ClockPanelView()
                 LocationPanelView(viewModel: viewModel.locationVM)

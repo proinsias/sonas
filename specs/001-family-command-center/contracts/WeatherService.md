@@ -1,7 +1,7 @@
 # Contract: WeatherService
 
-**Purpose**: Fetch current weather snapshot (WeatherKit) and AQI (Open-Meteo)
-for a given coordinate; provide a 7-day forecast.
+**Purpose**: Fetch current weather snapshot (WeatherKit) and AQI (Open-Meteo) for a given coordinate; provide a 7-day
+forecast.
 
 ```swift
 protocol WeatherServiceProtocol {
@@ -17,10 +17,9 @@ protocol WeatherServiceProtocol {
 **WeatherKit attributes used**:
 
 - `WeatherService.weather(for:including:)` with `.current` and `.daily` queries
-- `CurrentWeather`: `.temperature`, `.feelsLike`, `.condition`, `.humidity`,
-  `.wind`, `.pressure`, `.pressureTrend`
-- `DayWeather`: `.sun.sunrise`, `.sun.sunset`, `.moon.phase`,
-  `.highTemperature`, `.lowTemperature`, `.condition`, `.precipitationChance`
+- `CurrentWeather`: `.temperature`, `.feelsLike`, `.condition`, `.humidity`, `.wind`, `.pressure`, `.pressureTrend`
+- `DayWeather`: `.sun.sunrise`, `.sun.sunset`, `.moon.phase`, `.highTemperature`, `.lowTemperature`, `.condition`,
+  `.precipitationChance`
 
 **Open-Meteo AQI endpoint**:
 
@@ -36,13 +35,11 @@ Response field used: `current.us_aqi` (integer 0–500).
 
 **Error cases**:
 
-- `WeatherServiceError.weatherKitUnavailable` — entitlement missing or region
-  unsupported; returns cached snapshot with `airQualityIndex = nil`
-- `WeatherServiceError.aqiUnavailable` — Open-Meteo unreachable;
-  `WeatherSnapshot` returned with `airQualityIndex = nil` (degraded, not a total
-  failure)
-- `WeatherServiceError.locationNotConfigured` — home coordinate not set in
-  `AppConfiguration`
+- `WeatherServiceError.weatherKitUnavailable` — entitlement missing or region unsupported; returns cached snapshot with
+  `airQualityIndex = nil`
+- `WeatherServiceError.aqiUnavailable` — Open-Meteo unreachable; `WeatherSnapshot` returned with `airQualityIndex = nil`
+  (degraded, not a total failure)
+- `WeatherServiceError.locationNotConfigured` — home coordinate not set in `AppConfiguration`
 
 **Contract test fixtures** (`WeatherContractTests.swift`):
 

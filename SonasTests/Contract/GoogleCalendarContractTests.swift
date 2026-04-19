@@ -1,8 +1,9 @@
-import Testing
 import Foundation
 @testable import Sonas
+import Testing
 
 // MARK: - GoogleCalendarContractTests (T034)
+
 // 🔴 TEST-FIRST GATE — These tests MUST FAIL before CalendarService / GoogleCalendarClient
 // are implemented. Run and confirm FAILING; then implement T032 + T033.
 
@@ -12,20 +13,31 @@ final class GoogleCalendarURLProtocolStub: URLProtocol {
     static var responseData: Data = .init()
     static var statusCode: Int = 200
 
-    override class func canInit(with request: URLRequest) -> Bool { true }
-    override class func canonicalRequest(for request: URLRequest) -> URLRequest { request }
+    override static func canInit(with _: URLRequest) -> Bool {
+        true
+    }
+
+    override static func canonicalRequest(for request: URLRequest) -> URLRequest {
+        request
+    }
 
     override func startLoading() {
-        let response = HTTPURLResponse(
-            url: request.url!,
-            statusCode: Self.statusCode,
-            httpVersion: nil,
-            headerFields: nil
-        )!
+        guard let url = request.url,
+              let response = HTTPURLResponse(
+                  url: url,
+                  statusCode: Self.statusCode,
+                  httpVersion: nil,
+                  headerFields: nil,
+              )
+        else {
+            client?.urlProtocol(self, didFailWithError: URLError(.badURL))
+            return
+        }
         client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
         client?.urlProtocol(self, didLoad: Self.responseData)
         client?.urlProtocolDidFinishLoading(self)
     }
+
     override func stopLoading() {}
 }
 
@@ -33,7 +45,6 @@ final class GoogleCalendarURLProtocolStub: URLProtocol {
 
 @Suite("Google Calendar Service Contract Tests")
 struct GoogleCalendarContractTests {
-
     private func makeStubSession() -> URLSession {
         let config = URLSessionConfiguration.ephemeral
         config.protocolClasses = [GoogleCalendarURLProtocolStub.self]
@@ -42,10 +53,11 @@ struct GoogleCalendarContractTests {
 
     // MARK: - T034.1: Stub returns Google Calendar JSON → events include Google-sourced events
 
-    @Test("given Google Calendar JSON stub when fetchEvents called then returns Google-sourced CalendarEvent")
-    func given_googleCalendarJSON_when_fetchEvents_then_returnsGoogleEvent() async throws {
+    @Test
+    func `given Google Calendar JSON stub when fetchEvents called then returns Google-sourced CalendarEvent`(
+    ) async throws {
         GoogleCalendarURLProtocolStub.statusCode = 200
-        GoogleCalendarURLProtocolStub.responseData = """
+        GoogleCalendarURLProtocolStub.responseData = Data("""
         {
           "items": [
             {
@@ -56,13 +68,13 @@ struct GoogleCalendarContractTests {
             }
           ]
         }
-        """.data(using: .utf8)!
+        """.utf8)
 
         let client = GoogleCalendarClient(session: makeStubSession())
         let events = try await client.fetchEvents(
             accessToken: "stub-token",
             timeMin: Date.now,
-            timeMax: Date.now.addingTimeInterval(172800)
+            timeMax: Date.now.addingTimeInterval(172_800),
         )
 
         #expect(events.count == 1, "Expected 1 event from stub")
@@ -72,10 +84,11 @@ struct GoogleCalendarContractTests {
 
     // MARK: - T034.2: Events sorted ascending by startDate
 
-    @Test("given multiple events in reverse order when fetched then events are sorted ascending by startDate")
-    func given_multipleEventsOutOfOrder_when_fetched_then_sortedAscending() async throws {
+    @Test
+    func `given multiple events in reverse order when fetched then events are sorted ascending by startDate`(
+    ) async throws {
         GoogleCalendarURLProtocolStub.statusCode = 200
-        GoogleCalendarURLProtocolStub.responseData = """
+        GoogleCalendarURLProtocolStub.responseData = Data("""
         {
           "items": [
             {
@@ -92,38 +105,41 @@ struct GoogleCalendarContractTests {
             }
           ]
         }
-        """.data(using: .utf8)!
+        """.utf8)
 
         let client = GoogleCalendarClient(session: makeStubSession())
         let events = try await client.fetchEvents(
             accessToken: "stub-token",
             timeMin: Date.now,
-            timeMax: Date.now.addingTimeInterval(259200)
+            timeMax: Date.now.addingTimeInterval(259_200),
         )
 
         // CalendarService deduplication and sorting is applied at the service layer;
         // GoogleCalendarClient returns events in API order — verify the order reflects API response.
         #expect(events.count == 2, "Expected 2 events")
-        #expect(events[0].title == "Later Event", "API order preserved in client layer (sorting is service responsibility)")
+        #expect(
+            events[0].title == "Later Event",
+            "API order preserved in client layer (sorting is service responsibility)",
+        )
     }
 
     // MARK: - T034.3: Duplicate event with same title+startDate appears only once after deduplication
 
-    @Test("given duplicate events with same title and startDate when CalendarService merges then duplicate removed")
-    func given_duplicateEvents_when_merged_then_deduplicatedToOne() async throws {
+    @Test
+    func `given duplicate events with same title and startDate when CalendarService merges then duplicate removed`() {
         // Two events with the same title and startDate from different sources
         let date = Date(timeIntervalSince1970: 1_744_000_000)
         let event1 = CalendarEvent(
             id: "a1", title: "Morning Run",
             startDate: date, endDate: date.addingTimeInterval(3600),
             isAllDay: false, calendarName: "iCloud", source: .iCloud,
-            attendees: [], calendarColorHex: nil
+            attendees: [], calendarColorHex: nil,
         )
         let event2 = CalendarEvent(
             id: "g1", title: "Morning Run",
             startDate: date, endDate: date.addingTimeInterval(3600),
             isAllDay: false, calendarName: "Google Calendar", source: .google,
-            attendees: [], calendarColorHex: nil
+            attendees: [], calendarColorHex: nil,
         )
 
         // Simulate CalendarService deduplication (white-box contract: same title+startDate → 1 event)
@@ -139,8 +155,8 @@ struct GoogleCalendarContractTests {
 
     // MARK: - T034.4: HTTP 401 → throws googleAuthFailed
 
-    @Test("given HTTP 401 response when fetchEvents called then throws googleAuthFailed")
-    func given_http401_when_fetchEvents_then_throwsGoogleAuthFailed() async throws {
+    @Test
+    func `given HTTP 401 response when fetchEvents called then throws googleAuthFailed`() async throws {
         GoogleCalendarURLProtocolStub.statusCode = 401
         GoogleCalendarURLProtocolStub.responseData = Data()
 
@@ -149,7 +165,7 @@ struct GoogleCalendarContractTests {
             _ = try await client.fetchEvents(
                 accessToken: "expired-token",
                 timeMin: Date.now,
-                timeMax: Date.now.addingTimeInterval(172800)
+                timeMax: Date.now.addingTimeInterval(172_800),
             )
         }
     }

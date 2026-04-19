@@ -1,7 +1,6 @@
 # Contract: PhotoService
 
-**Purpose**: Access the designated iCloud Shared Album via PhotoKit; provide
-photo metadata and on-demand image loading.
+**Purpose**: Access the designated iCloud Shared Album via PhotoKit; provide photo metadata and on-demand image loading.
 
 ```swift
 protocol PhotoServiceProtocol {
@@ -51,21 +50,16 @@ PHImageManager.default().requestImage(
 
 **Change observation**:
 
-- `PHPhotoLibraryChangeObserver.photoLibraryDidChange(_:)` called when album
-  content changes.
-- On change: re-fetch photo list; removed photos disappear gracefully on next
-  carousel cycle.
+- `PHPhotoLibraryChangeObserver.photoLibraryDidChange(_:)` called when album content changes.
+- On change: re-fetch photo list; removed photos disappear gracefully on next carousel cycle.
 
 **Error cases**:
 
-- `PhotoServiceError.permissionDenied` — photo library access denied; panel
-  shows "Enable photo access in Settings" prompt.
-- `PhotoServiceError.noAlbumSelected` — no shared album configured; panel shows
-  "Select a shared album" prompt.
-- `PhotoServiceError.albumEmpty` — selected album has no photos; panel shows
-  "Add photos to your shared album" prompt.
-- Image load failure: returns a placeholder `Image` (SF Symbol `photo`); does
-  not throw.
+- `PhotoServiceError.permissionDenied` — photo library access denied; panel shows "Enable photo access in Settings"
+  prompt.
+- `PhotoServiceError.noAlbumSelected` — no shared album configured; panel shows "Select a shared album" prompt.
+- `PhotoServiceError.albumEmpty` — selected album has no photos; panel shows "Add photos to your shared album" prompt.
+- Image load failure: returns a placeholder `Image` (SF Symbol `photo`); does not throw.
 
 **Contract test fixtures** (`PhotoContractTests.swift`):
 

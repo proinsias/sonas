@@ -1,16 +1,16 @@
 import SwiftUI
 
 // MARK: - TVDashboardView (T079)
+
 // Lean-back full-screen layout for Apple TV.
 // Self-contained: uses only Sonas/Platform/TV + Sonas/Shared (excluding Mocks, which the
 // TV target omits). Fixture data is inlined here rather than pulled from mock classes.
 
 struct TVDashboardView: View {
-
     var body: some View {
         LazyVGrid(
             columns: Array(repeating: .init(.flexible(), spacing: 20), count: 3),
-            spacing: 20
+            spacing: 20,
         ) {
             TVClockPanel()
             TVWeatherPanel()
@@ -44,36 +44,36 @@ private struct TVClockPanel: View {
 }
 
 // MARK: - Weather
+
 // Fixture data inlined — the TV target excludes Sonas/Shared/Mocks.
 
 private struct TVWeatherPanel: View {
-
-    // Static fixture — replaced by a real WeatherService call when the TV target
-    // gains WeatherKit entitlement support.
+    /// Static fixture — replaced by a real WeatherService call when the TV target
+    /// gains WeatherKit entitlement support.
     private static let fixture = TVWeatherFixture(
         temperature: 18.5,
         conditionDescription: "Partly Cloudy",
         conditionSymbolName: "cloud.sun.fill",
         humidity: 0.72,
-        windSpeed: 22.0
+        windSpeed: 22.0,
     )
 
     var body: some View {
         PanelView(title: "Weather", icon: "cloud.sun.fill") {
-            let w = Self.fixture
+            let weather = Self.fixture
             VStack(spacing: 12) {
-                Image(systemName: w.conditionSymbolName)
+                Image(systemName: weather.conditionSymbolName)
                     .font(.system(size: 44))
                     .foregroundStyle(Color.accent)
-                Text(String(format: "%.0f°", w.temperature))
+                Text(String(format: "%.0f°", weather.temperature))
                     .font(.system(size: 48, weight: .light, design: .rounded))
                     .foregroundStyle(Color.panelForeground)
-                Text(w.conditionDescription)
+                Text(weather.conditionDescription)
                     .font(.subheadline)
                     .foregroundStyle(Color.secondaryLabel)
                 HStack(spacing: 16) {
-                    Label(String(format: "%.0f%%", w.humidity * 100), systemImage: "humidity")
-                    Label(String(format: "%.0f km/h", w.windSpeed), systemImage: "wind")
+                    Label(String(format: "%.0f%%", weather.humidity * 100), systemImage: "humidity")
+                    Label(String(format: "%.0f km/h", weather.windSpeed), systemImage: "wind")
                 }
                 .font(.caption)
                 .foregroundStyle(Color.secondaryLabel)
@@ -95,17 +95,23 @@ private struct TVWeatherFixture {
 }
 
 // MARK: - Events
+
 // Fixture data inlined — the TV target excludes Sonas/Shared/Mocks.
 
 private struct TVEventsPanel: View {
-
     private static let fixtures: [TVEventFixture] = [
-        TVEventFixture(title: "Family Dinner",
-                       time: Calendar.current.date(byAdding: .hour, value: 3, to: .now)!),
-        TVEventFixture(title: "School Run",
-                       time: Calendar.current.date(byAdding: .hour, value: 8, to: .now)!),
-        TVEventFixture(title: "Weekend Hiking",
-                       time: Calendar.current.date(byAdding: .day, value: 1, to: .now)!)
+        TVEventFixture(
+            title: "Family Dinner",
+            time: Calendar.current.date(byAdding: .hour, value: 3, to: .now) ?? Date(),
+        ),
+        TVEventFixture(
+            title: "School Run",
+            time: Calendar.current.date(byAdding: .hour, value: 8, to: .now) ?? Date(),
+        ),
+        TVEventFixture(
+            title: "Weekend Hiking",
+            time: Calendar.current.date(byAdding: .day, value: 1, to: .now) ?? Date(),
+        )
     ]
 
     var body: some View {

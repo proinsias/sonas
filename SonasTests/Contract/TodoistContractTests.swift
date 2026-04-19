@@ -1,8 +1,9 @@
-import Testing
 import Foundation
 @testable import Sonas
+import Testing
 
 // MARK: - TodoistContractTests (T056)
+
 // 🔴 TEST-FIRST GATE — run before TodoistService (T055)
 
 final class TodoistURLProtocolStub: URLProtocol {
@@ -14,27 +15,36 @@ final class TodoistURLProtocolStub: URLProtocol {
 
     static var responses: [String: StubResponse] = [:]
 
-    override class func canInit(with request: URLRequest) -> Bool {
+    override static func canInit(with request: URLRequest) -> Bool {
         request.url?.host?.contains("todoist.com") == true
     }
-    override class func canonicalRequest(for request: URLRequest) -> URLRequest { request }
+
+    override static func canonicalRequest(for request: URLRequest) -> URLRequest {
+        request
+    }
+
     override func startLoading() {
         let path = request.url?.path ?? ""
         let stub = Self.responses[path] ?? StubResponse(data: Data(), statusCode: 404, headers: [:])
-        let response = HTTPURLResponse(
-            url: request.url!, statusCode: stub.statusCode,
-            httpVersion: nil, headerFields: stub.headers
-        )!
+        guard let url = request.url,
+              let response = HTTPURLResponse(
+                  url: url, statusCode: stub.statusCode,
+                  httpVersion: nil, headerFields: stub.headers,
+              )
+        else {
+            client?.urlProtocol(self, didFailWithError: URLError(.badURL))
+            return
+        }
         client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
         client?.urlProtocol(self, didLoad: stub.data)
         client?.urlProtocolDidFinishLoading(self)
     }
+
     override func stopLoading() {}
 }
 
 @Suite("Todoist Service Contract Tests")
 struct TodoistContractTests {
-
     private func makeService() -> TodoistService {
         let config = URLSessionConfiguration.ephemeral
         config.protocolClasses = [TodoistURLProtocolStub.self]
@@ -43,19 +53,19 @@ struct TodoistContractTests {
 
     // MARK: - T056.1: Tasks grouped by projectName
 
-    @Test("given projects and tasks stubs when fetchTasks called then tasks grouped by projectName")
-    func given_projectsAndTasksStubs_when_fetchTasks_then_groupedByProjectName() async throws {
+    @Test
+    func `given projects and tasks stubs when fetchTasks called then tasks grouped by projectName`() async throws {
         TodoistURLProtocolStub.responses["/rest/v2/projects"] = .init(
-            data: """
+            data: Data("""
             [{"id":"proj1","name":"Home"},{"id":"proj2","name":"Admin"}]
-            """.data(using: .utf8)!,
-            statusCode: 200, headers: [:]
+            """.utf8),
+            statusCode: 200, headers: [:],
         )
         TodoistURLProtocolStub.responses["/rest/v2/tasks"] = .init(
-            data: """
+            data: Data("""
             [{"id":"t1","content":"Buy milk","description":"","project_id":"proj1","priority":2,"due":null}]
-            """.data(using: .utf8)!,
-            statusCode: 200, headers: [:]
+            """.utf8),
+            statusCode: 200, headers: [:],
         )
 
         let service = makeService()
@@ -71,11 +81,11 @@ struct TodoistContractTests {
 
     // MARK: - T056.2: completeTask succeeds on 204
 
-    @Test("given close endpoint returns 204 when completeTask called then no error thrown")
-    func given_close204_when_completeTask_then_noError() async throws {
+    @Test
+    func `given close endpoint returns 204 when completeTask called then no error thrown`() async throws {
         let taskID = "task-abc"
         TodoistURLProtocolStub.responses["/rest/v2/tasks/\(taskID)/close"] = .init(
-            data: Data(), statusCode: 204, headers: [:]
+            data: Data(), statusCode: 204, headers: [:],
         )
 
         let service = makeService()
@@ -87,11 +97,12 @@ struct TodoistContractTests {
 
     // MARK: - T056.3: completeTask throws rateLimitExceeded on 429
 
-    @Test("given close endpoint returns 429 with Retry-After when completeTask called then throws rateLimitExceeded")
-    func given_close429_when_completeTask_then_throwsRateLimitExceeded() async throws {
+    @Test
+    func `given close endpoint returns 429 with Retry-After when completeTask called then throws rateLimitExceeded`(
+    ) async throws {
         let taskID = "task-xyz"
         TodoistURLProtocolStub.responses["/rest/v2/tasks/\(taskID)/close"] = .init(
-            data: Data(), statusCode: 429, headers: ["Retry-After": "60"]
+            data: Data(), statusCode: 429, headers: ["Retry-After": "60"],
         )
 
         let service = makeService()

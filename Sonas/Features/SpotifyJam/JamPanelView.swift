@@ -1,11 +1,10 @@
-import SwiftUI
 import CoreImage
 import CoreImage.CIFilterBuiltins
+import SwiftUI
 
 // MARK: - JamPanelView (T074)
 
 struct JamPanelView: View {
-
     @State var viewModel: JamViewModel
 
     var body: some View {
@@ -150,7 +149,7 @@ struct JamPanelView: View {
             scaledImage,
             from: scaledImage.extent,
             format: .RGBA8,
-            colorSpace: CGColorSpaceCreateDeviceRGB()
+            colorSpace: CGColorSpaceCreateDeviceRGB(),
         ) else { return nil }
         return UIImage(cgImage: cgImage)
     }

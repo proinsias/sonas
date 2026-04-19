@@ -21,6 +21,7 @@ indent_style = tab
 ## Markdown
 [*.md]
 trim_trailing_whitespace = false
+indent_size = 1
 
 # Python
 [*.py]
@@ -42,10 +43,19 @@ trim_trailing_whitespace = true
 quote_type = double
 
 # YAML Based files - 2 space indent
-[*.{yml, yaml, sls}]
+[*.yml]
+indent_size = 2
+indent_style = space
+
+[*.yaml]
 indent_size = 2
 indent_style = space
 
 [*.{js,json}]
 indent_size = 2
 indent_style = space
+
+[*.{swift,swift.gyb,cpp,h}]
+indent_style = space
+# tab_width = 4
+indent_size = 1

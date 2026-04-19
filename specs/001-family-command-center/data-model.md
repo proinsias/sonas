@@ -2,9 +2,8 @@
 
 **Branch**: `001-family-command-center` | **Date**: 2026-04-07
 
-All models are value types (structs) used by the view layer. Persistence is
-handled by the SwiftData `@Model` cache counterparts (prefixed `Cached`). No
-model is sent to a custom server.
+All models are value types (structs) used by the view layer. Persistence is handled by the SwiftData `@Model` cache
+counterparts (prefixed `Cached`). No model is sent to a custom server.
 
 ---
 
@@ -27,8 +26,8 @@ Constraints:
 
 - `id` is unique per family member; stable across app restarts.
 - `displayName` is non-empty.
-- `locationSnapshot` is nil if the member's Sonas app is not installed, location
-  permission is denied, or the last update is older than 5 minutes.
+- `locationSnapshot` is nil if the member's Sonas app is not installed, location permission is denied, or the last
+  update is older than 5 minutes.
 
 ---
 
@@ -48,8 +47,8 @@ struct LocationSnapshot: Equatable {
 
 Constraints:
 
-- `placeName` is derived by reverse geocoding on the reporting device before
-  writing to CloudKit; raw coordinates are never displayed in the UI.
+- `placeName` is derived by reverse geocoding on the reporting device before writing to CloudKit; raw coordinates are
+  never displayed in the UI.
 - `isStale` is computed at read time, not stored.
 
 ---
@@ -189,10 +188,8 @@ struct Photo: Identifiable, Equatable {
 Constraints:
 
 - At most 20 most-recent photos fetched per session.
-- Full-resolution images loaded only when the user taps a photo (full-screen
-  mode).
-- Deleted photos are detected via `PHPhotoLibraryChangeObserver`; removed from
-  list gracefully.
+- Full-resolution images loaded only when the user taps a photo (full-screen mode).
+- Deleted photos are detected via `PHPhotoLibraryChangeObserver`; removed from list gracefully.
 
 ---
 
@@ -215,8 +212,7 @@ enum JamStatus { case active, ending, ended }
 
 ### AppConfiguration
 
-Household-level settings; persisted in `UserDefaults` (non-sensitive) and iOS
-Keychain (API tokens).
+Household-level settings; persisted in `UserDefaults` (non-sensitive) and iOS Keychain (API tokens).
 
 ```swift
 struct AppConfiguration {
@@ -237,9 +233,8 @@ struct AppConfiguration {
 
 ## SwiftData Cache Models
 
-Each cache model mirrors its domain counterpart with a `lastUpdated` timestamp.
-Used only for offline / initial-load display; never shown without a staleness
-indicator if too old.
+Each cache model mirrors its domain counterpart with a `lastUpdated` timestamp. Used only for offline / initial-load
+display; never shown without a staleness indicator if too old.
 
 ```swift
 @Model class CachedWeatherSnapshot { /* mirrors WeatherSnapshot + lastUpdated */ }

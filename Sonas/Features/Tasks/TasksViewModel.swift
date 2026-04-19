@@ -6,19 +6,22 @@ import Observation
 @Observable
 @MainActor
 final class TasksViewModel {
-
     // MARK: Published state
+
     private(set) var tasksByProject: [String: [Task]] = [:]
     private(set) var isLoading: Bool = true
     private(set) var error: PanelError?
     private(set) var completionErrorToast: String?
 
     // MARK: Dependencies
+
     private let service: any TaskServiceProtocol
     private let cache: CacheServiceProtocol
     private var refreshTimer: Timer?
 
-    var isConnected: Bool { service.isConnected }
+    var isConnected: Bool {
+        service.isConnected
+    }
 
     init(service: any TaskServiceProtocol, cache: CacheServiceProtocol? = nil) {
         self.service = service
@@ -57,15 +60,15 @@ final class TasksViewModel {
     func completeTask(_ task: Task) async {
         // Optimistic: remove from UI immediately
         var updated = tasksByProject
-        for (project, tasks) in updated {
-            updated[project] = tasks.filter { $0.id != task.id }
+        for project in updated.keys where updated[project]?.contains(where: { $0.id == task.id }) == true {
+            updated[project] = updated[project]?.filter { $0.id != task.id }
         }
         tasksByProject = updated
 
         // API call in background
         do {
             try await service.completeTask(id: task.id)
-            try? await cache.saveTasks(Array(tasksByProject.values.flatMap { $0 }))
+            try? await cache.saveTasks(Array(tasksByProject.values.flatMap(\.self)))
         } catch {
             // Rollback on failure
             var rolled = tasksByProject
@@ -102,7 +105,11 @@ final class TasksViewModel {
             isLoading = false
         } catch {
             if tasksByProject.isEmpty {
-                self.error = PanelError(title: "Tasks Unavailable", message: error.localizedDescription, isRetryable: true)
+                self.error = PanelError(
+                    title: "Tasks Unavailable",
+                    message: error.localizedDescription,
+                    isRetryable: true,
+                )
             }
             isLoading = false
         }

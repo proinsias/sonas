@@ -1,6 +1,7 @@
 import SwiftUI
 
 // MARK: - WatchSonasApp
+
 // Entry point for the watchOS target (WatchSonas).
 
 @main

@@ -1,6 +1,6 @@
-import Foundation
-import CoreLocation
 import CloudKit
+import CoreLocation
+import Foundation
 
 // MARK: - LocationServiceProtocol (T026)
 
@@ -28,13 +28,13 @@ enum LocationServiceError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .permissionDenied:
-            return "Location permission is required to show family members on the map."
+            "Location permission is required to show family members on the map."
         case .cloudKitUnavailable:
-            return "iCloud is unavailable. Family locations cannot be synced."
-        case .geocodingFailed(let err):
-            return "Could not determine place name: \(err.localizedDescription)"
-        case .subscriptionSetupFailed(let err):
-            return "Could not subscribe to location updates: \(err.localizedDescription)"
+            "iCloud is unavailable. Family locations cannot be synced."
+        case let .geocodingFailed(err):
+            "Could not determine place name: \(err.localizedDescription)"
+        case let .subscriptionSetupFailed(err):
+            "Could not subscribe to location updates: \(err.localizedDescription)"
         }
     }
 }
@@ -43,22 +43,24 @@ enum LocationServiceError: LocalizedError {
 
 @MainActor
 final class LocationService: NSObject, LocationServiceProtocol {
-
     // MARK: Constants
+
     private enum Constants {
-        static let recordType   = "FamilyLocation"
-        static let containerID  = "iCloud.com.anindependentmind.sonas"
-        static let zoneID       = CKRecordZone.default().zoneID
-        static let minDistance: CLLocationDistance = 50   // metres
-        static let maxInterval: TimeInterval = 60  // seconds
+        static let recordType = "FamilyLocation"
+        static let containerID = "iCloud.com.anindependentmind.sonas"
+        static let zoneID = CKRecordZone.default().zoneID
+        static let minDistance: CLLocationDistance = 50 // metres
+        static let maxInterval: TimeInterval = 60 // seconds
         static let subscriptionID = "sonas-family-location-sub"
     }
 
     // MARK: AsyncStream bookkeeping
+
     private var continuation: AsyncStream<[FamilyMember]>.Continuation?
     private(set) var familyLocations: AsyncStream<[FamilyMember]>
 
     // MARK: Private state
+
     private let locationManager = CLLocationManager()
     private let geocoder = CLGeocoder()
     private let container: CKContainer
@@ -105,14 +107,16 @@ final class LocationService: NSObject, LocationServiceProtocol {
         SonasLogger.location.info("LocationService: refresh")
         let query = CKQuery(
             recordType: Constants.recordType,
-            predicate: NSPredicate(value: true)
+            predicate: NSPredicate(value: true),
         )
         let (results, _) = try await container.privateCloudDatabase.records(matching: query)
         let fetchedMembers: [FamilyMember] = results.compactMap { _, result in
-            guard case .success(let record) = result else { return nil }
+            guard case let .success(record) = result else { return nil }
             return FamilyMember(from: record)
         }
-        for member in fetchedMembers { members[member.id] = member }
+        for member in fetchedMembers {
+            members[member.id] = member
+        }
         let all = Array(members.values)
         continuation?.yield(all)
         return all
@@ -127,7 +131,7 @@ final class LocationService: NSObject, LocationServiceProtocol {
                 recordType: Constants.recordType,
                 predicate: predicate,
                 subscriptionID: Constants.subscriptionID,
-                options: [.firesOnRecordCreation, .firesOnRecordUpdate, .firesOnRecordDeletion]
+                options: [.firesOnRecordCreation, .firesOnRecordUpdate, .firesOnRecordDeletion],
             )
             let notificationInfo = CKSubscription.NotificationInfo()
             notificationInfo.shouldSendContentAvailable = true
@@ -156,15 +160,15 @@ final class LocationService: NSObject, LocationServiceProtocol {
         do {
             let placemarks = try await geocoder.reverseGeocodeLocation(location)
             let placeName = placemarks.first.map {
-                [$0.locality, $0.administrativeArea].compactMap { $0 }.joined(separator: ", ")
+                [$0.locality, $0.administrativeArea].compactMap(\.self).joined(separator: ", ")
             } ?? "Unknown"
 
             let record = CKRecord(recordType: Constants.recordType)
             record["displayName"] = AppConfiguration.shared.homeLocationName as CKRecordValue
-            record["latitude"]    = location.coordinate.latitude as CKRecordValue
-            record["longitude"]   = location.coordinate.longitude as CKRecordValue
-            record["placeName"]   = placeName as CKRecordValue
-            record["recordedAt"]  = Date.now as CKRecordValue
+            record["latitude"] = location.coordinate.latitude as CKRecordValue
+            record["longitude"] = location.coordinate.longitude as CKRecordValue
+            record["placeName"] = placeName as CKRecordValue
+            record["recordedAt"] = Date.now as CKRecordValue
 
             _ = try await container.privateCloudDatabase.save(record)
             lastPublishedLocation = location
@@ -188,8 +192,10 @@ extension LocationService: CLLocationManagerDelegate {
         }
     }
 
-    nonisolated func locationManager(_ manager: CLLocationManager,
-                                     didUpdateLocations locations: [CLLocation]) {
+    nonisolated func locationManager(
+        _: CLLocationManager,
+        didUpdateLocations locations: [CLLocation],
+    ) {
         guard let loc = locations.last else { return }
         Swift.Task { @MainActor in
             await publish(location: loc)
@@ -203,10 +209,10 @@ private extension FamilyMember {
     init?(from record: CKRecord) {
         guard
             let name = record["displayName"] as? String,
-            let lat  = record["latitude"] as? Double,
-            let lon  = record["longitude"] as? Double,
+            let lat = record["latitude"] as? Double,
+            let lon = record["longitude"] as? Double,
             let place = record["placeName"] as? String,
-            let date  = record["recordedAt"] as? Date
+            let date = record["recordedAt"] as? Date
         else { return nil }
 
         self.init(
@@ -215,8 +221,8 @@ private extension FamilyMember {
             location: LocationSnapshot(
                 coordinate: .init(latitude: lat, longitude: lon),
                 placeName: place,
-                recordedAt: date
-            )
+                recordedAt: date,
+            ),
         )
     }
 }

@@ -1,18 +1,16 @@
 ---
-description: "Task list template for feature implementation"
+description: 'Task list template for feature implementation'
 ---
 
 # Tasks: [FEATURE NAME]
 
-**Input**: Design documents from `/specs/[###-feature-name]/` **Prerequisites**:
-plan.md (required), spec.md (required for user stories), research.md,
-data-model.md, contracts/
+**Input**: Design documents from `/specs/[###-feature-name]/` **Prerequisites**: plan.md (required), spec.md (required
+for user stories), research.md, data-model.md, contracts/
 
-**Tests**: The examples below include test tasks. Tests are OPTIONAL - only
-include them if explicitly requested in the feature specification.
+**Tests**: The examples below include test tasks. Tests are OPTIONAL - only include them if explicitly requested in the
+feature specification.
 
-**Organization**: Tasks are grouped by user story to enable independent
-implementation and testing of each story.
+**Organization**: Tasks are grouped by user story to enable independent implementation and testing of each story.
 
 ## Format: `[ID] [P?] [Story] Description`
 
@@ -58,8 +56,7 @@ implementation and testing of each story.
 
 ## Phase 2: Foundational (Blocking Prerequisites)
 
-**Purpose**: Core infrastructure that MUST be complete before ANY user story can
-be implemented
+**Purpose**: Core infrastructure that MUST be complete before ANY user story can be implemented
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
@@ -72,8 +69,7 @@ Examples of foundational tasks (adjust based on your project):
 - [ ] T008 Configure error handling and logging infrastructure
 - [ ] T009 Setup environment configuration management
 
-**Checkpoint**: Foundation ready - user story implementation can now begin in
-parallel
+**Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 
 ---
 
@@ -87,23 +83,19 @@ parallel
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-- [ ] T010 [P] [US1] Contract test for [endpoint] in
-      tests/contract/test\_[name].py
-- [ ] T011 [P] [US1] Integration test for [user journey] in
-      tests/integration/test\_[name].py
+- [ ] T010 [P] [US1] Contract test for [endpoint] in tests/contract/test\_[name].py
+- [ ] T011 [P] [US1] Integration test for [user journey] in tests/integration/test\_[name].py
 
 ### Implementation for User Story 1
 
 - [ ] T012 [P] [US1] Create [Entity1] model in src/models/[entity1].py
 - [ ] T013 [P] [US1] Create [Entity2] model in src/models/[entity2].py
-- [ ] T014 [US1] Implement [Service] in src/services/[service].py (depends on
-      T012, T013)
+- [ ] T014 [US1] Implement [Service] in src/services/[service].py (depends on T012, T013)
 - [ ] T015 [US1] Implement [endpoint/feature] in src/[location]/[file].py
 - [ ] T016 [US1] Add validation and error handling
 - [ ] T017 [US1] Add logging for user story 1 operations
 
-**Checkpoint**: At this point, User Story 1 should be fully functional and
-testable independently
+**Checkpoint**: At this point, User Story 1 should be fully functional and testable independently
 
 ---
 
@@ -115,10 +107,8 @@ testable independently
 
 ### Tests for User Story 2 (OPTIONAL - only if tests requested) ⚠️
 
-- [ ] T018 [P] [US2] Contract test for [endpoint] in
-      tests/contract/test\_[name].py
-- [ ] T019 [P] [US2] Integration test for [user journey] in
-      tests/integration/test\_[name].py
+- [ ] T018 [P] [US2] Contract test for [endpoint] in tests/contract/test\_[name].py
+- [ ] T019 [P] [US2] Integration test for [user journey] in tests/integration/test\_[name].py
 
 ### Implementation for User Story 2
 
@@ -127,8 +117,7 @@ testable independently
 - [ ] T022 [US2] Implement [endpoint/feature] in src/[location]/[file].py
 - [ ] T023 [US2] Integrate with User Story 1 components (if needed)
 
-**Checkpoint**: At this point, User Stories 1 AND 2 should both work
-independently
+**Checkpoint**: At this point, User Stories 1 AND 2 should both work independently
 
 ---
 
@@ -140,10 +129,8 @@ independently
 
 ### Tests for User Story 3 (OPTIONAL - only if tests requested) ⚠️
 
-- [ ] T024 [P] [US3] Contract test for [endpoint] in
-      tests/contract/test\_[name].py
-- [ ] T025 [P] [US3] Integration test for [user journey] in
-      tests/integration/test\_[name].py
+- [ ] T024 [P] [US3] Contract test for [endpoint] in tests/contract/test\_[name].py
+- [ ] T025 [P] [US3] Integration test for [user journey] in tests/integration/test\_[name].py
 
 ### Implementation for User Story 3
 
@@ -177,21 +164,19 @@ independently
 ### Phase Dependencies
 
 - **Setup (Phase 1)**: No dependencies - can start immediately
-- **Foundational (Phase 2)**: Depends on Setup completion - BLOCKS all user
-  stories
+- **Foundational (Phase 2)**: Depends on Setup completion - BLOCKS all user stories
 - **User Stories (Phase 3+)**: All depend on Foundational phase completion
-    - User stories can then proceed in parallel (if staffed)
-    - Or sequentially in priority order (P1 → P2 → P3)
+  - User stories can then proceed in parallel (if staffed)
+  - Or sequentially in priority order (P1 → P2 → P3)
 - **Polish (Final Phase)**: Depends on all desired user stories being complete
 
 ### User Story Dependencies
 
-- **User Story 1 (P1)**: Can start after Foundational (Phase 2) - No
-  dependencies on other stories
-- **User Story 2 (P2)**: Can start after Foundational (Phase 2) - May integrate
-  with US1 but should be independently testable
-- **User Story 3 (P3)**: Can start after Foundational (Phase 2) - May integrate
-  with US1/US2 but should be independently testable
+- **User Story 1 (P1)**: Can start after Foundational (Phase 2) - No dependencies on other stories
+- **User Story 2 (P2)**: Can start after Foundational (Phase 2) - May integrate with US1 but should be independently
+  testable
+- **User Story 3 (P3)**: Can start after Foundational (Phase 2) - May integrate with US1/US2 but should be independently
+  testable
 
 ### Within Each User Story
 
@@ -205,8 +190,7 @@ independently
 
 - All Setup tasks marked [P] can run in parallel
 - All Foundational tasks marked [P] can run in parallel (within Phase 2)
-- Once Foundational phase completes, all user stories can start in parallel (if
-  team capacity allows)
+- Once Foundational phase completes, all user stories can start in parallel (if team capacity allows)
 - All tests for a user story marked [P] can run in parallel
 - Models within a story marked [P] can run in parallel
 - Different user stories can be worked on in parallel by different team members
@@ -251,9 +235,9 @@ With multiple developers:
 
 1. Team completes Setup + Foundational together
 2. Once Foundational is done:
-    - Developer A: User Story 1
-    - Developer B: User Story 2
-    - Developer C: User Story 3
+   - Developer A: User Story 1
+   - Developer B: User Story 2
+   - Developer C: User Story 3
 3. Stories complete and integrate independently
 
 ---
@@ -266,5 +250,4 @@ With multiple developers:
 - Verify tests fail before implementing
 - Commit after each task or logical group
 - Stop at any checkpoint to validate story independently
-- Avoid: vague tasks, same file conflicts, cross-story dependencies that break
-  independence
+- Avoid: vague tasks, same file conflicts, cross-story dependencies that break independence

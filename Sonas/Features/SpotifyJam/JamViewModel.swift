@@ -6,14 +6,17 @@ import Observation
 @Observable
 @MainActor
 final class JamViewModel {
-
     // MARK: Published state
+
     private(set) var session: JamSession?
     private(set) var isLoading: Bool = false
     private(set) var error: PanelError?
-    var status: JamStatus { session?.status ?? .none }
+    var status: JamStatus {
+        session?.status ?? .none
+    }
 
     // MARK: Dependencies
+
     private let service: any JamServiceProtocol
 
     init(service: any JamServiceProtocol) {
@@ -36,7 +39,8 @@ final class JamViewModel {
             session = try await service.startJam()
             SonasLogger.jam.info("JamViewModel: session started")
         } catch JamServiceError.spotifyNotInstalled {
-            error = PanelError(title: "Spotify Not Installed", message: JamServiceError.spotifyNotInstalled.errorDescription!, isRetryable: false)
+            let errorDescription = JamServiceError.spotifyNotInstalled.errorDescription ?? "Spotify is not installed"
+            error = PanelError(title: "Spotify Not Installed", message: errorDescription, isRetryable: false)
         } catch {
             self.error = PanelError(title: "Jam Failed", message: error.localizedDescription, isRetryable: true)
         }
@@ -66,6 +70,11 @@ final class JamViewModel {
 
     // MARK: - Computed helpers
 
-    var isSpotifyInstalled: Bool { service.isSpotifyInstalled }
-    var isSpotifyConnected: Bool { service.isSpotifyConnected }
+    var isSpotifyInstalled: Bool {
+        service.isSpotifyInstalled
+    }
+
+    var isSpotifyConnected: Bool {
+        service.isSpotifyConnected
+    }
 }

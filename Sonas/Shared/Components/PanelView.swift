@@ -7,7 +7,7 @@ enum PanelState<T> {
     case loading
     case loaded(T)
     case error(PanelError)
-    case stale(T, lastUpdated: Date)  // Cached data shown offline with timestamp badge
+    case stale(T, lastUpdated: Date) // Cached data shown offline with timestamp badge
 }
 
 // MARK: - PanelView
@@ -25,7 +25,7 @@ struct PanelView<Content: View>: View {
         title: String,
         icon: String,
         lastUpdated: Date? = nil,
-        @ViewBuilder content: @escaping () -> Content
+        @ViewBuilder content: @escaping () -> Content,
     ) {
         self.title = title
         self.icon = icon
@@ -83,19 +83,19 @@ struct PanelError: Error, Equatable {
     static let networkUnavailable = PanelError(
         title: "No Connection",
         message: "Check your network connection and try again.",
-        isRetryable: true
+        isRetryable: true,
     )
 
     static let permissionDenied = PanelError(
         title: "Permission Required",
         message: "Enable access in Settings to use this feature.",
-        isRetryable: false
+        isRetryable: false,
     )
 
     static let notConfigured = PanelError(
         title: "Not Configured",
         message: "Complete setup in Settings to enable this panel.",
-        isRetryable: false
+        isRetryable: false,
     )
 }
 

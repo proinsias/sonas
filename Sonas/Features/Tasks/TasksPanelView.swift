@@ -3,7 +3,6 @@ import SwiftUI
 // MARK: - TasksPanelView (T058)
 
 struct TasksPanelView: View {
-
     @State var viewModel: TasksViewModel
 
     var body: some View {
@@ -26,7 +25,7 @@ struct TasksPanelView: View {
     private var content: some View {
         if !viewModel.isConnected {
             connectPrompt
-        } else if viewModel.isLoading && viewModel.tasksByProject.isEmpty {
+        } else if viewModel.isLoading, viewModel.tasksByProject.isEmpty {
             LoadingStateView(rows: 3)
         } else if let error = viewModel.error {
             ErrorStateView(error: error) { Swift.Task { await viewModel.refresh() } }

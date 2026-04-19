@@ -3,7 +3,6 @@ import SwiftUI
 // MARK: - LocationPanelView (T037)
 
 struct LocationPanelView: View {
-
     @State var viewModel: LocationViewModel
 
     var body: some View {

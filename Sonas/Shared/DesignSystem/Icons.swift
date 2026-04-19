@@ -1,12 +1,13 @@
 import Foundation
 
 // MARK: - SF Symbols Aliases
+
 // All icons use SF Symbols 5+ names. Each constant maps to a semantic panel concept.
 // Using string aliases (not enum) allows easy preview via Image(systemName:).
 
 enum Icon {
-
     // MARK: Panel identifiers
+
     static let clock = "clock"
     static let location = "location.fill"
     static let calendar = "calendar"
@@ -17,6 +18,7 @@ enum Icon {
     static let settings = "gear"
 
     // MARK: Weather conditions
+
     static let weatherClear = "sun.max.fill"
     static let weatherCloudy = "cloud.fill"
     static let weatherPartlyCloudy = "cloud.sun.fill"
@@ -29,6 +31,7 @@ enum Icon {
     static let weatherHail = "cloud.hail.fill"
 
     // MARK: Weather attributes
+
     static let humidity = "humidity.fill"
     static let windSpeed = "wind"
     static let pressure = "gauge"
@@ -37,6 +40,7 @@ enum Icon {
     static let sunset = "sunset.fill"
 
     // MARK: Moon phases
+
     static let moonNew = "moonphase.new.moon"
     static let moonWaxingCrescent = "moonphase.waxing.crescent"
     static let moonFirstQuarter = "moonphase.first.quarter"
@@ -47,6 +51,7 @@ enum Icon {
     static let moonWaningCrescent = "moonphase.waning.crescent"
 
     // MARK: Status
+
     static let locationUnavailable = "location.slash.fill"
     static let offline = "wifi.slash"
     static let error = "exclamationmark.triangle.fill"
@@ -55,6 +60,7 @@ enum Icon {
     static let retry = "arrow.counterclockwise"
 
     // MARK: Actions
+
     static let complete = "checkmark.circle.fill"
     static let incomplete = "circle"
     static let expand = "arrow.up.left.and.arrow.down.right"
@@ -64,6 +70,7 @@ enum Icon {
     static let install = "arrow.down.app.fill"
 
     // MARK: Spotify
+
     static let spotifyPlay = "play.fill"
     static let spotifyStop = "stop.fill"
     static let spotifyQR = "qrcode"

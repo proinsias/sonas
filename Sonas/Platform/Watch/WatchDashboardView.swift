@@ -1,11 +1,11 @@
 import SwiftUI
 
 // MARK: - WatchDashboardView (T078)
+
 // Compact glance: live clock, ≤2 family member first names + places, next event title.
 // Uses TimelineView for live clock; .containerBackground for Watch complication registration.
 
 struct WatchDashboardView: View {
-
     let members: [FamilyMember]
     let nextEvent: CalendarEvent?
 

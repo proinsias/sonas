@@ -1,18 +1,18 @@
 import SwiftUI
 
 // MARK: - WeatherPanelView (T050)
+
 // All 8 required attributes visible without scroll on standard iPhone.
 // 7-day forecast strip with high/low + SF Symbol per day.
 
 struct WeatherPanelView: View {
-
     @State var viewModel: WeatherViewModel
 
     var body: some View {
         PanelView(
             title: "Weather",
             icon: Icon.weather,
-            lastUpdated: viewModel.lastUpdated
+            lastUpdated: viewModel.lastUpdated,
         ) {
             content
         }
@@ -22,14 +22,14 @@ struct WeatherPanelView: View {
 
     @ViewBuilder
     private var content: some View {
-        if viewModel.isLoading && viewModel.snapshot == nil {
+        if viewModel.isLoading, viewModel.snapshot == nil {
             LoadingStateView(rows: 4, showsLargeBlock: true)
         } else if let error = viewModel.error, viewModel.snapshot == nil {
             ErrorStateView(error: error) { Swift.Task { await viewModel.refresh() } }
         } else if let snapshot = viewModel.snapshot {
             weatherContent(snapshot: snapshot)
                 .staleDataBadge(
-                    lastUpdated: viewModel.lastUpdated ?? .now
+                    lastUpdated: viewModel.lastUpdated ?? .now,
                 ) { Swift.Task { await viewModel.refresh() } }
         }
     }
@@ -81,39 +81,39 @@ struct WeatherPanelView: View {
             WeatherAttributeCell(
                 icon: Icon.humidity,
                 label: "Humidity",
-                value: String(format: "%.0f%%", snapshot.humidity * 100)
+                value: String(format: "%.0f%%", snapshot.humidity * 100),
             )
             WeatherAttributeCell(
                 icon: Icon.windSpeed,
                 label: "Wind",
-                value: "\(String(format: "%.0f", snapshot.windSpeed)) km/h \(snapshot.windCompassLabel)"
+                value: "\(String(format: "%.0f", snapshot.windSpeed)) km/h \(snapshot.windCompassLabel)",
             )
             WeatherAttributeCell(
                 icon: Icon.pressure,
                 label: "Pressure",
-                value: "\(String(format: "%.0f", snapshot.pressure)) hPa"
+                value: "\(String(format: "%.0f", snapshot.pressure)) hPa",
             )
             if let aqi = snapshot.airQualityIndex {
                 WeatherAttributeCell(
                     icon: Icon.airQuality,
                     label: "AQI",
-                    value: "\(aqi) – \(snapshot.aiqCategory?.label ?? "")"
+                    value: "\(aqi) – \(snapshot.aiqCategory?.label ?? "")",
                 )
             }
             WeatherAttributeCell(
                 icon: Icon.sunrise,
                 label: "Sunrise",
-                value: snapshot.sunriseTime.formatted(.dateTime.hour().minute())
+                value: snapshot.sunriseTime.formatted(.dateTime.hour().minute()),
             )
             WeatherAttributeCell(
                 icon: Icon.sunset,
                 label: "Sunset",
-                value: snapshot.sunsetTime.formatted(.dateTime.hour().minute())
+                value: snapshot.sunsetTime.formatted(.dateTime.hour().minute()),
             )
             WeatherAttributeCell(
                 icon: snapshot.moonPhase.symbolName,
                 label: "Moon",
-                value: snapshot.moonPhase.displayName
+                value: snapshot.moonPhase.displayName,
             )
         }
     }
@@ -199,7 +199,7 @@ private struct ForecastDayCell: View {
             "\(day.date.formatted(.dateTime.weekday(.wide))): "
                 + "high \(String(format: "%.0f", day.highTemperature)) "
                 + "low \(String(format: "%.0f", day.lowTemperature)) degrees, "
-                + day.conditionDescription
+                + day.conditionDescription,
         )
     }
 }

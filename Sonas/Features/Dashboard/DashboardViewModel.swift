@@ -6,20 +6,21 @@ import Observation
 @Observable
 @MainActor
 final class DashboardViewModel {
-
     // MARK: Sub-ViewModels (injected for testability)
+
     let locationVM: LocationViewModel
     let eventsVM: EventsViewModel
 
     // MARK: State
+
     private(set) var isShowingSettings: Bool = false
 
     init(
         locationService: any LocationServiceProtocol,
-        calendarService: any CalendarServiceProtocol
+        calendarService: any CalendarServiceProtocol,
     ) {
-        self.locationVM = LocationViewModel(service: locationService)
-        self.eventsVM   = EventsViewModel(service: calendarService)
+        locationVM = LocationViewModel(service: locationService)
+        eventsVM = EventsViewModel(service: calendarService)
     }
 
     // MARK: - Convenience factory
@@ -30,14 +31,19 @@ final class DashboardViewModel {
 
         return DashboardViewModel(
             locationService: useMockLocation ? LocationServiceMock() : LocationService(),
-            calendarService: useMockCalendar ? CalendarServiceMock() : CalendarService()
+            calendarService: useMockCalendar ? CalendarServiceMock() : CalendarService(),
         )
     }
 
     // MARK: - Settings
 
-    func showSettings() { isShowingSettings = true }
-    func hideSettings() { isShowingSettings = false }
+    func showSettings() {
+        isShowingSettings = true
+    }
+
+    func hideSettings() {
+        isShowingSettings = false
+    }
 
     // MARK: - Dashboard-level refresh
 

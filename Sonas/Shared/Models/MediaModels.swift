@@ -4,7 +4,7 @@ import Foundation
 
 /// Metadata for a single photo from the iCloud Shared Album.
 /// Full pixel data is loaded on demand via PhotoService; only metadata is persisted.
-struct Photo: Identifiable, Equatable, Sendable {
+struct Photo: Identifiable, Equatable {
     /// `PHAsset.localIdentifier`
     let id: String
     let creationDate: Date?
@@ -17,7 +17,7 @@ struct Photo: Identifiable, Equatable, Sendable {
 // MARK: - JamSession
 
 /// An active or recently ended Spotify Group Session (Jam).
-struct JamSession: Identifiable, Equatable, Sendable {
+struct JamSession: Identifiable, Equatable {
     let id: String
     /// The URL guests scan/tap to join the session
     let joinURL: URL
@@ -27,9 +27,9 @@ struct JamSession: Identifiable, Equatable, Sendable {
 
 // MARK: - JamStatus
 
-enum JamStatus: String, Sendable, Equatable {
-    case none    = "none"     // No session
-    case active  = "active"   // Session running, QR visible
-    case ending  = "ending"   // Stop command sent, waiting for confirmation
-    case ended   = "ended"    // Session over, QR removed
+enum JamStatus: String, Equatable {
+    case none // No session
+    case active // Session running, QR visible
+    case ending // Stop command sent, waiting for confirmation
+    case ended // Session over, QR removed
 }

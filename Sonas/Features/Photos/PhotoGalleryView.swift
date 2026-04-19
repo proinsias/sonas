@@ -1,11 +1,11 @@
 import SwiftUI
 
 // MARK: - PhotoGalleryView (T066)
+
 // TimelineView carousel with 15-second auto-advance at 60fps.
 // Tap → full-screen modal sheet with swipe-through navigation.
 
 struct PhotoGalleryView: View {
-
     @State var viewModel: PhotoViewModel
     @State private var selectedIndex: Int = 0
     @State private var isFullScreen: Bool = false
@@ -19,7 +19,7 @@ struct PhotoGalleryView: View {
             FullScreenPhotoView(
                 photos: viewModel.photos,
                 selectedIndex: $selectedIndex,
-                viewModel: viewModel
+                viewModel: viewModel,
             )
         }
     }
@@ -31,7 +31,7 @@ struct PhotoGalleryView: View {
                 .frame(height: 200)
         } else if let error = viewModel.error {
             ErrorStateView(error: error) { Swift.Task { await viewModel.reload() } }
-        } else if viewModel.photos.isEmpty && viewModel.selectedAlbumName == nil {
+        } else if viewModel.photos.isEmpty, viewModel.selectedAlbumName == nil {
             selectAlbumPrompt
         } else if viewModel.photos.isEmpty {
             emptyAlbumPrompt

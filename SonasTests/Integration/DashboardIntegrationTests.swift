@@ -1,23 +1,23 @@
-import Testing
-import SwiftUI
 @testable import Sonas
+import SwiftUI
+import Testing
 
 // MARK: - DashboardIntegrationTests (T043)
+
 // All-mock service injection — verifies US1 panels render within 500ms and
 // degraded state ("Location unavailable") renders correctly.
 
 @Suite("Dashboard Integration Tests")
 struct DashboardIntegrationTests {
-
     // MARK: - T043.1: All panels render with mock services within 500ms
 
-    @Test("given all mock services when dashboard loads then all US1 panels render within 500ms")
-    func given_allMockServices_when_dashboardLoads_then_US1PanelsRenderWithin500ms() async throws {
+    @Test
+    func `given all mock services when dashboard loads then all US1 panels render within 500ms`() async {
         let start = Date.now
 
         let vm = DashboardViewModel(
             locationService: LocationServiceMock(),
-            calendarService: CalendarServiceMock()
+            calendarService: CalendarServiceMock(),
         )
 
         await vm.locationVM.start()
@@ -32,11 +32,11 @@ struct DashboardIntegrationTests {
 
     // MARK: - T043.2: "Location unavailable" renders when mock returns nil location
 
-    @Test("given member with nil location when dashboard loads then location unavailable indicator shown")
-    func given_memberWithNilLocation_when_dashboardLoads_then_locationUnavailableShown() async throws {
+    @Test
+    func `given member with nil location when dashboard loads then location unavailable indicator shown`() async {
         let vm = DashboardViewModel(
             locationService: LocationServiceMock(),
-            calendarService: CalendarServiceMock()
+            calendarService: CalendarServiceMock(),
         )
 
         await vm.locationVM.start()
@@ -49,12 +49,15 @@ struct DashboardIntegrationTests {
 
     // MARK: - T043.3: Empty calendar events → "Nothing scheduled" state
 
-    @Test("given no upcoming events when events panel loads then shows empty state")
-    func given_noUpcomingEvents_when_eventsLoad_then_showsEmptyState() async throws {
+    @Test
+    func `given no upcoming events when events panel loads then shows empty state`() async {
         final class EmptyCalendarMock: CalendarServiceProtocol, @unchecked Sendable {
             var isGoogleConnected: Bool = false
             var needsGoogleReconnect: Bool = false
-            func fetchUpcomingEvents(hours: Int) async throws -> [CalendarEvent] { [] }
+            func fetchUpcomingEvents(hours _: Int) async throws -> [CalendarEvent] {
+                []
+            }
+
             func connectGoogleAccount() async throws {}
             func disconnectGoogleAccount() async {}
         }

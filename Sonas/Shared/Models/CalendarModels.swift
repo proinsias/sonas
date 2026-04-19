@@ -3,7 +3,7 @@ import Foundation
 // MARK: - CalendarEvent
 
 /// A single calendar event from either iCloud (EventKit) or Google Calendar REST.
-struct CalendarEvent: Identifiable, Equatable, Sendable {
+struct CalendarEvent: Identifiable, Equatable {
     let id: String
     let title: String
     let startDate: Date
@@ -20,9 +20,9 @@ struct CalendarEvent: Identifiable, Equatable, Sendable {
 // MARK: - CalendarSource
 
 /// The data source for a calendar event.
-enum CalendarSource: String, Sendable, Equatable {
-    case iCloud  = "iCloud"
-    case google  = "Google"
+enum CalendarSource: String, Equatable {
+    case iCloud
+    case google = "Google"
 }
 
 // MARK: - Convenience computed properties

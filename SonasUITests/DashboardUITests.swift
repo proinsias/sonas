@@ -1,11 +1,11 @@
 import XCTest
 
 // MARK: - DashboardUITests (T080)
+
 // Constitution §II: every user-facing feature MUST have at least one acceptance/integration test.
 // Run with all USE_MOCK_*=1 environment variables set in the SonasUITests scheme.
 
 final class DashboardUITests: XCTestCase {
-
     var app: XCUIApplication!
 
     override func setUp() {
@@ -43,16 +43,16 @@ final class DashboardUITests: XCTestCase {
 
     func testKeyboardNavigationReachesAllPanels() throws {
         #if targetEnvironment(macCatalyst)
-        XCTAssertTrue(app.otherElements["LocationPanel"].waitForExistence(timeout: 2))
-        XCTAssertTrue(app.buttons["Settings"].waitForExistence(timeout: 2))
+            XCTAssertTrue(app.otherElements["LocationPanel"].waitForExistence(timeout: 2))
+            XCTAssertTrue(app.buttons["Settings"].waitForExistence(timeout: 2))
         #else
-        throw XCTSkip("Keyboard navigation test requires macOS / Mac Catalyst")
+            throw XCTSkip("Keyboard navigation test requires macOS / Mac Catalyst")
         #endif
     }
 
     // MARK: - T080.3: SC-005 — ≤5 taps to reach Jam QR code from dashboard home
 
-    func testStartJamQRCodeWithinFiveTaps() throws {
+    func testStartJamQRCodeWithinFiveTaps() {
         var tapCount = 0
 
         // Tap 1: "Start Jam" button

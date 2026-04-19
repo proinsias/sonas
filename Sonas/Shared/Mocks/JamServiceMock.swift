@@ -3,7 +3,6 @@ import Foundation
 // MARK: - JamServiceMock (T070)
 
 final class JamServiceMock: JamServiceProtocol, @unchecked Sendable {
-
     private(set) var currentSession: JamSession?
     private(set) var isSpotifyConnected: Bool = true
     var isSpotifyInstalled: Bool = true
@@ -17,7 +16,7 @@ final class JamServiceMock: JamServiceProtocol, @unchecked Sendable {
             id: "mock-jam-session",
             joinURL: URL(string: "https://spotify.com/jam/abc123")!,
             status: .active,
-            startedAt: .now
+            startedAt: .now,
         )
         currentSession = session
         return session

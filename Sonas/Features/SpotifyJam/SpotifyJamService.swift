@@ -24,24 +24,24 @@ enum JamServiceError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .spotifyNotInstalled:
-            return "Spotify is not installed. Install Spotify to use Jam."
-        case .spotifyAuthFailed(let err):
-            return "Spotify connection failed: \(err.localizedDescription)"
-        case .sessionStartFailed(let err):
-            return "Could not start Jam: \(err.localizedDescription)"
+            "Spotify is not installed. Install Spotify to use Jam."
+        case let .spotifyAuthFailed(err):
+            "Spotify connection failed: \(err.localizedDescription)"
+        case let .sessionStartFailed(err):
+            "Could not start Jam: \(err.localizedDescription)"
         case .sessionNotActive:
-            return "No active Jam session."
+            "No active Jam session."
         }
     }
 }
 
 // MARK: - SpotifyJamService (T071)
+
 // Spotify iOS SDK integration — SPTConfiguration, SPTSessionManager, SPTAppRemote.
 // Requires SpotifyiOS framework linked in project.yml.
 
 @MainActor
 final class SpotifyJamService: JamServiceProtocol {
-
     private(set) var currentSession: JamSession?
     private(set) var isSpotifyConnected: Bool = false
 
@@ -69,19 +69,22 @@ final class SpotifyJamService: JamServiceProtocol {
             try await connectSpotify()
             guard isSpotifyConnected else {
                 throw JamServiceError.spotifyAuthFailed(
-                    NSError(domain: "Spotify", code: -1, userInfo: [NSLocalizedDescriptionKey: "Auth failed"])
+                    NSError(domain: "Spotify", code: -1, userInfo: [NSLocalizedDescriptionKey: "Auth failed"]),
                 )
             }
         }
 
         // SPTAppRemote.playerAPI.startGroupSession(callback:)
         // Placeholder: returns a fixture join URL until SPTAppRemote is integrated
-        let joinURL = URL(string: "https://open.spotify.com/jam/\(UUID().uuidString.lowercased().prefix(8))")!
+        let joinURLString = "https://open.spotify.com/jam/\(UUID().uuidString.lowercased().prefix(8))"
+        guard let joinURL = URL(string: joinURLString) else {
+            throw JamServiceError.sessionStartFailed(NSError(domain: "Spotify", code: -1))
+        }
         let session = JamSession(
             id: UUID().uuidString,
             joinURL: joinURL,
             status: .active,
-            startedAt: .now
+            startedAt: .now,
         )
         currentSession = session
         SonasLogger.jam.info("SpotifyJamService: jam started")

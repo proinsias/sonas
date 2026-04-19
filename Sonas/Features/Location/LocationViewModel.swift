@@ -6,13 +6,14 @@ import Observation
 @Observable
 @MainActor
 final class LocationViewModel {
-
     // MARK: Published state
+
     private(set) var members: [FamilyMember] = []
     private(set) var isLoading: Bool = true
     private(set) var error: PanelError?
 
     // MARK: Dependencies
+
     private let service: any LocationServiceProtocol
     private var streamTask: Swift.Task<Void, Never>?
 
@@ -50,7 +51,7 @@ final class LocationViewModel {
             self.error = PanelError(
                 title: "Location Unavailable",
                 message: error.localizedDescription,
-                isRetryable: true
+                isRetryable: true,
             )
         }
     }

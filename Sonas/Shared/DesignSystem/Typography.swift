@@ -1,12 +1,13 @@
 import SwiftUI
 
 // MARK: - Dynamic Type Scale Definitions
+
 // All text styles use system font to respect user's Dynamic Type preferences.
 // Custom sizes are clamped so layout remains legible at all accessibility sizes.
 
 extension Font {
-
     // MARK: Panel titles
+
     /// Large title for panel headers (e.g., "Weather", "Tasks")
     static let panelTitle: Font = .title2.weight(.semibold)
 
@@ -14,6 +15,7 @@ extension Font {
     static let sectionHeader: Font = .headline
 
     // MARK: Data display
+
     /// Primary data value — large prominent display (e.g., temperature "22°")
     static let dataLarge: Font = .system(.largeTitle, design: .rounded).weight(.bold)
 
@@ -24,6 +26,7 @@ extension Font {
     static let dataSmall: Font = .system(.callout, design: .rounded)
 
     // MARK: Body and labels
+
     /// Standard body text for event titles, task names, member names
     static let body: Font = .body
 
@@ -34,6 +37,7 @@ extension Font {
     static let timestamp: Font = .caption2
 
     // MARK: Interactive elements
+
     /// Button label text
     static let buttonLabel: Font = .callout.weight(.medium)
 }

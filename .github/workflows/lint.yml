@@ -1,10 +1,9 @@
+---
 name: Lint
-
 on:
   push:
     branches: [main]
   pull_request:
-
 jobs:
   # ── pre-commit (Linux) ────────────────────────────────────────────────────
   # Runs all hooks except SwiftLint, which requires macOS and runs below.
@@ -15,13 +14,10 @@ jobs:
       SKIP: swiftlint
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.x"
-
+          python-version: '3.x'
       - uses: pre-commit/action@v3.0.1
-
   # ── SwiftLint (macOS) ─────────────────────────────────────────────────────
   # SwiftLint is not available on Linux runners, so it runs in a separate job.
   swiftlint:
@@ -29,9 +25,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
-
       - name: Install SwiftLint
         run: brew install swiftlint
-
       - name: Run SwiftLint
         run: swiftlint lint --strict

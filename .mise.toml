@@ -1,0 +1,11 @@
+[tools]
+actionlint = "latest"
+editorconfig-checker = "latest"
+lychee = "latest"
+prettier = "latest"
+ripsecrets = "latest"
+shellcheck = "latest"
+shfmt = "latest"
+swiftformat = { version = "latest", no_app = "true", rename_exe = "swiftformat" }
+swiftlint = "latest"
+yamllint = "latest"

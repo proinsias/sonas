@@ -1,21 +1,20 @@
+---
 name: Sonas
 options:
   bundleIdPrefix: com.anindependentmind
   deploymentTarget:
-    iOS: "17.0"
-    watchOS: "11.0"
-    tvOS: "18.0"
-  xcodeVersion: "16"
+    iOS: '17.0'
+    watchOS: '11.0'
+    tvOS: '18.0'
+  xcodeVersion: '16'
   createIntermediateGroups: true
   groupSortPosition: top
-
 settings:
   base:
-    SWIFT_VERSION: "5.10"
-    MARKETING_VERSION: "1.0.0"
-    CURRENT_PROJECT_VERSION: "1"
-    DEVELOPMENT_TEAM: "" # Set your Apple Developer Team ID here
-
+    SWIFT_VERSION: '5.10'
+    MARKETING_VERSION: '1.0.0'
+    CURRENT_PROJECT_VERSION: '1'
+    DEVELOPMENT_TEAM: '' # Set your Apple Developer Team ID here
 # packages: (none linked yet)
 # GoogleSignIn: AppAuth inside it initialises ASWebAuthenticationSession via ViewBridge at launch
 #   even when never imported → "ViewBridge to RemoteViewService Terminated" noise on every run.
@@ -28,41 +27,37 @@ settings:
 #   SpotifyiOS:
 #     url: https://github.com/spotify/ios-sdk
 #     exactVersion: "1.2.3"
-
 targets:
   # ─── Main iOS App ────────────────────────────────────────────────────────────
   Sonas:
     type: application
     platform: iOS
-    deploymentTarget: "17.0"
+    deploymentTarget: '17.0'
     sources:
       - path: Sonas
         excludes:
-          - "**/*.md"
+          - '**/*.md'
     info:
       path: Sonas/Info.plist
       properties:
         CFBundleDisplayName: Sonas
-        CFBundleShortVersionString: "$(MARKETING_VERSION)"
-        CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
+        CFBundleShortVersionString: '$(MARKETING_VERSION)'
+        CFBundleVersion: '$(CURRENT_PROJECT_VERSION)'
         # Location permissions
-        NSLocationWhenInUseUsageDescription:
-          "Sonas shares your location with family members via CloudKit."
+        NSLocationWhenInUseUsageDescription: 'Sonas shares your location with family members via CloudKit.'
         NSLocationAlwaysAndWhenInUseUsageDescription:
-          "Sonas updates your location in the background so family members
-          always see where you are."
+          'Sonas updates your location in the background so family members always see where you are.'
         # Photo permissions
-        NSPhotoLibraryUsageDescription:
-          "Sonas reads your iCloud Shared Album to display family photos."
+        NSPhotoLibraryUsageDescription: 'Sonas reads your iCloud Shared Album to display family photos.'
         # Spotify
-        SPTClientID: ""
-        SPTRedirectURL: "sonas://spotify-callback"
+        SPTClientID: ''
+        SPTRedirectURL: 'sonas://spotify-callback'
         # URL Schemes
         CFBundleURLTypes:
           - CFBundleURLSchemes:
               - sonas
           - CFBundleURLSchemes:
-              - "com.googleusercontent.apps.YOUR_GOOGLE_CLIENT_ID"
+              - 'com.googleusercontent.apps.YOUR_GOOGLE_CLIENT_ID'
         # Background modes
         UIBackgroundModes:
           - fetch
@@ -89,23 +84,23 @@ targets:
       - BackgroundModes
     # WeatherKit and CloudKit/iCloud capabilities require a paid Apple Developer account.
     # Re-enable once a paid account is available:
-    #   entitlements properties: com.apple.developer.weatherkit, com.apple.developer.icloud-services, com.apple.developer.icloud-container-identifiers
+    #   entitlements properties: com.apple.developer.weatherkit, com.apple.developer.icloud-services,
+    #       com.apple.developer.icloud-container-identifiers
     #   capabilities: WeatherKit, CloudKit
     # dependencies: (none — GoogleSignIn and SpotifyiOS unlinked until actually imported; see packages comment above)
     scheme:
       environmentVariables:
-        USE_MOCK_LOCATION: "0"
-        USE_MOCK_WEATHER: "0"
-        USE_MOCK_CALENDAR: "0"
-        USE_MOCK_TASKS: "0"
-        USE_MOCK_PHOTOS: "0"
-        USE_MOCK_JAM: "0"
-
+        USE_MOCK_LOCATION: '0'
+        USE_MOCK_WEATHER: '0'
+        USE_MOCK_CALENDAR: '0'
+        USE_MOCK_TASKS: '0'
+        USE_MOCK_PHOTOS: '0'
+        USE_MOCK_JAM: '0'
   # ─── Unit + Contract Tests ────────────────────────────────────────────────────
   SonasTests:
     type: bundle.unit-test
     platform: iOS
-    deploymentTarget: "17.0"
+    deploymentTarget: '17.0'
     sources:
       - path: SonasTests
     settings:
@@ -113,12 +108,11 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.anindependentmind.sonas.tests
     dependencies:
       - target: Sonas
-
   # ─── UI Tests ─────────────────────────────────────────────────────────────────
   SonasUITests:
     type: bundle.ui-testing
     platform: iOS
-    deploymentTarget: "17.0"
+    deploymentTarget: '17.0'
     sources:
       - path: SonasUITests
     settings:
@@ -126,52 +120,49 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.anindependentmind.sonas.uitests
     dependencies:
       - target: Sonas
-
   # ─── watchOS Extension ────────────────────────────────────────────────────────
   WatchSonas:
     type: application
     platform: watchOS
-    deploymentTarget: "11.0"
+    deploymentTarget: '11.0'
     sources:
       - path: Sonas/Platform/Watch
       - path: Sonas/Shared
         excludes:
-          - "Mocks/**"
-          - "**/*.md"
+          - 'Mocks/**'
+          - '**/*.md'
       - path: WatchSonas/Assets.xcassets
     info:
       path: WatchSonas/Info.plist
       properties:
         CFBundleDisplayName: Sonas
-        CFBundleShortVersionString: "$(MARKETING_VERSION)"
-        CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
+        CFBundleShortVersionString: '$(MARKETING_VERSION)'
+        CFBundleVersion: '$(CURRENT_PROJECT_VERSION)'
         WKApplication: true
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.anindependentmind.sonas.watch
-
   # ─── tvOS App ─────────────────────────────────────────────────────────────────
   TVSonas:
     type: application
     platform: tvOS
-    deploymentTarget: "18.0"
+    deploymentTarget: '18.0'
     sources:
       - path: Sonas/Platform/TV
       - path: Sonas/Shared
         excludes:
-          - "Mocks/**"
-          - "**/*.md"
+          - 'Mocks/**'
+          - '**/*.md'
       - path: TVSonas/Assets.xcassets
     info:
       path: TVSonas/Info.plist
       properties:
         CFBundleDisplayName: Sonas
-        CFBundleShortVersionString: "$(MARKETING_VERSION)"
-        CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
+        CFBundleShortVersionString: '$(MARKETING_VERSION)'
+        CFBundleVersion: '$(CURRENT_PROJECT_VERSION)'
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.anindependentmind.sonas.tv
-
 schemes:
   Sonas:
     build:
@@ -194,7 +185,6 @@ schemes:
       config: Debug
     archive:
       config: Release
-
   SonasTests:
     build:
       targets:
@@ -208,7 +198,6 @@ schemes:
         - name: SonasTests
           parallelizable: true
           randomExecutionOrder: true
-
   SonasUITests:
     build:
       targets:

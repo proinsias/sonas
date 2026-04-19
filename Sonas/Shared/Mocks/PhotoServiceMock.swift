@@ -4,32 +4,31 @@ import UIKit
 // MARK: - PhotoServiceMock (T062)
 
 final class PhotoServiceMock: PhotoServiceProtocol, @unchecked Sendable {
-
     private(set) var selectedAlbumName: String? = "Family Album"
 
-    func fetchRecentPhotos(limit: Int = 20) async throws -> [Photo] {
-        return Self.fixtures
+    func fetchRecentPhotos(limit _: Int = 20) async throws -> [Photo] {
+        Self.fixtures
     }
 
-    func loadThumbnail(for photo: Photo, size: CGSize) async throws -> Data {
-        return UIColor.systemBlue.image(size: size).pngData() ?? Data()
+    func loadThumbnail(for _: Photo, size: CGSize) async throws -> Data {
+        UIColor.systemBlue.image(size: size).pngData() ?? Data()
     }
 
-    func loadFullImage(for photo: Photo) async throws -> Data {
-        return UIColor.systemBlue.image(size: CGSize(width: 1080, height: 1080)).pngData() ?? Data()
+    func loadFullImage(for _: Photo) async throws -> Data {
+        UIColor.systemBlue.image(size: CGSize(width: 1080, height: 1080)).pngData() ?? Data()
     }
 
     func selectSharedAlbum() async throws -> String {
-        return selectedAlbumName ?? "Mock Album"
+        selectedAlbumName ?? "Mock Album"
     }
 
-    static let fixtures: [Photo] = (0..<5).map { index in
+    static let fixtures: [Photo] = (0 ..< 5).map { index in
         Photo(
             id: "mock-photo-\(index)",
             creationDate: Date.now.addingTimeInterval(TimeInterval(-index * 86400)),
             width: 1080,
             height: 1080,
-            contributorName: ["Alice", "Bob", "Carol"][index % 3]
+            contributorName: ["Alice", "Bob", "Carol"][index % 3],
         )
     }
 }

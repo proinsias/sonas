@@ -1,36 +1,37 @@
-import Testing
-import Foundation
 import CloudKit
+import Foundation
 @testable import Sonas
+import Testing
 
 // MARK: - LocationContractTests (T031)
+
 // 🔴 TEST-FIRST GATE — These tests MUST FAIL before LocationService is implemented.
 // Run this file first; confirm all tests fail; then implement LocationService.
 
 @Suite("Location Service Contract Tests")
 struct LocationContractTests {
-
     // MARK: - Fixture data
 
     private static func makeFamilyLocationRecord(
         name: String,
         lat: Double,
         lon: Double,
-        placeName: String
+        placeName: String,
     ) -> CKRecord {
         let record = CKRecord(recordType: "FamilyLocation")
         record["displayName"] = name as CKRecordValue
-        record["latitude"]    = lat as CKRecordValue
-        record["longitude"]   = lon as CKRecordValue
-        record["placeName"]   = placeName as CKRecordValue
-        record["recordedAt"]  = Date.now as CKRecordValue
+        record["latitude"] = lat as CKRecordValue
+        record["longitude"] = lon as CKRecordValue
+        record["placeName"] = placeName as CKRecordValue
+        record["recordedAt"] = Date.now as CKRecordValue
         return record
     }
 
     // MARK: - T031.1: Stub returns two FamilyLocation records → service emits 2 FamilyMember values
 
-    @Test("given two CloudKit FamilyLocation records when refresh is called then familyLocations emits 2 members")
-    func given_twoCloudKitRecords_when_refresh_then_emitsTwoMembers() async throws {
+    @Test
+    func `given two CloudKit FamilyLocation records when refresh is called then familyLocations emits 2 members`(
+    ) async throws {
         // Arrange: CloudKit container stub returning two fixture records
         let service = LocationService()
 
@@ -39,7 +40,7 @@ struct LocationContractTests {
         let task = Swift.Task {
             for await members in service.familyLocations {
                 received = members
-                break  // Take first emission
+                break // Take first emission
             }
         }
         _ = try await service.refresh()
@@ -51,13 +52,13 @@ struct LocationContractTests {
 
     // MARK: - T031.2: placeName is populated correctly from the record
 
-    @Test("given a CloudKit record with placeName when parsed then FamilyMember.location.placeName matches")
-    func given_cloudKitRecord_when_parsed_then_placeNameMatches() async throws {
+    @Test
+    func `given a CloudKit record with placeName when parsed then FamilyMember.location.placeName matches`() {
         let record = Self.makeFamilyLocationRecord(
             name: "Alice",
             lat: 53.3498,
             lon: -6.2603,
-            placeName: "Dublin City Centre"
+            placeName: "Dublin City Centre",
         )
 
         // The private initialiser FamilyMember(from:) must be accessible for contract verification.
@@ -69,11 +70,11 @@ struct LocationContractTests {
 
     // MARK: - T031.3: recordedAt is populated correctly
 
-    @Test("given a CloudKit record with recordedAt when parsed then FamilyMember.location.recordedAt is recent")
-    func given_cloudKitRecord_when_parsed_then_recordedAtIsRecent() async throws {
+    @Test
+    func `given a CloudKit record with recordedAt when parsed then FamilyMember.location.recordedAt is recent`() {
         let now = Date.now
         let record = Self.makeFamilyLocationRecord(
-            name: "Bob", lat: 51.5, lon: -0.1, placeName: "London"
+            name: "Bob", lat: 51.5, lon: -0.1, placeName: "London",
         )
         record["recordedAt"] = now as CKRecordValue
 

@@ -1,12 +1,11 @@
-import SwiftUI
-import SwiftData
 import BackgroundTasks
+import SwiftData
+import SwiftUI
 
 // MARK: - SonasApp (T025)
 
 @main
 struct SonasApp: App {
-
     @Environment(\.scenePhase) private var scenePhase
 
     var body: some Scene {
@@ -28,7 +27,7 @@ struct SonasApp: App {
     init() {
         BGTaskScheduler.shared.register(
             forTaskWithIdentifier: "com.sonas.refresh",
-            using: nil
+            using: nil,
         ) { task in
             // T089: Full BGAppRefreshTask handler
             // Fetches weather snapshot, AQI, and Todoist tasks; writes to CacheService.
@@ -78,7 +77,7 @@ struct SonasApp: App {
 
     private func scheduleBGRefresh() {
         let request = BGAppRefreshTaskRequest(identifier: "com.sonas.refresh")
-        request.earliestBeginDate = Date(timeIntervalSinceNow: 15 * 60)  // 15 min
+        request.earliestBeginDate = Date(timeIntervalSinceNow: 15 * 60) // 15 min
         do {
             try BGTaskScheduler.shared.submit(request)
             SonasLogger.app.info("BGAppRefreshTask: scheduled in ≥15 min")

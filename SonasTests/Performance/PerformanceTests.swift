@@ -1,13 +1,13 @@
-import XCTest
-import SwiftData
 @testable import Sonas
+import SwiftData
+import XCTest
 
 // MARK: - PerformanceTests (T090)
+
 // Constitution §IV — performance baselines MUST be verified in task checklist.
 // Uses XCTestCase.measure{} for baseline recording.
 
 final class PerformanceTests: XCTestCase {
-
     // MARK: - T090.1: Cached-data dashboard render ≤ 500ms
 
     func test_cachedDataDashboardRender_isWithin500ms() async throws {
@@ -29,19 +29,19 @@ final class PerformanceTests: XCTestCase {
             Swift.Task { @MainActor in
                 let vm = DashboardViewModel(
                     locationService: LocationServiceMock(),
-                    calendarService: CalendarServiceMock()
+                    calendarService: CalendarServiceMock(),
                 )
                 await vm.locationVM.start()
                 await vm.eventsVM.load()
                 exp.fulfill()
             }
-            wait(for: [exp], timeout: 0.5)  // Constitution §IV: ≤500ms
+            wait(for: [exp], timeout: 0.5) // Constitution §IV: ≤500ms
         }
     }
 
     // MARK: - T090.2: WeatherViewModel cache-load path ≤ 500ms
 
-    func test_weatherViewModelCacheLoad_isWithin500ms() throws {
+    func test_weatherViewModelCacheLoad_isWithin500ms() {
         let options = XCTMeasureOptions()
         options.iterationCount = 5
         measure(options: options) {
@@ -68,7 +68,7 @@ final class PerformanceTests: XCTestCase {
                 await vm.endJam()
                 exp.fulfill()
             }
-            wait(for: [exp], timeout: 0.1)  // Constitution §IV: ≤100ms UI interaction
+            wait(for: [exp], timeout: 0.1) // Constitution §IV: ≤100ms UI interaction
         }
     }
 }

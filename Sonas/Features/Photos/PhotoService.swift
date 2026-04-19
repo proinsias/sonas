@@ -8,7 +8,7 @@ protocol PhotoServiceProtocol: AnyObject, Sendable {
     func fetchRecentPhotos(limit: Int) async throws -> [Photo]
     func loadThumbnail(for photo: Photo, size: CGSize) async throws -> Data
     func loadFullImage(for photo: Photo) async throws -> Data
-    func selectSharedAlbum() async throws -> String  // Returns album display name
+    func selectSharedAlbum() async throws -> String // Returns album display name
     var selectedAlbumName: String? { get }
 }
 
@@ -22,10 +22,10 @@ enum PhotoServiceError: LocalizedError {
 
     var errorDescription: String? {
         switch self {
-        case .permissionDenied: return "Photo library access is required to show the family gallery."
-        case .albumNotFound:    return "The selected album could not be found. Re-select in Settings."
-        case .albumEmpty:       return "The selected album is empty. Add photos to see them here."
-        case .imageLoadFailed:  return "Could not load photo."
+        case .permissionDenied: "Photo library access is required to show the family gallery."
+        case .albumNotFound: "The selected album could not be found. Re-select in Settings."
+        case .albumEmpty: "The selected album is empty. Add photos to see them here."
+        case .imageLoadFailed: "Could not load photo."
         }
     }
 }
@@ -34,8 +34,10 @@ enum PhotoServiceError: LocalizedError {
 
 @MainActor
 final class PhotoService: NSObject, PhotoServiceProtocol, PHPhotoLibraryChangeObserver {
+    var selectedAlbumName: String? {
+        AppConfiguration.shared.selectedAlbumName
+    }
 
-    var selectedAlbumName: String? { AppConfiguration.shared.selectedAlbumName }
     private var changeObservationTask: Swift.Task<Void, Never>?
     private var onAlbumChanged: (() -> Void)?
 
@@ -62,7 +64,7 @@ final class PhotoService: NSObject, PhotoServiceProtocol, PHPhotoLibraryChangeOb
 
         let collections = PHAssetCollection.fetchAssetCollections(
             withLocalIdentifiers: [albumID],
-            options: nil
+            options: nil,
         )
         guard let album = collections.firstObject else {
             throw PhotoServiceError.albumNotFound
@@ -84,7 +86,7 @@ final class PhotoService: NSObject, PhotoServiceProtocol, PHPhotoLibraryChangeOb
                 creationDate: asset.creationDate,
                 width: asset.pixelWidth,
                 height: asset.pixelHeight,
-                contributorName: nil
+                contributorName: nil,
             ))
         }
         SonasLogger.photos.info("PhotoService: fetched \(photos.count) photos")
@@ -105,7 +107,7 @@ final class PhotoService: NSObject, PhotoServiceProtocol, PHPhotoLibraryChangeOb
                 for: asset,
                 targetSize: size,
                 contentMode: .aspectFill,
-                options: options
+                options: options,
             ) { image, info in
                 if let degraded = info?[PHImageResultIsDegradedKey] as? Bool, degraded { return }
                 if let image, let data = image.pngData() {
@@ -124,12 +126,12 @@ final class PhotoService: NSObject, PhotoServiceProtocol, PHPhotoLibraryChangeOb
     func selectSharedAlbum() async throws -> String {
         // Album picker presented from SettingsView via PHPickerViewController
         // Returns album name after user selection; actual UI in SettingsView T092
-        return AppConfiguration.shared.selectedAlbumName ?? ""
+        AppConfiguration.shared.selectedAlbumName ?? ""
     }
 
     // MARK: - PHPhotoLibraryChangeObserver
 
-    nonisolated func photoLibraryDidChange(_ changeInstance: PHChange) {
+    nonisolated func photoLibraryDidChange(_: PHChange) {
         Swift.Task { @MainActor in
             SonasLogger.photos.info("PhotoService: library changed — triggering re-fetch")
             onAlbumChanged?()

@@ -6,7 +6,6 @@ import Observation
 @Observable
 @MainActor
 final class PhotoViewModel {
-
     private(set) var photos: [Photo] = []
     private(set) var isLoading: Bool = true
     private(set) var error: PanelError?

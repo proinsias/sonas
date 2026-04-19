@@ -1,3 +1,4 @@
+---
 # markdownlint-cli2 configuration for Sonas
 # Relaxed for spec documentation which contains long lines,
 # HTML comments, and placeholder tokens.

@@ -19,7 +19,7 @@ final class CachedWeatherSnapshot {
     var sunriseTime = Date.distantPast
     var sunsetTime = Date.distantPast
     var moonPhaseRaw: String = ""
-    var forecastJSON = Data()   // Encoded [DayForecast] via JSONEncoder
+    var forecastJSON = Data() // Encoded [DayForecast] via JSONEncoder
     var lastUpdated = Date.distantPast
 
     init(
@@ -28,7 +28,7 @@ final class CachedWeatherSnapshot {
         humidity: Double, windSpeed: Double, windDirection: Double, windCompassLabel: String,
         pressure: Double, pressureTrendRaw: String, airQualityIndex: Int?,
         sunriseTime: Date, sunsetTime: Date, moonPhaseRaw: String,
-        forecastJSON: Data, lastUpdated: Date
+        forecastJSON: Data, lastUpdated: Date,
     ) {
         self.temperature = temperature; self.feelsLike = feelsLike
         self.conditionDescription = conditionDescription; self.conditionSymbolName = conditionSymbolName
@@ -73,7 +73,7 @@ final class CachedCalendarEvent {
     var isAllDay: Bool = false
     var calendarName: String = ""
     var sourceRaw: String = ""
-    var attendeesJSON = Data()   // Encoded [String] via JSONEncoder
+    var attendeesJSON = Data() // Encoded [String] via JSONEncoder
     var calendarColorHex: String?
     var lastUpdated = Date.distantPast
 

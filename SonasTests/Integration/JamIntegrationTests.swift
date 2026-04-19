@@ -1,18 +1,18 @@
-import Testing
-import Foundation
 import CoreImage
+import Foundation
 @testable import Sonas
+import Testing
 
 // MARK: - JamIntegrationTests (T076-I)
+
 // Constitution §II — every user-facing feature MUST have an integration test.
 
 @Suite("Jam Panel Integration Tests")
 struct JamIntegrationTests {
-
     // MARK: - T076-I.1: JamPanelView renders non-nil QR Image within 500ms of startJam resolving
 
-    @Test("given JamServiceMock when startJam called then QR CIImage is non-nil within 500ms")
-    func given_mockJamService_when_startJam_then_qrImageNonNilWithin500ms() async throws {
+    @Test
+    func `given JamServiceMock when startJam called then QR CIImage is non-nil within 500ms`() async throws {
         let start = Date.now
         let service = JamServiceMock()
         let session = try await service.startJam()
@@ -30,8 +30,8 @@ struct JamIntegrationTests {
 
     // MARK: - T076-I.2: QR Image accessibility identifier disappears after endJam
 
-    @Test("given active jam session when endJam called then session status is ended and QR should be hidden")
-    func given_activeSession_when_endJam_then_sessionEnded() async throws {
+    @Test
+    func `given active jam session when endJam called then session status is ended and QR should be hidden`() async {
         let service = JamServiceMock()
         let vm = JamViewModel(service: service)
 

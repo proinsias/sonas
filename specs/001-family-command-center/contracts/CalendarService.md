@@ -1,8 +1,7 @@
 # Contract: CalendarService
 
-**Purpose**: Aggregate upcoming calendar events from iCloud (EventKit) and
-Google Calendar (REST API v3) for the next 48 hours, deduplicated and sorted by
-start time.
+**Purpose**: Aggregate upcoming calendar events from iCloud (EventKit) and Google Calendar (REST API v3) for the next 48
+hours, deduplicated and sorted by start time.
 
 ```swift
 protocol CalendarServiceProtocol {
@@ -27,8 +26,7 @@ protocol CalendarServiceProtocol {
 
 - `EKEventStore.requestFullAccessToEvents()` (iOS 17+)
 - `EKEventStore.events(matching: EKEventStore.predicateForEvents(withStart:end:calendars:))`
-- All accessible EKCalendar instances included (no filter by calendar name in
-  v1)
+- All accessible EKCalendar instances included (no filter by calendar name in v1)
 
 **Google Calendar REST v3**:
 
@@ -42,19 +40,15 @@ GET https://www.googleapis.com/calendar/v3/calendars/primary/events
 Authorization: Bearer {access_token}
 ```
 
-**Response mapping**: | Google field | `CalendarEvent` field | |---|---| | `id`
-| `id` | | `summary` | `title` | | `start.dateTime` or `start.date` |
-`startDate`, `isAllDay` | | `end.dateTime` or `end.date` | `endDate` | |
-`attendees[].displayName` | `attendeeNames` | | `colorId` (mapped to hex) |
-`calendarColour` |
+**Response mapping**: | Google field | `CalendarEvent` field | |---|---| | `id` | `id` | | `summary` | `title` | |
+`start.dateTime` or `start.date` | `startDate`, `isAllDay` | | `end.dateTime` or `end.date` | `endDate` | |
+`attendees[].displayName` | `attendeeNames` | | `colorId` (mapped to hex) | `calendarColour` |
 
 **Error cases**:
 
-- `CalendarServiceError.eventKitDenied` — EventKit permission denied; returns
-  Google-only events
-- `CalendarServiceError.googleTokenExpired` — triggers silent refresh; if
-  refresh fails, returns iCloud-only events and sets
-  `needsGoogleReconnect = true`
+- `CalendarServiceError.eventKitDenied` — EventKit permission denied; returns Google-only events
+- `CalendarServiceError.googleTokenExpired` — triggers silent refresh; if refresh fails, returns iCloud-only events and
+  sets `needsGoogleReconnect = true`
 - `CalendarServiceError.googleAPIError(statusCode:)` — HTTP 4xx/5xx from Google
 
 **Contract test fixtures** (`GoogleCalendarContractTests.swift`):

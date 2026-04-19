@@ -22,28 +22,33 @@ enum TaskServiceError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .authenticationFailed:
-            return "Todoist token invalid. Re-connect in Settings."
-        case .rateLimitExceeded(let retry):
-            return "Rate limit reached. Retry in \(Int(retry)) seconds."
-        case .networkError(let err):
-            return "Network error: \(err.localizedDescription)"
+            "Todoist token invalid. Re-connect in Settings."
+        case let .rateLimitExceeded(retry):
+            "Rate limit reached. Retry in \(Int(retry)) seconds."
+        case let .networkError(err):
+            "Network error: \(err.localizedDescription)"
         case .notConnected:
-            return "Connect your Todoist account in Settings."
+            "Connect your Todoist account in Settings."
         }
     }
 }
 
 // MARK: - TodoistService (T055)
+
 // Todoist REST API v2 — personal API token auth, cursor pagination, optimistic complete + rollback.
 
 @MainActor
 final class TodoistService: TaskServiceProtocol {
-
     private enum Endpoint {
         static let base = "https://api.todoist.com/rest/v2"
         static let projects = "\(base)/projects"
-        static func tasks(projectID: String) -> String { "\(base)/tasks?project_id=\(projectID)" }
-        static func closeTask(id: String) -> String { "\(base)/tasks/\(id)/close" }
+        static func tasks(projectID: String) -> String {
+            "\(base)/tasks?project_id=\(projectID)"
+        }
+
+        static func closeTask(id: String) -> String {
+            "\(base)/tasks/\(id)/close"
+        }
     }
 
     private let session: URLSession
@@ -51,7 +56,7 @@ final class TodoistService: TaskServiceProtocol {
 
     init(session: URLSession = .shared) {
         self.session = session
-        self.isConnected = AppConfiguration.shared.todoistAPIToken != nil
+        isConnected = AppConfiguration.shared.todoistAPIToken != nil
     }
 
     // MARK: - TaskServiceProtocol
@@ -78,7 +83,7 @@ final class TodoistService: TaskServiceProtocol {
         var allTasks: [Task] = []
 
         for projectID in projectIDs {
-            try await Swift.Task.sleep(nanoseconds: 300_000_000)  // 300ms inter-request delay
+            try await Swift.Task.sleep(nanoseconds: 300_000_000) // 300ms inter-request delay
             let tasks = try await fetchTasksForProject(id: projectID, token: token)
             allTasks.append(contentsOf: tasks)
         }
@@ -89,7 +94,10 @@ final class TodoistService: TaskServiceProtocol {
         guard let token = AppConfiguration.shared.todoistAPIToken else {
             throw TaskServiceError.notConnected
         }
-        var request = URLRequest(url: URL(string: Endpoint.closeTask(id: id))!)
+        guard let url = URL(string: Endpoint.closeTask(id: id)) else {
+            throw TaskServiceError.networkError(NSError(domain: "Todoist", code: -1))
+        }
+        var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
 
@@ -118,7 +126,10 @@ final class TodoistService: TaskServiceProtocol {
         if !selectedIDs.isEmpty { return selectedIDs }
 
         // Fall back to all projects if none configured
-        var request = URLRequest(url: URL(string: Endpoint.projects)!)
+        guard let projectsURL = URL(string: Endpoint.projects) else {
+            throw TaskServiceError.networkError(NSError(domain: "Todoist", code: -1))
+        }
+        var request = URLRequest(url: projectsURL)
         request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         let (data, _) = try await session.data(for: request)
         let projects = try JSONDecoder().decode([TodoistProject].self, from: data)
@@ -133,7 +144,10 @@ final class TodoistService: TaskServiceProtocol {
         repeat {
             var urlString = Endpoint.tasks(projectID: id)
             if let cursor { urlString += "&cursor=\(cursor)" }
-            var request = URLRequest(url: URL(string: urlString)!)
+            guard let tasksURL = URL(string: urlString) else {
+                throw TaskServiceError.networkError(NSError(domain: "Todoist", code: -1))
+            }
+            var request = URLRequest(url: tasksURL)
             request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
 
             let (data, response) = try await session.data(for: request)
@@ -171,14 +185,24 @@ private struct TodoistTask: Decodable {
     let id: String
     let content: String
     let description: String
-    let project_id: String
+    let projectID: String
     let priority: Int
     let due: TodoistDue?
+
+    enum CodingKeys: String, CodingKey {
+        case id, content, description, priority, due
+        case projectID = "project_id"
+    }
 
     struct TodoistDue: Decodable {
         let date: String?
         let string: String
-        let is_recurring: Bool
+        let isRecurring: Bool
+
+        enum CodingKeys: String, CodingKey {
+            case date, string
+            case isRecurring = "is_recurring"
+        }
     }
 
     func toTask(orderIndex: inout Int) -> Task {
@@ -188,11 +212,11 @@ private struct TodoistTask: Decodable {
                 ISO8601DateFormatter().date(from: $0) ??
                     DateFormatter.todoistDate.date(from: $0)
             }
-            return TaskDue(date: date, string: $0.string, isRecurring: $0.is_recurring)
+            return TaskDue(date: date, string: $0.string, isRecurring: $0.isRecurring)
         }
         return Task(
             id: id, content: content, description: description,
-            projectID: project_id, projectName: "",  // Populated by calling context
+            projectID: projectID, projectName: "", // Populated by calling context
             due: taskDue,
             priority: TaskPriority(todoistPriority: priority),
             isCompleted: false, isCompleting: false,
@@ -203,8 +227,8 @@ private struct TodoistTask: Decodable {
 
 private extension DateFormatter {
     static let todoistDate: DateFormatter = {
-        let f = DateFormatter()
-        f.dateFormat = "yyyy-MM-dd"
-        return f
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        return formatter
     }()
 }

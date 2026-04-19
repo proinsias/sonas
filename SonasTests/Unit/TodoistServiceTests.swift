@@ -1,16 +1,15 @@
-import Testing
 import Foundation
 @testable import Sonas
+import Testing
 
 // MARK: - TodoistServiceTests (T059)
 
 @Suite("Todoist Service Unit Tests")
 struct TodoistServiceTests {
-
     // MARK: - T059.1: Optimistic rollback when completeTask throws
 
-    @Test("given task in list when completeTask fails then task reappears in tasksByProject")
-    func given_taskInList_when_completeTaskFails_then_rollback() async throws {
+    @Test
+    func `given task in list when completeTask fails then task reappears in tasksByProject`() async throws {
         final class FailingTaskService: TaskServiceProtocol, @unchecked Sendable {
             var isConnected: Bool = true
             var fetchCalled = false
@@ -18,10 +17,12 @@ struct TodoistServiceTests {
                 fetchCalled = true
                 return TaskServiceMock.fixtures
             }
-            func completeTask(id: String) async throws {
+
+            func completeTask(id _: String) async throws {
                 throw TaskServiceError.networkError(NSError(domain: "test", code: -1))
             }
-            func connectTodoist(apiToken: String) async throws {}
+
+            func connectTodoist(apiToken _: String) async throws {}
             func disconnectTodoist() async {}
         }
 
@@ -30,19 +31,19 @@ struct TodoistServiceTests {
         await vm.start()
 
         let task = TaskServiceMock.fixtures[0]
-        let countBefore = vm.tasksByProject.values.flatMap { $0 }.count
+        let countBefore = vm.tasksByProject.values.flatMap(\.self).count
 
         await vm.completeTask(task)
 
-        let countAfter = vm.tasksByProject.values.flatMap { $0 }.count
+        let countAfter = vm.tasksByProject.values.flatMap(\.self).count
         #expect(countAfter == countBefore, "Task must be rolled back after completeTask failure")
         #expect(vm.completionErrorToast != nil, "Error toast must be shown on rollback")
     }
 
     // MARK: - T059.2: authenticationFailed on 401
 
-    @Test("given Todoist service when 401 received then throws authenticationFailed")
-    func given_todoist401_when_completeTask_then_throwsAuthFailed() async throws {
+    @Test
+    func `given Todoist service when 401 received then throws authenticationFailed`() async throws {
         let config = URLSessionConfiguration.ephemeral
         config.protocolClasses = [FourOhOneProtocol.self]
         let session = URLSession(configuration: config)
@@ -59,13 +60,25 @@ struct TodoistServiceTests {
 // MARK: - 401 stub
 
 private final class FourOhOneProtocol: URLProtocol {
-    override class func canInit(with request: URLRequest) -> Bool { true }
-    override class func canonicalRequest(for request: URLRequest) -> URLRequest { request }
+    override static func canInit(with _: URLRequest) -> Bool {
+        true
+    }
+
+    override static func canonicalRequest(for request: URLRequest) -> URLRequest {
+        request
+    }
+
     override func startLoading() {
-        let response = HTTPURLResponse(url: request.url!, statusCode: 401, httpVersion: nil, headerFields: nil)!
+        guard let url = request.url,
+              let response = HTTPURLResponse(url: url, statusCode: 401, httpVersion: nil, headerFields: nil)
+        else {
+            client?.urlProtocol(self, didFailWithError: URLError(.badURL))
+            return
+        }
         client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
         client?.urlProtocol(self, didLoad: Data())
         client?.urlProtocolDidFinishLoading(self)
     }
+
     override func stopLoading() {}
 }

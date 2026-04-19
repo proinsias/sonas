@@ -1,14 +1,14 @@
+import CoreLocation
 import Foundation
 import Observation
-import CoreLocation
 
 // MARK: - WeatherViewModel (T049)
 
 @Observable
 @MainActor
 final class WeatherViewModel {
-
     // MARK: Published state
+
     private(set) var snapshot: WeatherSnapshot?
     private(set) var forecast: [DayForecast] = []
     private(set) var isLoading: Bool = true
@@ -16,6 +16,7 @@ final class WeatherViewModel {
     private(set) var lastUpdated: Date?
 
     // MARK: Dependencies
+
     private let service: any WeatherServiceProtocol
     private let cache: CacheServiceProtocol
     private let config: AppConfiguration
@@ -24,7 +25,7 @@ final class WeatherViewModel {
     init(
         service: any WeatherServiceProtocol,
         cache: CacheServiceProtocol? = nil,
-        config: AppConfiguration = .shared
+        config: AppConfiguration = .shared,
     ) {
         self.service = service
         self.cache = cache ?? CacheService.shared
@@ -90,7 +91,7 @@ final class WeatherViewModel {
                 self.error = PanelError(
                     title: "Weather Unavailable",
                     message: error.localizedDescription,
-                    isRetryable: true
+                    isRetryable: true,
                 )
             }
             isLoading = false

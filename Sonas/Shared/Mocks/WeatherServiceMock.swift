@@ -1,15 +1,15 @@
-import Foundation
 import CoreLocation
+import Foundation
 
 // MARK: - WeatherServiceMock (T045)
+
 // Returns fixture WeatherSnapshot with all 8 required fields populated.
 // Active when USE_MOCK_WEATHER=1 environment variable is set.
 
 final class WeatherServiceMock: WeatherServiceProtocol, @unchecked Sendable {
-
-    func fetchWeather(for coordinate: CLLocationCoordinate2D) async throws
+    func fetchWeather(for _: CLLocationCoordinate2D) async throws
         -> (current: WeatherSnapshot, forecast: [DayForecast]) {
-        return (Self.currentFixture, Self.forecastFixtures)
+        (Self.currentFixture, Self.forecastFixtures)
     }
 
     // MARK: Fixtures
@@ -30,20 +30,20 @@ final class WeatherServiceMock: WeatherServiceProtocol, @unchecked Sendable {
         sunriseTime: Calendar.current.date(bySettingHour: 6, minute: 28, second: 0, of: .now)!,
         sunsetTime: Calendar.current.date(bySettingHour: 20, minute: 14, second: 0, of: .now)!,
         moonPhase: .waxingGibbous,
-        fetchedAt: .now
+        fetchedAt: .now,
     )
 
-    static let forecastFixtures: [DayForecast] = (0..<7).map { offset in
+    static let forecastFixtures: [DayForecast] = (0 ..< 7).map { offset in
         let date = Calendar.current.date(byAdding: .day, value: offset, to: .now)!
         let dateStr = ISO8601DateFormatter().string(from: Calendar.current.startOfDay(for: date))
         return DayForecast(
             id: String(dateStr.prefix(10)),
             date: date,
-            highTemperature: Double.random(in: 14...22),
-            lowTemperature: Double.random(in: 6...13),
+            highTemperature: Double.random(in: 14 ... 22),
+            lowTemperature: Double.random(in: 6 ... 13),
             conditionSymbolName: ["sun.max.fill", "cloud.sun.fill", "cloud.fill", "cloud.rain.fill"].randomElement()!,
             conditionDescription: ["Sunny", "Partly Cloudy", "Cloudy", "Light Rain"].randomElement()!,
-            precipitationChance: Double.random(in: 0...0.6)
+            precipitationChance: Double.random(in: 0 ... 0.6),
         )
     }
 }

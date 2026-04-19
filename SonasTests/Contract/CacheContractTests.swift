@@ -1,15 +1,15 @@
-import Testing
 import Foundation
-import SwiftData
 @testable import Sonas
+import SwiftData
+import Testing
 
 // MARK: - CacheContractTests (T023)
+
 // 🔴 TEST-FIRST GATE — These tests MUST FAIL before CacheService is implemented.
 // Uses an in-memory ModelContainer so no disk I/O occurs.
 
 @Suite("Cache Service Contract Tests")
 struct CacheContractTests {
-
     // MARK: - In-memory container factory
 
     private func makeInMemoryService() throws -> CacheService {
@@ -27,8 +27,8 @@ struct CacheContractTests {
 
     // MARK: - Weather round-trip
 
-    @Test("given weather snapshot when saved then loadWeather returns matching snapshot")
-    func given_weatherSnapshot_when_saved_then_loadWeatherReturnsSnapshot() async throws {
+    @Test
+    func `given weather snapshot when saved then loadWeather returns matching snapshot`() async throws {
         let sut = try makeInMemoryService()
         let snapshot = WeatherSnapshot(
             temperature: 18.5, feelsLike: 16.0,
@@ -38,7 +38,7 @@ struct CacheContractTests {
             aiqCategory: .good,
             sunriseTime: Date.now, sunsetTime: Date.now.addingTimeInterval(43200),
             moonPhase: .firstQuarter,
-            fetchedAt: Date.now
+            fetchedAt: Date.now,
         )
         let forecast: [DayForecast] = []
 
@@ -53,25 +53,30 @@ struct CacheContractTests {
 
     // MARK: - evictStaleEntries removes weather older than TTL
 
-    @Test("given weather saved more than 1 hour ago when evictStaleEntries called then loadWeather returns nil")
-    func given_staleWeather_when_evictStaleEntries_then_loadWeatherReturnsNil() async throws {
+    @Test
+    func `given weather saved more than 1 hour ago when evictStaleEntries called then loadWeather returns nil`(
+    ) async throws {
         let sut = try makeInMemoryService()
 
         // Inject a stale CachedWeatherSnapshot directly into the container
-        let schema = Schema([CachedWeatherSnapshot.self, CachedLocationSnapshot.self,
-                             CachedCalendarEvent.self, CachedTask.self, CachedJamSession.self])
+        let schema = Schema(
+            [
+                CachedWeatherSnapshot.self, CachedLocationSnapshot.self,
+                CachedCalendarEvent.self, CachedTask.self, CachedJamSession.self
+            ],
+        )
         let config = ModelConfiguration(isStoredInMemoryOnly: true)
         let container = try ModelContainer(for: schema, configurations: config)
         let staleSvc = CacheService(container: container)
 
-        let staleDate = Date.now.addingTimeInterval(-7200)  // 2 hours ago
+        let staleDate = Date.now.addingTimeInterval(-7200) // 2 hours ago
         let snapshot = WeatherSnapshot(
             temperature: 20.0, feelsLike: 18.0,
             conditionDescription: "Clear", conditionSymbolName: "sun.max.fill",
             humidity: 0.5, windSpeed: 10.0, windDirection: 180.0, windCompassLabel: "S",
             pressure: 1010.0, pressureTrend: .rising, airQualityIndex: nil, aiqCategory: nil,
             sunriseTime: staleDate, sunsetTime: staleDate.addingTimeInterval(43200),
-            moonPhase: .fullMoon, fetchedAt: staleDate
+            moonPhase: .fullMoon, fetchedAt: staleDate,
         )
         try await staleSvc.saveWeather(snapshot, forecast: [])
         try await staleSvc.evictStaleEntries()
@@ -82,8 +87,8 @@ struct CacheContractTests {
 
     // MARK: - Location round-trip
 
-    @Test("given family members when saved then loadLocations returns matching members")
-    func given_familyMembers_when_saved_then_loadLocationsReturnsThem() async throws {
+    @Test
+    func `given family members when saved then loadLocations returns matching members`() async throws {
         let sut = try makeInMemoryService()
         let members = LocationServiceMock.fixtures.filter { $0.location != nil }
 
@@ -95,8 +100,9 @@ struct CacheContractTests {
 
     // MARK: - evictStaleEntries removes location snapshots older than 5 minutes
 
-    @Test("given location older than 5 minutes when evictStaleEntries called then loadLocations returns empty")
-    func given_staleLocation_when_evictStaleEntries_then_returnsEmpty() async throws {
+    @Test
+    func `given location older than 5 minutes when evictStaleEntries called then loadLocations returns empty`(
+    ) async throws {
         // This test verifies the TTL contract (5 min) defined in research.md §Decision 9.
         // CacheService.evictStaleEntries() must delete CachedLocationSnapshot records whose
         // lastUpdated is >300 seconds in the past.

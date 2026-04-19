@@ -3,7 +3,6 @@ import SwiftUI
 // MARK: - EventsPanelView (T039)
 
 struct EventsPanelView: View {
-
     @State var viewModel: EventsViewModel
 
     var body: some View {

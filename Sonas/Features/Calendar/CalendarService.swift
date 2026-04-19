@@ -1,5 +1,5 @@
-import Foundation
 import EventKit
+import Foundation
 
 // MARK: - CalendarServiceProtocol (T027)
 
@@ -27,20 +27,20 @@ enum CalendarServiceError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .eventKitPermissionDenied:
-            return "Calendar access is required to show your events. Enable it in Settings."
-        case .googleAuthFailed(let err):
-            return "Google Calendar connection failed: \(err.localizedDescription)"
-        case .fetchFailed(let err):
-            return "Could not load calendar events: \(err.localizedDescription)"
+            "Calendar access is required to show your events. Enable it in Settings."
+        case let .googleAuthFailed(err):
+            "Google Calendar connection failed: \(err.localizedDescription)"
+        case let .fetchFailed(err):
+            "Could not load calendar events: \(err.localizedDescription)"
         }
     }
 }
 
 // MARK: - GoogleCalendarClient (T032)
+
 // Handles Google Calendar REST v3 fetch with OAuth token management.
 
 final class GoogleCalendarClient: Sendable {
-
     private enum Endpoint {
         static let events = "https://www.googleapis.com/calendar/v3/calendars/primary/events"
     }
@@ -57,7 +57,7 @@ final class GoogleCalendarClient: Sendable {
     func fetchEvents(
         accessToken: String,
         timeMin: Date,
-        timeMax: Date
+        timeMax: Date,
     ) async throws -> [CalendarEvent] {
         var components = URLComponents(string: Endpoint.events)!
         let formatter = ISO8601DateFormatter()
@@ -70,13 +70,16 @@ final class GoogleCalendarClient: Sendable {
             .init(name: "maxResults", value: "50")
         ]
 
-        var request = URLRequest(url: components.url!)
+        guard let url = components.url else {
+            throw CalendarServiceError.fetchFailed(NSError(domain: "GoogleCalendar", code: -1))
+        }
+        var request = URLRequest(url: url)
         request.addValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
 
         let (data, response) = try await session.data(for: request)
         if let http = response as? HTTPURLResponse, http.statusCode == 401 {
             throw CalendarServiceError.googleAuthFailed(
-                NSError(domain: "GoogleCalendar", code: 401, userInfo: [NSLocalizedDescriptionKey: "Token expired"])
+                NSError(domain: "GoogleCalendar", code: 401, userInfo: [NSLocalizedDescriptionKey: "Token expired"]),
             )
         }
 
@@ -115,13 +118,13 @@ private struct GoogleCalendarItem: Decodable {
         dateFormatter.dateFormat = "yyyy-MM-dd"
 
         let startDate: Date = {
-            if let dt = start?.dateTime { return isoFormatter.date(from: dt) ?? .now }
-            if let d  = start?.date { return dateFormatter.date(from: d) ?? .now }
+            if let dateTime = start?.dateTime { return isoFormatter.date(from: dateTime) ?? .now }
+            if let date = start?.date { return dateFormatter.date(from: date) ?? .now }
             return .now
         }()
         let endDate: Date = {
-            if let dt = end?.dateTime { return isoFormatter.date(from: dt) ?? startDate }
-            if let d  = end?.date { return dateFormatter.date(from: d) ?? startDate }
+            if let dateTime = end?.dateTime { return isoFormatter.date(from: dateTime) ?? startDate }
+            if let date = end?.date { return dateFormatter.date(from: date) ?? startDate }
             return startDate
         }()
         let isAllDay = start?.dateTime == nil
@@ -137,7 +140,7 @@ private struct GoogleCalendarItem: Decodable {
             calendarName: "Google Calendar",
             source: .google,
             attendees: names,
-            calendarColorHex: nil
+            calendarColorHex: nil,
         )
     }
 }
@@ -146,7 +149,6 @@ private struct GoogleCalendarItem: Decodable {
 
 @MainActor
 final class CalendarService: CalendarServiceProtocol {
-
     private let eventStore = EKEventStore()
     private let googleClient: GoogleCalendarClient
     private(set) var isGoogleConnected: Bool = false
@@ -154,7 +156,7 @@ final class CalendarService: CalendarServiceProtocol {
 
     init(googleClient: GoogleCalendarClient = GoogleCalendarClient()) {
         self.googleClient = googleClient
-        isGoogleConnected = AppConfiguration.shared.todoistAPIToken != nil  // re-use Keychain check pattern
+        isGoogleConnected = AppConfiguration.shared.todoistAPIToken != nil // re-use Keychain check pattern
         // Actually GoogleSignIn SDK manages tokens; check SDK's hasPreviousSignIn
     }
 
@@ -199,7 +201,7 @@ final class CalendarService: CalendarServiceProtocol {
         let predicate = eventStore.predicateForEvents(
             withStart: start,
             end: end,
-            calendars: nil
+            calendars: nil,
         )
         let events = eventStore.events(matching: predicate)
         return events.map { event in
@@ -211,16 +213,17 @@ final class CalendarService: CalendarServiceProtocol {
                 isAllDay: event.isAllDay,
                 calendarName: event.calendar?.title ?? "iCloud",
                 source: .iCloud,
-                attendees: event.attendees?.compactMap { $0.name } ?? [],
-                calendarColorHex: nil
+                attendees: event.attendees?.compactMap(\.name) ?? [],
+                calendarColorHex: nil,
             )
         }
     }
 
-    private func fetchGoogleEvents(from start: Date, to end: Date) async throws -> [CalendarEvent] {
+    private func fetchGoogleEvents(from _: Date, to _: Date) async throws -> [CalendarEvent] {
         guard isGoogleConnected else { return [] }
         // Retrieve fresh access token from GoogleSignIn SDK
-        // Placeholder returns empty; real implementation calls GIDSignIn.sharedInstance.currentUser?.refreshTokensIfNeeded
+        // Placeholder returns empty; real implementation calls
+        // GIDSignIn.sharedInstance.currentUser?.refreshTokensIfNeeded
         return []
     }
 

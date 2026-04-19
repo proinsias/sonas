@@ -1,17 +1,19 @@
-import Foundation
 import CoreLocation
+import Foundation
 import Security
 
 // MARK: - AppConfiguration
+
 // UserDefaults-backed app settings. Sensitive tokens are stored in iOS Keychain.
 
 @Observable
 final class AppConfiguration {
-
     // MARK: Shared singleton
+
     static let shared = AppConfiguration()
 
     // MARK: Weather / Location
+
     /// Home location coordinate used by WeatherService and as the map origin.
     var homeLocation: CLLocationCoordinate2D? {
         get {
@@ -34,6 +36,7 @@ final class AppConfiguration {
     }
 
     // MARK: Todoist
+
     /// Todoist API token stored securely in Keychain
     var todoistAPIToken: String? {
         get { Keychain.load(service: Keys.todoistToken) }
@@ -47,6 +50,7 @@ final class AppConfiguration {
     }
 
     // MARK: Photos
+
     /// Local identifier of the selected iCloud Shared Album (`PHAssetCollection.localIdentifier`)
     var selectedAlbumIdentifier: String? {
         get { defaults.string(forKey: Keys.albumIdentifier) }
@@ -60,6 +64,7 @@ final class AppConfiguration {
     }
 
     // MARK: Display preferences
+
     /// Temperature unit: true = Fahrenheit, false = Celsius
     var useFahrenheit: Bool {
         get { defaults.bool(forKey: Keys.useFahrenheit) }
@@ -67,6 +72,7 @@ final class AppConfiguration {
     }
 
     // MARK: Private
+
     private let defaults = UserDefaults.standard
     private init() {}
 }

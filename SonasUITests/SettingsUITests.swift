@@ -1,10 +1,10 @@
 import XCTest
 
 // MARK: - SettingsUITests (T094)
+
 // Constitution §II: every user-facing feature MUST have at least one acceptance/integration test.
 
 final class SettingsUITests: XCTestCase {
-
     var app: XCUIApplication!
 
     override func setUp() {
@@ -24,7 +24,7 @@ final class SettingsUITests: XCTestCase {
 
     // MARK: - T094.1: Home location picker saves coordinate and reflects in WeatherPanel
 
-    func testHomeLocationSavesAndReflectsInWeatherPanel() throws {
+    func testHomeLocationSavesAndReflectsInWeatherPanel() {
         // Open Settings
         let settingsButton = app.buttons["Settings"]
         XCTAssertTrue(settingsButton.waitForExistence(timeout: 2))
@@ -43,7 +43,7 @@ final class SettingsUITests: XCTestCase {
 
     // MARK: - T094.2: Todoist token entry invokes TaskService.connectTodoist
 
-    func testTodoistTokenEntryTransitionsToTaskList() throws {
+    func testTodoistTokenEntryTransitionsToTaskList() {
         // With USE_MOCK_TASKS=1, Tasks panel shows mock tasks
         // Verify TasksPanel accessibility identifier is present
         XCTAssertTrue(app.otherElements["TasksPanel"].waitForExistence(timeout: 3))
@@ -51,7 +51,7 @@ final class SettingsUITests: XCTestCase {
 
     // MARK: - T094.3: Photo album picker selection persists after app restart
 
-    func testPhotoAlbumPickerPersistsAfterRestart() throws {
+    func testPhotoAlbumPickerPersistsAfterRestart() {
         // Verify PhotosPanel is visible (indicating album configured or prompt shown)
         XCTAssertTrue(app.otherElements["PhotosPanel"].waitForExistence(timeout: 3))
 

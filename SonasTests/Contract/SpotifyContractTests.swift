@@ -1,17 +1,18 @@
-import Testing
 import Foundation
 @testable import Sonas
+import Testing
 
 // MARK: - SpotifyContractTests (T072)
+
 // 🔴 TEST-FIRST GATE — run before SpotifyJamService (T071)
 
 @Suite("Spotify Jam Service Contract Tests")
 struct SpotifyContractTests {
-
     // MARK: - T072.1: startJam returns active session with joinURL
 
-    @Test("given mock Spotify service when startJam called then returns JamSession with status active and joinURL")
-    func given_mockSpotify_when_startJam_then_activeSessionWithJoinURL() async throws {
+    @Test
+    func `given mock Spotify service when startJam called then returns JamSession with status active and joinURL`(
+    ) async throws {
         let service = JamServiceMock()
         let session = try await service.startJam()
 
@@ -21,8 +22,8 @@ struct SpotifyContractTests {
 
     // MARK: - T072.2: startJam throws spotifyNotInstalled when isSpotifyInstalled == false
 
-    @Test("given Spotify not installed when startJam called then throws spotifyNotInstalled")
-    func given_spotifyNotInstalled_when_startJam_then_throwsSpotifyNotInstalled() async throws {
+    @Test
+    func `given Spotify not installed when startJam called then throws spotifyNotInstalled`() async throws {
         let service = JamServiceMock()
         service.isSpotifyInstalled = false
 
@@ -33,8 +34,8 @@ struct SpotifyContractTests {
 
     // MARK: - T072.3: endJam transitions status to ended
 
-    @Test("given active session when endJam called then session status transitions to ended")
-    func given_activeSession_when_endJam_then_statusEnded() async throws {
+    @Test
+    func `given active session when endJam then session status transitions to ended`() async throws {
         let service = JamServiceMock()
         _ = try await service.startJam()
         try await service.endJam()
@@ -44,8 +45,8 @@ struct SpotifyContractTests {
 
     // MARK: - T072.4: QR code can be generated from joinURL
 
-    @Test("given jam session joinURL when CIFilter.qrCodeGenerator applied then produces non-nil CIImage")
-    func given_jamJoinURL_when_qrCodeGenerated_then_nonNilImage() async throws {
+    @Test
+    func `given jam session joinURL when CIFilter.qrCodeGenerator then produces non-nil CIImage`() async throws {
         let service = JamServiceMock()
         let session = try await service.startJam()
 
