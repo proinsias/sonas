@@ -47,18 +47,21 @@ final class WeatherService: WeatherServiceProtocol {
         guard CLLocationCoordinate2DIsValid(coordinate) else {
             throw WeatherServiceError.locationNotConfigured
         }
-
         SonasLogger.weather.info("WeatherService: fetching weather")
-
         let location = CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
-
-        // Concurrent fetch: WeatherKit + AQI
         async let weatherKitResult = fetchWeatherKit(location: location)
         async let aqiResult = fetchAQI(coordinate: coordinate)
-
         let (wk, aqiValue) = try await (weatherKitResult, aqiResult)
+        return (makeSnapshot(from: wk, aqiValue: aqiValue), makeForecast(from: wk))
+    }
 
-        let snapshot = WeatherSnapshot(
+    // MARK: - Private helpers
+
+    private func makeSnapshot(
+        from wk: (current: CurrentWeather, daily: Forecast<DayWeather>),
+        aqiValue: Int?
+    ) -> WeatherSnapshot {
+        WeatherSnapshot(
             temperature: wk.current.temperature.converted(to: .celsius).value,
             feelsLike: wk.current.apparentTemperature.converted(to: .celsius).value,
             conditionDescription: wk.current.condition.description,
@@ -74,13 +77,16 @@ final class WeatherService: WeatherServiceProtocol {
             sunriseTime: wk.daily[0].sun.sunrise ?? .now,
             sunsetTime: wk.daily[0].sun.sunset ?? .now,
             moonPhase: MoonPhase(weatherKit: wk.daily[0].moon.phase),
-            fetchedAt: .now,
+            fetchedAt: .now
         )
+    }
 
-        let forecast = wk.daily.prefix(7).map { day in
-            let calendar = Calendar.current
+    private func makeForecast(
+        from wk: (current: CurrentWeather, daily: Forecast<DayWeather>)
+    ) -> [DayForecast] {
+        wk.daily.prefix(7).map { day in
             let dateString = ISO8601DateFormatter().string(
-                from: calendar.startOfDay(for: day.date),
+                from: Calendar.current.startOfDay(for: day.date)
             )
             return DayForecast(
                 id: String(dateString.prefix(10)),
@@ -89,21 +95,17 @@ final class WeatherService: WeatherServiceProtocol {
                 lowTemperature: day.lowTemperature.converted(to: .celsius).value,
                 conditionSymbolName: day.symbolName,
                 conditionDescription: day.condition.description,
-                precipitationChance: day.precipitationChance,
+                precipitationChance: day.precipitationChance
             )
         }
-
-        return (snapshot, Array(forecast))
     }
-
-    // MARK: - Private helpers
 
     private func fetchWeatherKit(location: CLLocation) async throws
         -> (current: CurrentWeather, daily: Forecast<DayWeather>) {
         do {
             let weather = try await weatherService.weather(
                 for: location,
-                including: .current, .daily,
+                including: .current, .daily
             )
             return (weather.0, weather.1)
         } catch {
@@ -112,13 +114,11 @@ final class WeatherService: WeatherServiceProtocol {
     }
 
     private func fetchAQI(coordinate: CLLocationCoordinate2D) async -> Int? {
-        // Open-Meteo Air Quality API (no API key required; free tier)
         let urlString = "https://air-quality-api.open-meteo.com/v1/air-quality"
             + "?latitude=\(coordinate.latitude)"
             + "&longitude=\(coordinate.longitude)"
             + "&current=us_aqi"
         guard let url = URL(string: urlString) else { return nil }
-
         do {
             let (data, response) = try await session.data(from: url)
             guard (response as? HTTPURLResponse)?.statusCode == 200 else {
@@ -188,17 +188,20 @@ private extension WeatherKit.Wind.CompassDirection {
 // MARK: - MoonPhase mapping from WeatherKit
 
 private extension MoonPhase {
+    /// Dictionary lookup avoids a 9-branch switch that would exceed cyclomatic_complexity threshold.
+    /// Fallback to .newMoon mirrors the @unknown default in the previous switch implementation.
+    static let weatherKitMapping: [WeatherKit.MoonPhase: MoonPhase] = [
+        .new: .newMoon,
+        .waxingCrescent: .waxingCrescent,
+        .firstQuarter: .firstQuarter,
+        .waxingGibbous: .waxingGibbous,
+        .full: .fullMoon,
+        .waningGibbous: .waningGibbous,
+        .lastQuarter: .lastQuarter,
+        .waningCrescent: .waningCrescent
+    ]
+
     init(weatherKit phase: WeatherKit.MoonPhase) {
-        switch phase {
-        case .new: self = .newMoon
-        case .waxingCrescent: self = .waxingCrescent
-        case .firstQuarter: self = .firstQuarter
-        case .waxingGibbous: self = .waxingGibbous
-        case .full: self = .fullMoon
-        case .waningGibbous: self = .waningGibbous
-        case .lastQuarter: self = .lastQuarter
-        case .waningCrescent: self = .waningCrescent
-        @unknown default: self = .newMoon
-        }
+        self = Self.weatherKitMapping[phase] ?? .newMoon
     }
 }

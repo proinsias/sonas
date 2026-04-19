@@ -43,10 +43,10 @@ final class CacheService: CacheServiceProtocol {
             // Without this, CoreData logs several pages of filesystem diagnostics before creating
             // the directory itself; the store still opens successfully but the noise is misleading.
             if let appSupport = FileManager.default.urls(
-                for: .applicationSupportDirectory, in: .userDomainMask,
+                for: .applicationSupportDirectory, in: .userDomainMask
             ).first {
                 try? FileManager.default.createDirectory(
-                    at: appSupport, withIntermediateDirectories: true,
+                    at: appSupport, withIntermediateDirectories: true
                 )
             }
             let config = ModelConfiguration(cloudKitDatabase: .none)
@@ -56,7 +56,7 @@ final class CacheService: CacheServiceProtocol {
                 CachedCalendarEvent.self,
                 CachedTask.self,
                 CachedJamSession.self,
-                configurations: config,
+                configurations: config
             )
             return CacheService(container: container)
         } catch {
@@ -77,9 +77,11 @@ final class CacheService: CacheServiceProtocol {
         static let task: TimeInterval = 86400 // 24 hours
         // Calendar events: evicted if past their endDate (handled in evictStaleEntries)
     }
+}
 
-    // MARK: - Weather
+// MARK: - Weather
 
+extension CacheService {
     func saveWeather(_ snapshot: WeatherSnapshot, forecast: [DayForecast]) async throws {
         guard let modelContainer else { return }
         let context = modelContainer.mainContext
@@ -101,7 +103,7 @@ final class CacheService: CacheServiceProtocol {
             sunsetTime: snapshot.sunsetTime,
             moonPhaseRaw: snapshot.moonPhase.rawValue,
             forecastJSON: forecastData,
-            lastUpdated: snapshot.fetchedAt,
+            lastUpdated: snapshot.fetchedAt
         )
         context.insert(cached)
         try context.save()
@@ -113,23 +115,24 @@ final class CacheService: CacheServiceProtocol {
         guard let cached = try? context.fetch(FetchDescriptor<CachedWeatherSnapshot>()).first else {
             return nil
         }
-        guard Date.now.timeIntervalSince(cached.lastUpdated) < TTL.weather else {
-            return nil
-        }
+        guard Date.now.timeIntervalSince(cached.lastUpdated) < TTL.weather else { return nil }
         return cached.toWeatherSnapshot()
     }
 
     func loadForecast() async -> [DayForecast] {
         guard let modelContainer else { return [] }
         let context = modelContainer.mainContext
-        guard let cached = try? context.fetch(FetchDescriptor<CachedWeatherSnapshot>()).first,
-              let forecasts = try? JSONDecoder().decode([DayForecastCodable].self, from: cached.forecastJSON)
+        guard
+            let cached = try? context.fetch(FetchDescriptor<CachedWeatherSnapshot>()).first,
+            let forecasts = try? JSONDecoder().decode([DayForecastCodable].self, from: cached.forecastJSON)
         else { return [] }
         return forecasts.map(\.toDayForecast)
     }
+}
 
-    // MARK: - Location
+// MARK: - Location
 
+extension CacheService {
     func saveLocations(_ members: [FamilyMember]) async throws {
         guard let modelContainer else { return }
         let context = modelContainer.mainContext
@@ -143,7 +146,7 @@ final class CacheService: CacheServiceProtocol {
                 longitude: loc.coordinate.longitude,
                 placeName: loc.placeName,
                 recordedAt: loc.recordedAt,
-                lastUpdated: .now,
+                lastUpdated: .now
             )
             context.insert(cached)
         }
@@ -158,9 +161,11 @@ final class CacheService: CacheServiceProtocol {
         }
         return snapshots.map { $0.toFamilyMember() }
     }
+}
 
-    // MARK: - Calendar
+// MARK: - Calendar
 
+extension CacheService {
     func saveEvents(_ events: [CalendarEvent]) async throws {
         guard let modelContainer else { return }
         let context = modelContainer.mainContext
@@ -177,7 +182,7 @@ final class CacheService: CacheServiceProtocol {
                 sourceRaw: event.source.rawValue,
                 attendeesJSON: attendeesData,
                 calendarColorHex: event.calendarColorHex,
-                lastUpdated: .now,
+                lastUpdated: .now
             )
             context.insert(cached)
         }
@@ -187,14 +192,14 @@ final class CacheService: CacheServiceProtocol {
     func loadEvents() async -> [CalendarEvent] {
         guard let modelContainer else { return [] }
         let context = modelContainer.mainContext
-        guard let cached = try? context.fetch(FetchDescriptor<CachedCalendarEvent>()) else {
-            return []
-        }
+        guard let cached = try? context.fetch(FetchDescriptor<CachedCalendarEvent>()) else { return [] }
         return cached.compactMap { $0.toCalendarEvent() }
     }
+}
 
-    // MARK: - Tasks
+// MARK: - Tasks
 
+extension CacheService {
     func saveTasks(_ tasks: [Task]) async throws {
         guard let modelContainer else { return }
         let context = modelContainer.mainContext
@@ -212,7 +217,7 @@ final class CacheService: CacheServiceProtocol {
                 dueString: task.due?.string,
                 isRecurring: task.due?.isRecurring ?? false,
                 orderIndex: task.orderIndex,
-                lastUpdated: .now,
+                lastUpdated: .now
             )
             context.insert(cached)
         }
@@ -222,14 +227,14 @@ final class CacheService: CacheServiceProtocol {
     func loadTasks() async -> [Task] {
         guard let modelContainer else { return [] }
         let context = modelContainer.mainContext
-        guard let cached = try? context.fetch(FetchDescriptor<CachedTask>()) else {
-            return []
-        }
+        guard let cached = try? context.fetch(FetchDescriptor<CachedTask>()) else { return [] }
         return cached.map { $0.toTask() }
     }
+}
 
-    // MARK: - Jam
+// MARK: - Jam
 
+extension CacheService {
     func saveJamSession(_ session: JamSession?) async throws {
         guard let modelContainer else { return }
         let context = modelContainer.mainContext
@@ -240,7 +245,7 @@ final class CacheService: CacheServiceProtocol {
                 joinURLString: joinURL,
                 statusRaw: session.status.rawValue,
                 startedAt: session.startedAt,
-                lastUpdated: .now,
+                lastUpdated: .now
             )
             context.insert(cached)
         }
@@ -250,155 +255,57 @@ final class CacheService: CacheServiceProtocol {
     func loadJamSession() async -> JamSession? {
         guard let modelContainer else { return nil }
         let context = modelContainer.mainContext
-        guard let cached = try? context.fetch(FetchDescriptor<CachedJamSession>()).first else {
-            return nil
-        }
+        guard let cached = try? context.fetch(FetchDescriptor<CachedJamSession>()).first else { return nil }
         return cached.toJamSession()
     }
+}
 
-    // MARK: - Eviction (research.md §Decision 9)
+// MARK: - Eviction (research.md §Decision 9)
 
+extension CacheService {
     func evictStaleEntries() async throws {
         guard let modelContainer else { return }
         let context = modelContainer.mainContext
-
-        // Weather: evict if > 1 hour old
-        if let weather = try? context.fetch(
-            FetchDescriptor<CachedWeatherSnapshot>(),
-        ).first,
-            Date.now.timeIntervalSince(weather.lastUpdated) > TTL.weather {
-            context.delete(weather)
-        }
-
-        // Location: evict individual snapshots > 5 min old
-        if let locations = try? context.fetch(FetchDescriptor<CachedLocationSnapshot>()) {
-            for loc in locations where Date.now.timeIntervalSince(loc.lastUpdated) > TTL.location {
-                context.delete(loc)
-            }
-        }
-
-        // Calendar events: evict past events
-        if let events = try? context.fetch(FetchDescriptor<CachedCalendarEvent>()) {
-            for event in events where event.endDate < .now {
-                context.delete(event)
-            }
-        }
-
-        // Tasks: evict if > 24 hours old
-        if let tasks = try? context.fetch(FetchDescriptor<CachedTask>()) {
-            for task in tasks where Date.now.timeIntervalSince(task.lastUpdated) > TTL.task {
-                context.delete(task)
-            }
-        }
-
-        // Jam: evict ended sessions
-        if let jams = try? context.fetch(FetchDescriptor<CachedJamSession>()) {
-            for jam in jams where jam.statusRaw == JamStatus.ended.rawValue {
-                context.delete(jam)
-            }
-        }
-
+        evictStaleWeather(context: context)
+        evictStaleLocations(context: context)
+        evictStaleEvents(context: context)
+        evictStaleTasks(context: context)
+        evictStaleJamSessions(context: context)
         try context.save()
     }
-}
 
-// MARK: - Codable bridge types for DayForecast serialisation
-
-private struct DayForecastCodable: Codable {
-    let id, conditionSymbolName, conditionDescription: String
-    let date: Date
-    let highTemperature, lowTemperature, precipitationChance: Double
-
-    init(_ forecast: DayForecast) {
-        id = forecast.id
-        conditionSymbolName = forecast.conditionSymbolName
-        conditionDescription = forecast.conditionDescription
-        date = forecast.date
-        highTemperature = forecast.highTemperature
-        lowTemperature = forecast.lowTemperature
-        precipitationChance = forecast.precipitationChance
+    private func evictStaleWeather(context: ModelContext) {
+        guard let weather = try? context.fetch(FetchDescriptor<CachedWeatherSnapshot>()).first,
+              Date.now.timeIntervalSince(weather.lastUpdated) > TTL.weather
+        else { return }
+        context.delete(weather)
     }
 
-    var toDayForecast: DayForecast {
-        DayForecast(
-            id: id, date: date,
-            highTemperature: highTemperature, lowTemperature: lowTemperature,
-            conditionSymbolName: conditionSymbolName, conditionDescription: conditionDescription,
-            precipitationChance: precipitationChance,
-        )
-    }
-}
-
-// MARK: - CachedModel → Domain model conversions
-
-private extension CachedWeatherSnapshot {
-    func toWeatherSnapshot() -> WeatherSnapshot {
-        WeatherSnapshot(
-            temperature: temperature, feelsLike: feelsLike,
-            conditionDescription: conditionDescription, conditionSymbolName: conditionSymbolName,
-            humidity: humidity, windSpeed: windSpeed,
-            windDirection: windDirection, windCompassLabel: windCompassLabel,
-            pressure: pressure,
-            pressureTrend: PressureTrend(rawValue: pressureTrendRaw) ?? .steady,
-            airQualityIndex: airQualityIndex,
-            aiqCategory: airQualityIndex.map { AQICategory(usAQI: $0) },
-            sunriseTime: sunriseTime, sunsetTime: sunsetTime,
-            moonPhase: MoonPhase(rawValue: moonPhaseRaw) ?? .newMoon,
-            fetchedAt: lastUpdated,
-        )
-    }
-}
-
-private extension CachedLocationSnapshot {
-    func toFamilyMember() -> FamilyMember {
-        FamilyMember(
-            id: memberID,
-            displayName: displayName,
-            location: LocationSnapshot(
-                coordinate: .init(latitude: latitude, longitude: longitude),
-                placeName: placeName,
-                recordedAt: recordedAt,
-            ),
-        )
-    }
-}
-
-private extension CachedCalendarEvent {
-    func toCalendarEvent() -> CalendarEvent? {
-        let attendees = (try? JSONDecoder().decode([String].self, from: attendeesJSON)) ?? []
-        return CalendarEvent(
-            id: eventID, title: title,
-            startDate: startDate, endDate: endDate, isAllDay: isAllDay,
-            calendarName: calendarName,
-            source: CalendarSource(rawValue: sourceRaw) ?? .iCloud,
-            attendees: attendees, calendarColorHex: calendarColorHex,
-        )
-    }
-}
-
-private extension CachedTask {
-    func toTask() -> Task {
-        let due: TaskDue? = dueString.map {
-            TaskDue(date: dueDate, string: $0, isRecurring: isRecurring)
+    private func evictStaleLocations(context: ModelContext) {
+        guard let locations = try? context.fetch(FetchDescriptor<CachedLocationSnapshot>()) else { return }
+        for loc in locations where Date.now.timeIntervalSince(loc.lastUpdated) > TTL.location {
+            context.delete(loc)
         }
-        return Task(
-            id: taskID, content: content, description: taskDescription,
-            projectID: projectID, projectName: projectName,
-            due: due,
-            priority: TaskPriority(rawValue: priorityRaw) ?? .normal,
-            isCompleted: isCompleted, isCompleting: false,
-            createdAt: nil, orderIndex: orderIndex,
-        )
     }
-}
 
-private extension CachedJamSession {
-    func toJamSession() -> JamSession? {
-        guard let url = URL(string: joinURLString) else { return nil }
-        return JamSession(
-            id: sessionID, joinURL: url,
-            status: JamStatus(rawValue: statusRaw) ?? .ended,
-            startedAt: startedAt,
-        )
+    private func evictStaleEvents(context: ModelContext) {
+        guard let events = try? context.fetch(FetchDescriptor<CachedCalendarEvent>()) else { return }
+        for event in events where event.endDate < .now {
+            context.delete(event)
+        }
+    }
+
+    private func evictStaleTasks(context: ModelContext) {
+        guard let tasks = try? context.fetch(FetchDescriptor<CachedTask>()) else { return }
+        for task in tasks where Date.now.timeIntervalSince(task.lastUpdated) > TTL.task {
+            context.delete(task)
+        }
+    }
+
+    private func evictStaleJamSessions(context: ModelContext) {
+        guard let jams = try? context.fetch(FetchDescriptor<CachedJamSession>()) else { return }
+        for jam in jams where jam.statusRaw == JamStatus.ended.rawValue {
+            context.delete(jam)
+        }
     }
 }
