@@ -8,4 +8,5 @@ shellcheck = "latest"
 shfmt = "latest"
 swiftformat = { version = "latest", no_app = "true", rename_exe = "swiftformat" }
 swiftlint = "latest"
+xcodegen = "latest"
 yamllint = "latest"
