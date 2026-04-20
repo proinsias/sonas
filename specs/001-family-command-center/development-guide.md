@@ -125,41 +125,37 @@ Before the app can build (even for the simulator) you need to tell Xcode which A
 3. Click the **Signing & Capabilities** tab.
 4. Under **Team**, click the dropdown and select your Apple ID. If it's not listed, click **Add an Account…** and sign
    in with your Apple ID.
-5. Xcode will automatically fill in a Bundle Identifier — change `com.yourteam.sonas` to something unique, like
-   `com.anindependentmind.sonas`.
+5. Xcode will automatically fill in a Bundle Identifier — change it to match the `bundleIdPrefix` you set in
+   `project.yml` (e.g. `com.yourteam.sonas`).
 6. Repeat steps 2–5 for the **SonasTests**, **SonasUITests**, **WatchSonas**, and **TVSonas** targets, using the same
    Team and a matching bundle ID suffix.
 
 > **"Failed to register bundle identifier" error?** The bundle ID you chose is already taken by another app on Apple's
-> servers. Add a random number or your initials to make it unique (e.g. `com.anindependentmind.sonas42`).
+> servers. Add initials or a unique suffix to make it unique (e.g. `com.smithfamily.sonas`).
 
 ---
 
-## Step 8 — Update project.yml with your Team ID
+## Step 8 — Configure project.yml
 
-So future `xcodegen generate` runs don't reset your signing:
+`project.yml` is gitignored — each developer keeps their own local copy with their own credentials.
 
-1. In Terminal, find your Team ID:
+1. Copy the template:
    ```bash
-   # In Xcode: click your project → Signing & Capabilities → Team dropdown
-   # The ID is shown in parentheses, e.g. "Francis O'Donovan (AB12CD34EF)"
-   # Copy the letters/numbers in parentheses
+   cp project.yml.template project.yml
    ```
 2. Open `project.yml` in a text editor:
    ```bash
    open -e project.yml
    ```
-3. Find the line:
-   ```yaml
-   DEVELOPMENT_TEAM: '' # Set your Apple Developer Team ID here
-   ```
-   Replace `""` with your Team ID in quotes:
-   ```yaml
-   DEVELOPMENT_TEAM: 'AB12CD34EF'
-   ```
+3. Replace every `YOUR_*` placeholder:
+   - `YOUR_TEAM_ID` — find it in Xcode: project → Signing & Capabilities → Team dropdown (the 10-character ID in
+     parentheses)
+   - `com.yourteam` — your reverse-DNS bundle ID prefix (e.g. `com.smithfamily`)
+   - `YOUR_SPOTIFY_CLIENT_ID` — from developer.spotify.com/dashboard
+   - `YOUR_GOOGLE_CLIENT_ID` — from console.cloud.google.com
 4. Save the file and regenerate:
    ```bash
-   xcodegen generate --spec project.yml
+   xcodegen generate
    ```
 
 ---

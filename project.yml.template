@@ -1,7 +1,17 @@
+# project.yml.template
+#
+# HOW TO USE:
+#   1. Copy this file to project.yml:
+#        cp project.yml.template project.yml
+#   2. Replace every YOUR_* placeholder with your own values (search for "YOUR_").
+#   3. Run `xcodegen generate` to create Sonas.xcodeproj.
+#   4. See SETUP.md for full credential and capability setup instructions.
+#
+# project.yml is gitignored — each developer/family keeps their own local copy.
 ---
 name: Sonas
 options:
-  bundleIdPrefix: com.anindependentmind
+  bundleIdPrefix: com.yourteam
   deploymentTarget:
     iOS: '17.0'
     watchOS: '11.0'
@@ -14,7 +24,7 @@ settings:
     SWIFT_VERSION: '5.10'
     MARKETING_VERSION: '1.0.0'
     CURRENT_PROJECT_VERSION: '1'
-    DEVELOPMENT_TEAM: '' # Set your Apple Developer Team ID here
+    DEVELOPMENT_TEAM: 'YOUR_TEAM_ID' # Replace with your 10-character Apple Developer Team ID
 # packages: (none linked yet)
 # GoogleSignIn: AppAuth inside it initialises ASWebAuthenticationSession via ViewBridge at launch
 #   even when never imported → "ViewBridge to RemoteViewService Terminated" noise on every run.
@@ -49,14 +59,15 @@ targets:
           'Sonas updates your location in the background so family members always see where you are.'
         # Photo permissions
         NSPhotoLibraryUsageDescription: 'Sonas reads your iCloud Shared Album to display family photos.'
-        # Spotify
-        SPTClientID: ''
+        # Spotify — replace with your Spotify Client ID from developer.spotify.com/dashboard
+        SPTClientID: 'YOUR_SPOTIFY_CLIENT_ID'
         SPTRedirectURL: 'sonas://spotify-callback'
         # URL Schemes
         CFBundleURLTypes:
           - CFBundleURLSchemes:
               - sonas
           - CFBundleURLSchemes:
+              # Replace YOUR_GOOGLE_CLIENT_ID with the client ID from console.cloud.google.com
               - 'com.googleusercontent.apps.YOUR_GOOGLE_CLIENT_ID'
         # Background modes
         UIBackgroundModes:
@@ -76,7 +87,7 @@ targets:
         UILaunchScreen: {}
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.anindependentmind.sonas
+        PRODUCT_BUNDLE_IDENTIFIER: com.yourteam.sonas
         ENABLE_HARDENED_RUNTIME: YES
     entitlements:
       path: Sonas/Sonas.entitlements
@@ -105,7 +116,7 @@ targets:
       - path: SonasTests
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.anindependentmind.sonas.tests
+        PRODUCT_BUNDLE_IDENTIFIER: com.yourteam.sonas.tests
     dependencies:
       - target: Sonas
   # ─── UI Tests ─────────────────────────────────────────────────────────────────
@@ -117,7 +128,7 @@ targets:
       - path: SonasUITests
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.anindependentmind.sonas.uitests
+        PRODUCT_BUNDLE_IDENTIFIER: com.yourteam.sonas.uitests
     dependencies:
       - target: Sonas
   # ─── watchOS Extension ────────────────────────────────────────────────────────
@@ -141,7 +152,7 @@ targets:
         WKApplication: true
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.anindependentmind.sonas.watch
+        PRODUCT_BUNDLE_IDENTIFIER: com.yourteam.sonas.watch
   # ─── tvOS App ─────────────────────────────────────────────────────────────────
   TVSonas:
     type: application
@@ -162,7 +173,7 @@ targets:
         CFBundleVersion: '$(CURRENT_PROJECT_VERSION)'
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.anindependentmind.sonas.tv
+        PRODUCT_BUNDLE_IDENTIFIER: com.yourteam.sonas.tv
 schemes:
   Sonas:
     build:

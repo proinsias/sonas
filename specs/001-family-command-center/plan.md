@@ -1,7 +1,7 @@
 # Implementation Plan: Sonas — iOS Family Command Center
 
-**Branch**: `001-family-command-center` | **Date**: 2026-04-07 | **Spec**: specs/001-family-command-center/spec.md
-**Input**: Feature specification from `/specs/001-family-command-center/spec.md`
+**Spec**: specs/001-family-command-center/spec.md **Input**: Feature specification from
+`/specs/001-family-command-center/spec.md`
 
 ## Summary
 

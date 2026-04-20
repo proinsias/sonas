@@ -75,3 +75,9 @@ fastlane/Preview.html
 fastlane/screenshots/**/*.png
 fastlane/test_output
 .lycheecache
+
+# Developer-configured files — copy from *.template and customise before building
+project.yml
+Sonas/Info.plist
+WatchSonas/Info.plist
+TVSonas/Info.plist

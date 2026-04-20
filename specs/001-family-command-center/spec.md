@@ -1,10 +1,9 @@
 # Feature Specification: Sonas — iOS Family Command Center
 
-**Feature Branch**: `001-family-command-center` **Created**: 2026-04-07 **Status**: Draft **Input**: User description:
-"Build an iOS application called Sonas to act as a Family Command Center, showing the date & time, everyone's location,
-upcoming events, shared photos, todoist lists, the weather (today/this week, sunrise/set, moon phase, wind, humidity,
-pressure, air quality), spotify jam QR, and other family matters. Ensure that the application can later be ported to
-iPadOS, macOS, WatchOS, and tvOS."
+User description: "Build an iOS application called Sonas to act as a Family Command Center, showing the date & time,
+everyone's location, upcoming events, shared photos, todoist lists, the weather (today/this week, sunrise/set, moon
+phase, wind, humidity, pressure, air quality), spotify jam QR, and other family matters. Ensure that the application can
+later be ported to iPadOS, macOS, WatchOS, and tvOS."
 
 ## Clarifications
 

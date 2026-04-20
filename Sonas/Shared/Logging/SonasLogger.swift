@@ -8,7 +8,7 @@ import OSLog
 // privacy levels. All service implementations in Phases 3–7 MUST call SonasLogger.
 
 enum SonasLogger {
-    private static let subsystem = "com.anindependentmind.sonas"
+    private static let subsystem = Bundle.main.bundleIdentifier ?? "com.example.sonas"
 
     // MARK: Per-module loggers
 

@@ -47,7 +47,7 @@ final class LocationService: NSObject, LocationServiceProtocol {
 
     private enum Constants {
         static let recordType = "FamilyLocation"
-        static let containerID = "iCloud.com.anindependentmind.sonas"
+        static let containerID = "iCloud.\(Bundle.main.bundleIdentifier ?? "com.example.sonas")"
         static let zoneID = CKRecordZone.default().zoneID
         static let minDistance: CLLocationDistance = 50 // metres
         static let maxInterval: TimeInterval = 60 // seconds

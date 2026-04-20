@@ -78,3 +78,16 @@ indent_size = 1
 
 [*.pbxproj]
 max_line_length = off
+
+# Template files — inherit rules matching the format they represent
+[*.yml.template]
+indent_size = 2
+indent_style = space
+
+[*.yaml.template]
+indent_size = 2
+indent_style = space
+
+[*.plist.template]
+indent_size = 4
+indent_style = space

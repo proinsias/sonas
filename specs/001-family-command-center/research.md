@@ -1,7 +1,5 @@
 # Research: Sonas — iOS Family Command Center
 
-**Branch**: `001-family-command-center` | **Date**: 2026-04-07
-
 ---
 
 ## Decision 1: Family Member Location Mechanism

@@ -22,8 +22,9 @@
 
 - [x] T001 Create Xcode project `Sonas.xcodeproj` with targets: `Sonas` (iOS 17+ deployment), `SonasTests`,
       `SonasUITests`, `WatchSonas` (watchOS 11+), `TVSonas` (tvOS 18+) at repo root
-- [x] T002 Configure `Sonas` target capabilities: WeatherKit, CloudKit (container `iCloud.com.anindependentmind.sonas`),
-      Background Modes (Background fetch, Remote notifications) in Xcode Signing & Capabilities
+- [x] T002 Configure `Sonas` target capabilities: WeatherKit, CloudKit (container `iCloud.com.yourteam.sonas` —
+      auto-derived from bundle ID at runtime), Background Modes (Background fetch, Remote notifications) in Xcode
+      Signing & Capabilities
 - [x] T003 [P] Add SPM/SDK package dependencies to `Sonas.xcodeproj`: `GoogleSignIn-iOS` and `SpotifyiOS` pinned to
       **exact SemVer versions** (e.g., `GoogleSignIn-iOS 7.1.0`; resolve latest stable at time of addition); commit
       `Package.resolved` to version control _(Constitution §Quality — exact version pinning required)_

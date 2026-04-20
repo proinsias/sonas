@@ -8,14 +8,21 @@ import Testing
 // Covers FR-017: location updates reflected within 60 seconds via CKQuerySubscription.
 // Requires iCloud sign-in in the Simulator + CloudKit test container.
 // Run in SonasIntegrationTests scheme; NOT included in standard SonasTests CI run.
+// Set CLOUDKIT_CONTAINER_ID in the integration test scheme environment variables if your
+// container differs from the default derived from the app's bundle identifier.
 
 @Suite("Location CloudKit Integration Tests", .tags(.integration))
 struct LocationCloudKitTests {
+    private static var cloudKitContainerID: String {
+        ProcessInfo.processInfo.environment["CLOUDKIT_CONTAINER_ID"]
+            ?? "iCloud.\(Bundle.main.bundleIdentifier ?? "com.example.sonas")"
+    }
+
     // MARK: - T042a: Write record → refresh returns member
 
     @Test
     func `given FamilyLocation record written when refresh called then service returns that member`() async throws {
-        let container = CKContainer(identifier: "iCloud.com.anindependentmind.sonas")
+        let container = CKContainer(identifier: Self.cloudKitContainerID)
         let db = container.privateCloudDatabase
 
         let record = CKRecord(recordType: "FamilyLocation")
@@ -51,7 +58,7 @@ struct LocationCloudKitTests {
         await service.startPublishing()
 
         // Simulate second-device write
-        let container = CKContainer(identifier: "iCloud.com.anindependentmind.sonas")
+        let container = CKContainer(identifier: Self.cloudKitContainerID)
         let db = container.privateCloudDatabase
 
         let record = CKRecord(recordType: "FamilyLocation")

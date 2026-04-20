@@ -1,7 +1,5 @@
 # Data Model: Sonas — iOS Family Command Center
 
-**Branch**: `001-family-command-center` | **Date**: 2026-04-07
-
 All models are value types (structs) used by the view layer. Persistence is handled by the SwiftData `@Model` cache
 counterparts (prefixed `Cached`). No model is sent to a custom server.
 

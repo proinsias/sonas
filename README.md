@@ -59,46 +59,11 @@ are no `#if os()` conditionals in view code.
 
 ---
 
-## App Versions
-
-### Mockup — zero-API prototype
-
-**Branch**: `mockup/ios-dashboard`
-
-A fully static SwiftUI prototype of the dashboard with **no network calls, no entitlements, and no accounts required**.
-Every panel renders from hardcoded fixture data in `MockData.swift`. It exists to validate UI design, layout, and panel
-interactions before wiring up live services.
-
-**What works out of the box:**
-
-- Adaptive grid layout (iPhone single-column, iPad/Mac three-column)
-- Live clock via `TimelineView(.everySecond)`
-- 4 mock family members with colour-coded avatars and location labels
-- 4 fixture calendar events with colour stripes
-- Full weather snapshot with 7-day forecast strip
-- 6 household tasks with interactive local checkboxes (state is not persisted)
-- 8-entry photo carousel with 5-second auto-advance and page dots
-- Spotify Jam toggle between idle and active states
-
-**What is not present:**
-
-- No real data of any kind
-- No networking or API clients
-- No entitlements (location, calendar, photos, WeatherKit, CloudKit)
-- No persistence
-- No tests
-
----
-
-### Full App — live integrations
-
-**Branch**: `001-family-command-center`
+## Service integrations
 
 The production implementation, following the spec and plan in `specs/001-family-command-center/`. All panels fetch live
 data through protocol-based service layers, with SwiftData caching so the dashboard renders immediately from cache while
 fresh data loads in the background.
-
-**Service integrations:**
 
 <!-- editorconfig-checker disable -->
 
@@ -163,17 +128,20 @@ The dashboard appears in under 30 seconds with all panels populated from static 
 ### Building the Full App
 
 ```bash
-git checkout 001-family-command-center
-open Sonas.xcodeproj # or Sonas.xcworkspace if CocoaPods/SPM workspace
+cp project.yml.template project.yml   # then edit project.yml — replace all YOUR_* placeholders
+xcodegen generate
+open Sonas.xcodeproj
 ```
 
-**Signing**: In Xcode → Targets → Sonas → Signing & Capabilities, select your development team. The bundle identifier is
-`com.yourteam.sonas` — update it to match your provisioning profile.
+See [SETUP.md](SETUP.md) for full credential and capability setup instructions.
 
-**Required capabilities** (add in Signing & Capabilities):
+**Signing**: In Xcode → Targets → Sonas → Signing & Capabilities, select your development team. Use the bundle
+identifier prefix you set in `project.yml` (e.g. `com.yourteam.sonas`).
+
+**Required capabilities** (add in Signing & Capabilities, requires paid Apple Developer account):
 
 - WeatherKit
-- CloudKit (container: `iCloud.com.yourteam.sonas`)
+- CloudKit (container auto-derived from bundle ID: `iCloud.<your-bundle-id>`)
 - Push Notifications (required by CloudKit subscriptions)
 - Background Modes → Background fetch, Remote notifications
 
@@ -191,26 +159,23 @@ xcodebuild \
 
 ### Configuration and Credentials
 
-All credentials are set at runtime by the user in the app's Settings panel, except Spotify which requires build-time
-`Info.plist` keys.
+All build-time credentials are set in `project.yml` (copied from `project.yml.template`). Runtime credentials are
+entered by each user in the app's Settings panel.
 
-**Spotify** — add to `Sonas/Info.plist`:
+**Spotify** — set `SPTClientID` in `project.yml`, then run `xcodegen generate`:
 
-```xml
-<key>SPTClientID</key>
-<string>YOUR_SPOTIFY_CLIENT_ID</string>
-<key>SPTRedirectURL</key>
-<string>sonas://spotify-callback</string>
+```yaml
+SPTClientID: 'YOUR_SPOTIFY_CLIENT_ID'
 ```
 
 Register `sonas://spotify-callback` as a redirect URI in the
 [Spotify Developer Dashboard](https://developer.spotify.com/dashboard).
 
-**Google Calendar** — add to `Sonas/Info.plist`:
+**Google Calendar** — replace `YOUR_GOOGLE_CLIENT_ID` in the URL scheme entry in `project.yml`, then run
+`xcodegen generate`:
 
-```xml
-<key>GIDClientID</key>
-<string>YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com</string>
+```yaml
+- 'com.googleusercontent.apps.YOUR_GOOGLE_CLIENT_ID'
 ```
 
 Create OAuth 2.0 credentials in the [Google Cloud Console](https://console.cloud.google.com/) with scope
@@ -220,6 +185,8 @@ Create OAuth 2.0 credentials in the [Google Cloud Console](https://console.cloud
 
 **WeatherKit** — enable the WeatherKit capability in your Apple Developer portal (sandbox approval can take minutes to
 hours on first use).
+
+See [SETUP.md](SETUP.md) for step-by-step instructions including CloudKit container setup and per-family data isolation.
 
 ---
 
