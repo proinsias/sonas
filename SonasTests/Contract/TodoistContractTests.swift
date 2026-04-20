@@ -49,7 +49,7 @@ struct TodoistContractTests {
     private func makeService() -> TodoistService {
         let config = URLSessionConfiguration.ephemeral
         config.protocolClasses = [TodoistURLProtocolStub.self]
-        return TodoistService(session: URLSession(configuration: config))
+        return TodoistService(session: URLSession(configuration: config), token: "stub-token")
     }
 
     // MARK: - T056.1: Tasks grouped by projectName
@@ -70,13 +70,9 @@ struct TodoistContractTests {
         )
 
         let service = makeService()
-        // Set API token to trigger fetch
-        AppConfiguration.shared.todoistAPIToken = "stub-token"
         AppConfiguration.shared.selectedTodoistProjectIDs = []
 
         let tasks = try await service.fetchTasks()
-        AppConfiguration.shared.todoistAPIToken = nil
-
         #expect(!tasks.isEmpty, "Tasks must be returned from stub")
     }
 
@@ -90,9 +86,7 @@ struct TodoistContractTests {
         )
 
         let service = makeService()
-        AppConfiguration.shared.todoistAPIToken = "stub-token"
         try await service.completeTask(id: taskID)
-        AppConfiguration.shared.todoistAPIToken = nil
         // No error = test passes
     }
 
@@ -107,10 +101,8 @@ struct TodoistContractTests {
         )
 
         let service = makeService()
-        AppConfiguration.shared.todoistAPIToken = "stub-token"
         await #expect(throws: TaskServiceError.self) {
             try await service.completeTask(id: taskID)
         }
-        AppConfiguration.shared.todoistAPIToken = nil
     }
 }

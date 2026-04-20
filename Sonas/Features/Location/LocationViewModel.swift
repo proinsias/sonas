@@ -27,12 +27,17 @@ final class LocationViewModel {
         isLoading = true
         error = nil
         await service.startPublishing()
-        streamTask = Swift.Task { [weak self, service] in
-            for await updated in service.familyLocations {
+        var iterator = service.familyLocations.makeAsyncIterator()
+        if let initial = await iterator.next() {
+            members = initial.sorted { $0.displayName < $1.displayName }
+            isLoading = false
+        }
+        streamTask = Swift.Task { [weak self] in
+            var iter = iterator
+            while let updated = await iter.next() {
                 guard !Swift.Task<Never, Never>.isCancelled else { break }
                 await MainActor.run {
                     self?.members = updated.sorted { $0.displayName < $1.displayName }
-                    self?.isLoading = false
                 }
             }
         }

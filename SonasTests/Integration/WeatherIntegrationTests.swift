@@ -8,7 +8,7 @@ import Testing
 // Requires WeatherKit entitlement; run in SonasIntegrationTests scheme.
 
 @MainActor
-@Suite("Weather Integration Tests", .tags(.integration))
+@Suite("Weather Integration Tests", .disabled("Requires WeatherKit entitlement"))
 struct WeatherIntegrationTests {
     @Test
     func `given hard-coded Dublin coordinate when fetchWeather called then snapshot is non-nil with 7-day forecast`(

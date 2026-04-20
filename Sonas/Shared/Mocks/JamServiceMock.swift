@@ -12,6 +12,9 @@ final class JamServiceMock: JamServiceProtocol, @unchecked Sendable {
     }
 
     func startJam() async throws -> JamSession {
+        guard isSpotifyInstalled else {
+            throw JamServiceError.spotifyNotInstalled
+        }
         let session = JamSession(
             id: "mock-jam-session",
             joinURL: URL(string: "https://spotify.com/jam/abc123")!,

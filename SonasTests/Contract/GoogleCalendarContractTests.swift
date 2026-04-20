@@ -44,7 +44,7 @@ final class GoogleCalendarURLProtocolStub: URLProtocol {
 // MARK: - Tests
 
 @MainActor
-@Suite("Google Calendar Service Contract Tests")
+@Suite("Google Calendar Service Contract Tests", .serialized)
 struct GoogleCalendarContractTests {
     private func makeStubSession() -> URLSession {
         let config = URLSessionConfiguration.ephemeral

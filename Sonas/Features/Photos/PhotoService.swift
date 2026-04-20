@@ -75,7 +75,8 @@ final class PhotoService: NSObject, PhotoServiceProtocol, PHPhotoLibraryChangeOb
         fetchOptions.fetchLimit = limit
         let assets = PHAsset.fetchAssets(in: album, options: fetchOptions)
 
-        guard !assets.isEmpty else {
+        // swiftlint:disable:next empty_count
+        guard assets.count != 0 else { // PHFetchResult lacks isEmpty before iOS 18 (SONAS-001)
             throw PhotoServiceError.albumEmpty
         }
 

@@ -52,11 +52,17 @@ final class TodoistService: TaskServiceProtocol {
     }
 
     private let session: URLSession
+    private let tokenOverride: String?
     private(set) var isConnected: Bool
 
-    init(session: URLSession = .shared) {
+    init(session: URLSession = .shared, token: String? = nil) {
         self.session = session
-        isConnected = AppConfiguration.shared.todoistAPIToken != nil
+        tokenOverride = token
+        isConnected = token != nil || AppConfiguration.shared.todoistAPIToken != nil
+    }
+
+    private var resolvedToken: String? {
+        tokenOverride ?? AppConfiguration.shared.todoistAPIToken
     }
 
     // MARK: - TaskServiceProtocol
@@ -74,7 +80,7 @@ final class TodoistService: TaskServiceProtocol {
     }
 
     func fetchTasks() async throws -> [Task] {
-        guard let token = AppConfiguration.shared.todoistAPIToken else {
+        guard let token = resolvedToken else {
             throw TaskServiceError.notConnected
         }
         SonasLogger.tasks.info("TodoistService: fetchTasks")
@@ -91,7 +97,7 @@ final class TodoistService: TaskServiceProtocol {
     }
 
     func completeTask(id: String) async throws {
-        guard let token = AppConfiguration.shared.todoistAPIToken else {
+        guard let token = resolvedToken else {
             throw TaskServiceError.notConnected
         }
         guard let url = URL(string: Endpoint.closeTask(id: id)) else {

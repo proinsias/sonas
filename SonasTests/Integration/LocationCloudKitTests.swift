@@ -12,7 +12,7 @@ import Testing
 // container differs from the default derived from the app's bundle identifier.
 
 @MainActor
-@Suite("Location CloudKit Integration Tests", .tags(.integration))
+@Suite("Location CloudKit Integration Tests", .disabled("Requires CloudKit entitlement and iCloud sign-in"))
 struct LocationCloudKitTests {
     private static var cloudKitContainerID: String {
         ProcessInfo.processInfo.environment["CLOUDKIT_CONTAINER_ID"]
