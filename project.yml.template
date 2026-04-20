@@ -47,6 +47,8 @@ targets:
       - path: Sonas
         excludes:
           - '**/*.md'
+          - 'Platform/TV/TVSonasApp.swift'
+          - 'Platform/Watch/WatchSonasApp.swift'
     info:
       path: Sonas/Info.plist
       properties:
@@ -89,6 +91,7 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.yourteam.sonas
         ENABLE_HARDENED_RUNTIME: YES
+        SUPPORTS_MACCATALYST: YES
     entitlements:
       path: Sonas/Sonas.entitlements
     capabilities:
@@ -205,6 +208,13 @@ schemes:
       gatherCoverageData: true
       coverageTargets:
         - Sonas
+      environmentVariables:
+        USE_MOCK_LOCATION: '1'
+        USE_MOCK_WEATHER: '1'
+        USE_MOCK_CALENDAR: '1'
+        USE_MOCK_TASKS: '1'
+        USE_MOCK_PHOTOS: '1'
+        USE_MOCK_JAM: '1'
       targets:
         - name: SonasTests
           parallelizable: true

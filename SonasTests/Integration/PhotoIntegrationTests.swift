@@ -6,6 +6,7 @@ import Testing
 
 // Constitution §II — every user-facing feature MUST have an integration test.
 
+@MainActor
 @Suite("Photo Gallery Integration Tests")
 struct PhotoIntegrationTests {
     // MARK: - T068-I.1: PhotoGalleryView renders ≥1 thumbnail within 500ms

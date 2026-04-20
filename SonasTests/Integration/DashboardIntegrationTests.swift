@@ -7,6 +7,7 @@ import Testing
 // All-mock service injection — verifies US1 panels render within 500ms and
 // degraded state ("Location unavailable") renders correctly.
 
+@MainActor
 @Suite("Dashboard Integration Tests")
 struct DashboardIntegrationTests {
     // MARK: - T043.1: All panels render with mock services within 500ms
@@ -17,7 +18,7 @@ struct DashboardIntegrationTests {
 
         let vm = DashboardViewModel(
             locationService: LocationServiceMock(),
-            calendarService: CalendarServiceMock(),
+            calendarService: CalendarServiceMock()
         )
 
         await vm.locationVM.start()
@@ -36,7 +37,7 @@ struct DashboardIntegrationTests {
     func `given member with nil location when dashboard loads then location unavailable indicator shown`() async {
         let vm = DashboardViewModel(
             locationService: LocationServiceMock(),
-            calendarService: CalendarServiceMock(),
+            calendarService: CalendarServiceMock()
         )
 
         await vm.locationVM.start()

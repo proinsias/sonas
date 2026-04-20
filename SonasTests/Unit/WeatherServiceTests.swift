@@ -4,6 +4,7 @@ import Testing
 
 // MARK: - WeatherServiceTests (T051)
 
+@MainActor
 @Suite("Weather Service Unit Tests")
 struct WeatherServiceTests {
     // MARK: - T051.1: MoonPhase from WeatherKit fraction value

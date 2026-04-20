@@ -4,6 +4,7 @@ import Testing
 
 // MARK: - PhotoServiceTests (T067)
 
+@MainActor
 @Suite("Photo Service Unit Tests")
 struct PhotoServiceTests {
     // MARK: - T067.1: Sort order is creationDate descending

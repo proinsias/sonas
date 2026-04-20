@@ -11,6 +11,7 @@ import Testing
 // Set CLOUDKIT_CONTAINER_ID in the integration test scheme environment variables if your
 // container differs from the default derived from the app's bundle identifier.
 
+@MainActor
 @Suite("Location CloudKit Integration Tests", .tags(.integration))
 struct LocationCloudKitTests {
     private static var cloudKitContainerID: String {

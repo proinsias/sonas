@@ -4,6 +4,7 @@ import Testing
 
 // MARK: - CalendarServiceTests (T084)
 
+@MainActor
 @Suite("Calendar Service Unit Tests")
 struct CalendarServiceTests {
     // MARK: - T084.1: Deduplication removes event when title+startDate match

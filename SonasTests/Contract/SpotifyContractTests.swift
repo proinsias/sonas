@@ -6,6 +6,7 @@ import Testing
 
 // 🔴 TEST-FIRST GATE — run before SpotifyJamService (T071)
 
+@MainActor
 @Suite("Spotify Jam Service Contract Tests")
 struct SpotifyContractTests {
     // MARK: - T072.1: startJam returns active session with joinURL

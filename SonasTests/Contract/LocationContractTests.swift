@@ -8,6 +8,7 @@ import Testing
 // 🔴 TEST-FIRST GATE — These tests MUST FAIL before LocationService is implemented.
 // Run this file first; confirm all tests fail; then implement LocationService.
 
+@MainActor
 @Suite("Location Service Contract Tests")
 struct LocationContractTests {
     // MARK: - Fixture data

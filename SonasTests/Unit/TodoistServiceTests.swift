@@ -4,6 +4,7 @@ import Testing
 
 // MARK: - TodoistServiceTests (T059)
 
+@MainActor
 @Suite("Todoist Service Unit Tests")
 struct TodoistServiceTests {
     // MARK: - T059.1: Optimistic rollback when completeTask throws

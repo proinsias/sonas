@@ -29,15 +29,14 @@ final class AQIURLProtocolStub: URLProtocol {
             return
         }
         client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
-        if let data = Data(Self.responseJSON.utf8) {
-            client?.urlProtocol(self, didLoad: data)
-        }
+        client?.urlProtocol(self, didLoad: Data(Self.responseJSON.utf8))
         client?.urlProtocolDidFinishLoading(self)
     }
 
     override func stopLoading() {}
 }
 
+@MainActor
 @Suite("AQI Contract Tests")
 struct AQIContractTests {
     private func makeService() -> WeatherService {

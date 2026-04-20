@@ -14,9 +14,6 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Install xcodegen
-        run: brew install xcodegen
-
       - name: Generate project.yml from template
         run: |
           sed \
@@ -30,16 +27,7 @@ jobs:
         run: xcodegen generate
 
       - name: Run unit and contract tests
-        run: |
-          xcodebuild test \
-            -scheme SonasTests \
-            -destination 'platform=iOS Simulator,name=iPhone 16 Pro' \
-            -configuration Debug \
-            -enableCodeCoverage YES \
-            CODE_SIGN_IDENTITY="" \
-            CODE_SIGNING_REQUIRED=NO \
-            CODE_SIGNING_ALLOWED=NO \
-            | xcpretty || exit 1
+        run: mise run test-unit
 
   ui:
     name: UI Tests
@@ -49,9 +37,6 @@ jobs:
       - uses: jdx/mise-action@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Install xcodegen
-        run: brew install xcodegen
 
       - name: Generate project.yml from template
         run: |
@@ -78,12 +63,4 @@ jobs:
         run: xcodegen generate
 
       - name: Run UI tests
-        run: |
-          xcodebuild test \
-            -scheme SonasUITests \
-            -destination 'platform=iOS Simulator,name=iPhone 16 Pro' \
-            -configuration Debug \
-            CODE_SIGN_IDENTITY="" \
-            CODE_SIGNING_REQUIRED=NO \
-            CODE_SIGNING_ALLOWED=NO \
-            | xcpretty || exit 1
+        run: mise run test-ui

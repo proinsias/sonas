@@ -6,14 +6,12 @@ import Testing
 
 // 🔴 TEST-FIRST GATE — run before PhotoService (T063)
 
+@MainActor
 @Suite("Photo Service Contract Tests")
 struct PhotoContractTests {
     // MARK: - T064.1: fetchRecentPhotos returns 5 photos sorted descending by creationDate
 
-    @Test("""
-    given mock photo service with 5 assets when fetchRecentPhotos called \
-    then returns 5 photos sorted descending
-    """)
+    @Test
     func `given mock with 5 assets when fetch recent then 5 photos sorted descending`() async throws {
         let service = PhotoServiceMock()
         let photos = try await service.fetchRecentPhotos(limit: 20)

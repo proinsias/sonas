@@ -43,6 +43,7 @@ final class TodoistURLProtocolStub: URLProtocol {
     override func stopLoading() {}
 }
 
+@MainActor
 @Suite("Todoist Service Contract Tests")
 struct TodoistContractTests {
     private func makeService() -> TodoistService {

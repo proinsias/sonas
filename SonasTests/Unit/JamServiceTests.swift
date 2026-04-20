@@ -5,6 +5,7 @@ import Testing
 
 // MARK: - JamServiceTests (T075)
 
+@MainActor
 @Suite("Jam Service Unit Tests")
 struct JamServiceTests {
     // MARK: - T075.1: joinURL string encodes correctly as QR CIImage data

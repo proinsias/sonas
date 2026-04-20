@@ -1,3 +1,40 @@
+# Don't put credentials or other secrets into this shared file!
+[hooks]
+enter = "mise i -q"
+
+[settings]
+env_file = ".env"
+experimental = true
+gpg_verify = true
+status.missing_tools = "always"
+status.show_env = true
+
+[tasks.test-ui]
+description = 'Run UI tests'
+run = '''
+    xcodebuild test \
+        -scheme SonasUITests \
+        -destination 'platform=macOS,variant=Mac Catalyst' \
+        -configuration Debug \
+        CODE_SIGN_IDENTITY="" \
+        CODE_SIGNING_REQUIRED=NO \
+        CODE_SIGNING_ALLOWED=NO
+'''
+
+[tasks.test-unit]
+description = 'Run unit tests'
+run = '''
+    xcodebuild test \
+        -scheme SonasTests \
+        -destination 'platform=macOS,variant=Mac Catalyst' \
+        -configuration Debug \
+        -enableCodeCoverage YES \
+        CODE_SIGN_IDENTITY="" \
+        CODE_SIGNING_REQUIRED=NO \
+        CODE_SIGNING_ALLOWED=NO \
+        SWIFT_TESTING_ENABLED=YES
+'''
+
 [tools]
 actionlint = "latest"
 editorconfig-checker = "latest"

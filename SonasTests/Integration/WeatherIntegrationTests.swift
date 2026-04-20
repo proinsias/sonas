@@ -7,6 +7,7 @@ import Testing
 
 // Requires WeatherKit entitlement; run in SonasIntegrationTests scheme.
 
+@MainActor
 @Suite("Weather Integration Tests", .tags(.integration))
 struct WeatherIntegrationTests {
     @Test

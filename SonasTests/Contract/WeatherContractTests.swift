@@ -7,6 +7,7 @@ import Testing
 
 // 🔴 TEST-FIRST GATE — run before WeatherService (T046)
 
+@MainActor
 @Suite("Weather Service Contract Tests")
 struct WeatherContractTests {
     // MARK: - T048.1: snapshot.airQualityIndex == 42 from AQI stub
@@ -16,7 +17,7 @@ struct WeatherContractTests {
         // WeatherKit mock + AQI stub — WeatherServiceMock short-circuits WeatherKit entitlement
         let mock = WeatherServiceMock()
         let (snapshot, _) = try await mock.fetchWeather(
-            for: CLLocationCoordinate2D(latitude: 53.35, longitude: -6.26),
+            for: CLLocationCoordinate2D(latitude: 53.35, longitude: -6.26)
         )
         // Fixture sets airQualityIndex = 42
         #expect(snapshot.airQualityIndex == 42, "Fixture airQualityIndex must be 42")
@@ -28,7 +29,7 @@ struct WeatherContractTests {
     func `given mock weather service when fetchWeather called then forecast contains 7 days`() async throws {
         let mock = WeatherServiceMock()
         let (_, forecast) = try await mock.fetchWeather(
-            for: CLLocationCoordinate2D(latitude: 53.35, longitude: -6.26),
+            for: CLLocationCoordinate2D(latitude: 53.35, longitude: -6.26)
         )
         #expect(forecast.count == 7, "Forecast must contain exactly 7 DayForecast entries")
     }
@@ -39,12 +40,12 @@ struct WeatherContractTests {
     func `given mock weather service when fetchWeather called then forecast[0].id equals today's date`() async throws {
         let mock = WeatherServiceMock()
         let (_, forecast) = try await mock.fetchWeather(
-            for: CLLocationCoordinate2D(latitude: 53.35, longitude: -6.26),
+            for: CLLocationCoordinate2D(latitude: 53.35, longitude: -6.26)
         )
         let todayString = String(
             ISO8601DateFormatter()
                 .string(from: Calendar.current.startOfDay(for: .now))
-                .prefix(10),
+                .prefix(10)
         )
         #expect(forecast[0].id == todayString, "First forecast entry ID must be today's ISO date (YYYY-MM-DD)")
     }
@@ -56,7 +57,7 @@ struct WeatherContractTests {
     ) async throws {
         let mock = WeatherServiceMock()
         let (snapshot, _) = try await mock.fetchWeather(
-            for: CLLocationCoordinate2D(latitude: 53.35, longitude: -6.26),
+            for: CLLocationCoordinate2D(latitude: 53.35, longitude: -6.26)
         )
         #expect(!snapshot.conditionDescription.isEmpty, "conditionDescription must be non-empty")
         #expect(snapshot.humidity > 0, "humidity must be > 0")

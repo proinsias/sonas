@@ -7,6 +7,7 @@ import Testing
 
 // Constitution §II — every user-facing feature MUST have an integration test.
 
+@MainActor
 @Suite("Jam Panel Integration Tests")
 struct JamIntegrationTests {
     // MARK: - T076-I.1: JamPanelView renders non-nil QR Image within 500ms of startJam resolving

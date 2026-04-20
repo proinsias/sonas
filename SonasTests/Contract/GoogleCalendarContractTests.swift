@@ -43,6 +43,7 @@ final class GoogleCalendarURLProtocolStub: URLProtocol {
 
 // MARK: - Tests
 
+@MainActor
 @Suite("Google Calendar Service Contract Tests")
 struct GoogleCalendarContractTests {
     private func makeStubSession() -> URLSession {

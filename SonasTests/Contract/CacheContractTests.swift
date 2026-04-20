@@ -8,6 +8,7 @@ import Testing
 // 🔴 TEST-FIRST GATE — These tests MUST FAIL before CacheService is implemented.
 // Uses an in-memory ModelContainer so no disk I/O occurs.
 
+@MainActor
 @Suite("Cache Service Contract Tests")
 struct CacheContractTests {
     // MARK: - In-memory container factory

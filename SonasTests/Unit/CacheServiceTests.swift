@@ -5,6 +5,7 @@ import Testing
 
 // MARK: - CacheServiceTests (T085)
 
+@MainActor
 @Suite("Cache Service Unit Tests")
 struct CacheServiceTests {
     private func makeInMemoryService() throws -> CacheService {
