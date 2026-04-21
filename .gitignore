@@ -76,10 +76,11 @@ fastlane/screenshots/**/*.png
 fastlane/test_output
 .lycheecache
 
-# Developer-configured files — copy from *.template and customise before building
-project.yml
 Sonas.xcodeproj/
-Sonas/Info.plist
 WatchSonas/Info.plist
 TVSonas/Info.plist
 .mise.local.toml
+
+# Developer-configured files — copy from *.template and customise before building
+project.yml
+Sonas/Info.plist

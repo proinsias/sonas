@@ -203,10 +203,9 @@ prompt if the SDK is unavailable.
 
 ### Todoist
 
-- No build-time configuration. Users enter their personal API token at runtime in Settings → Connect Todoist. The token
-  can be found at [todoist.com/app/settings/integrations](https://todoist.com/app/settings/integrations)). The token is
-  stored in the device Keychain, not in the app bundle.
-- For contract tests: set `TODOIST_TEST_TOKEN` environment variable in the test scheme.
+No build-time configuration. Users enter their personal API token at runtime in Settings → Connect Todoist. The token
+can be found at [todoist.com/app/settings/integrations](https://todoist.com/app/settings/integrations). The token is
+stored in the device Keychain, not in the app bundle.
 
 ### Run on simulator again
 
