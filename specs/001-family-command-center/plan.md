@@ -14,19 +14,25 @@ single SwiftUI codebase with adaptive layouts targets iOS, iPadOS, macOS, watchO
 
 ## Technical Context
 
-**Language/Version**: Swift 5.10 / SwiftUI, iOS 18+ (minimum deployment target: iOS 17 for SwiftData) **Primary
-Dependencies**: WeatherKit, EventKit, PhotoKit, CoreLocation, CloudKit, GoogleSignIn-iOS SDK, Google Calendar REST API
-v3, Todoist REST API v2, Spotify iOS SDK (SpotifyiOS), CoreImage (QR), SwiftData, BackgroundTasks, UserNotifications
-**Storage**: SwiftData (on-device cache only); CloudKit private container for location relay — no custom server-side
-database **Testing**: Swift Testing framework (iOS 17+) + XCTest; contract tests via URLProtocol stubbing for REST APIs;
-UI tests via XCUITest **Target Platform**: iOS 18+ (primary); iPadOS 18+ / macOS 15+ (Catalyst or native SwiftUI) /
-watchOS 11+ / tvOS 18+ (adaptive layout extensions) **Project Type**: Mobile app (SwiftUI multi-platform, single
-codebase) **Performance Goals**: Dashboard visible with cached data in ≤500ms; full live data in ≤2s; UI interactions
-≤100ms; photo gallery at 60fps; background Todoist refresh best-effort every 5 min (foreground) / 15 min (background via
-BGAppRefreshTask) **Constraints**: No custom backend; no server-side personal data storage; ≤150MB peak memory; offline
-degraded mode mandatory; 9+ App Store age rating; no analytics/ad SDKs; AirQuality data from secondary API (WeatherKit
-does not provide AQI) **Scale/Scope**: 2–15 family members per household; single shared CloudKit container; single
-iCloud Shared Album; up to 3 Todoist family projects; 7-day weather window; 48-hour calendar window
+- **Language/Version**: Swift 5.10 / SwiftUI, iOS 18+ (minimum deployment target: iOS 17 for SwiftData)
+- **Primary Dependencies**: WeatherKit, EventKit, PhotoKit, CoreLocation, CloudKit, GoogleSignIn-iOS SDK, Google
+  Calendar REST API v3, Todoist REST API v2, Spotify iOS SDK (SpotifyiOS), CoreImage (QR), SwiftData, BackgroundTasks,
+  UserNotifications
+- **Storage**: SwiftData (on-device cache only); CloudKit private container for location relay — no custom server-side
+  database
+- **Testing**: Swift Testing framework (iOS 17+) + XCTest; contract tests via URLProtocol stubbing for REST APIs; UI
+  tests via XCUITest
+- **Target Platform**: iOS 18+ (primary); iPadOS 18+ / macOS 15+ (Catalyst or native SwiftUI) / watchOS 11+ / tvOS 18+
+  (adaptive layout extensions)
+- **Project Type**: Mobile app (SwiftUI multi-platform, single codebase)
+- **Performance Goals**: Dashboard visible with cached data in ≤500ms; full live data in ≤2s; UI interactions ≤100ms;
+  photo gallery at 60fps; background Todoist refresh best-effort every 5 min (foreground) / 15 min (background via
+  BGAppRefreshTask)
+- **Constraints**: No custom backend; no server-side personal data storage; ≤150MB peak memory; offline degraded mode
+  mandatory; 9+ App Store age rating; no analytics/ad SDKs; AirQuality data from secondary API (WeatherKit does not
+  provide AQI)
+- **Scale/Scope**: 2–15 family members per household; single shared CloudKit container; single iCloud Shared Album; up
+  to 3 Todoist family projects; 7-day weather window; 48-hour calendar window
 
 ## Constitution Check
 

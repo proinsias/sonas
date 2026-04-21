@@ -16,6 +16,7 @@ options:
     iOS: '17.0'
     watchOS: '11.0'
     tvOS: '18.0'
+    macOS: '15.0'
   xcodeVersion: '16'
   createIntermediateGroups: true
   groupSortPosition: top

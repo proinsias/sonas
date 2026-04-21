@@ -21,6 +21,7 @@ run = '''
     xcodebuild test \
         -scheme SonasUITests \
         -destination "platform=iOS Simulator,id=$SIM" \
+        -enableCodeCoverage YES \
         -configuration Debug \
         CODE_SIGN_IDENTITY="" \
         CODE_SIGNING_REQUIRED=NO \
@@ -34,6 +35,7 @@ run = '''
     xcodebuild build-for-testing \
         -scheme SonasUITests \
         -destination 'platform=macOS,variant=Mac Catalyst' \
+        -enableCodeCoverage YES \
         -configuration Debug \
         CODE_SIGN_IDENTITY="" \
         CODE_SIGNING_REQUIRED=NO \
@@ -45,6 +47,7 @@ run = '''
     xcodebuild test-without-building \
         -scheme SonasUITests \
         -destination 'platform=macOS,variant=Mac Catalyst' \
+        -enableCodeCoverage YES \
         -configuration Debug \
         CODE_SIGN_IDENTITY="" \
         CODE_SIGNING_REQUIRED=NO \
@@ -101,6 +104,7 @@ depends = [
 actionlint = "latest"
 editorconfig-checker = "latest"
 lychee = "latest"
+prek = "latest"
 prettier = "latest"
 ripsecrets = "latest"
 shellcheck = "latest"
