@@ -12,7 +12,19 @@ status.show_env = true
 [tasks.test-ui]
 description = 'Run UI tests'
 run = '''
-    xcodebuild test \
+    set -euo pipefail
+    xcodebuild build-for-testing \
+        -scheme SonasUITests \
+        -destination 'platform=macOS,variant=Mac Catalyst' \
+        -configuration Debug \
+        CODE_SIGN_IDENTITY="" \
+        CODE_SIGNING_REQUIRED=NO \
+        CODE_SIGNING_ALLOWED=NO
+
+    RUNNER=$(find ~/Library/Developer/Xcode/DerivedData -name "SonasUITests-Runner.app" -type d | head -1)
+    codesign --force --sign - "$RUNNER"
+
+    xcodebuild test-without-building \
         -scheme SonasUITests \
         -destination 'platform=macOS,variant=Mac Catalyst' \
         -configuration Debug \
@@ -47,3 +59,9 @@ swiftformat = { version = "latest", no_app = "true", rename_exe = "swiftformat" 
 swiftlint = "latest"
 xcodegen = "latest"
 yamllint = "latest"
+
+[env]
+CCR_API_KEY = { required = "Set API key to access Claude Code Router" }
+GEMINI_API_KEY = { required = "Set API key to access Gemini" }
+GROQ_API_KEY = { required = "Set API key to access Groq" }
+OPENAI_API_KEY = { required = "Set API key to access OpenAI" }

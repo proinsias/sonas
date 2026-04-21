@@ -63,7 +63,15 @@ final class LocationService: NSObject, LocationServiceProtocol {
 
     private let locationManager = CLLocationManager()
     private let geocoder = CLGeocoder()
-    private let container: CKContainer
+    private var _container: CKContainer?
+    private let _containerIdentifier: String
+    private var container: CKContainer {
+        if let existing = _container { return existing }
+        let new = CKContainer(identifier: _containerIdentifier)
+        _container = new
+        return new
+    }
+
     private var lastPublishedLocation: CLLocation?
     private var lastPublishDate: Date = .distantPast
     private var members: [String: FamilyMember] = [:]
@@ -71,7 +79,7 @@ final class LocationService: NSObject, LocationServiceProtocol {
     // MARK: Init
 
     init(containerIdentifier: String = Constants.containerID) {
-        container = CKContainer(identifier: containerIdentifier)
+        _containerIdentifier = containerIdentifier
         var continuation: AsyncStream<[FamilyMember]>.Continuation?
         familyLocations = AsyncStream { cont in continuation = cont }
         super.init()
