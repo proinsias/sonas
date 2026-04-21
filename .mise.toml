@@ -9,8 +9,26 @@ gpg_verify = true
 status.missing_tools = "always"
 status.show_env = true
 
-[tasks.test-ui]
-description = 'Run UI tests'
+[tasks.tests-ui-ios]
+description = 'Run UI tests on iOS Simulator'
+run = '''
+    set -euo pipefail
+    SIM=$(xcrun simctl list devices available | grep -m1 'iPhone [0-9]' | sed 's/.*(\([A-Z0-9-]*\)).*/\1/')
+    if [ -z "$SIM" ]; then
+        echo "No iOS Simulator runtime found. Install one via Xcode > Settings > Components." >&2
+        exit 1
+    fi
+    xcodebuild test \
+        -scheme SonasUITests \
+        -destination "platform=iOS Simulator,id=$SIM" \
+        -configuration Debug \
+        CODE_SIGN_IDENTITY="" \
+        CODE_SIGNING_REQUIRED=NO \
+        CODE_SIGNING_ALLOWED=NO
+'''
+
+[tasks.tests-ui-mac]
+description = 'Run UI tests on Mac'
 run = '''
     set -euo pipefail
     xcodebuild build-for-testing \
@@ -33,8 +51,31 @@ run = '''
         CODE_SIGNING_ALLOWED=NO
 '''
 
-[tasks.test-unit]
-description = 'Run unit tests'
+[tasks.tests-ui]
+depends = ["tests-ui-*"]
+
+[tasks.tests-unit-ios]
+description = 'Run unit tests on iOS Simulator'
+run = '''
+    set -euo pipefail
+    SIM=$(xcrun simctl list devices available | grep -m1 'iPhone [0-9]' | sed 's/.*(\([A-Z0-9-]*\)).*/\1/')
+    if [ -z "$SIM" ]; then
+        echo "No iOS Simulator runtime found. Install one via Xcode > Settings > Components." >&2
+        exit 1
+    fi
+    xcodebuild test \
+        -scheme SonasTests \
+        -destination "platform=iOS Simulator,id=$SIM" \
+        -configuration Debug \
+        -enableCodeCoverage YES \
+        CODE_SIGN_IDENTITY="" \
+        CODE_SIGNING_REQUIRED=NO \
+        CODE_SIGNING_ALLOWED=NO \
+        SWIFT_TESTING_ENABLED=YES
+'''
+
+[tasks.tests-unit-mac]
+description = 'Run unit tests on Mac'
 run = '''
     xcodebuild test \
         -scheme SonasTests \
@@ -46,6 +87,15 @@ run = '''
         CODE_SIGNING_ALLOWED=NO \
         SWIFT_TESTING_ENABLED=YES
 '''
+
+[tasks.tests-unit]
+depends = ["tests-unit-*"]
+
+[tasks.tests]
+depends = [
+    "tests-ui",
+    "tests-unit",
+]
 
 [tools]
 actionlint = "latest"

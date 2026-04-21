@@ -1,0 +1,126 @@
+---
+name: Tests
+on:
+  push:
+    branches: [main]
+  pull_request:
+jobs:
+  ui-ios:
+    name: UI Tests (iOS Simulator)
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v6
+      - uses: jdx/mise-action@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Generate project.yml from template
+        run: |
+          sed \
+            -e 's/YOUR_TEAM_ID//' \
+            -e 's/com\.yourteam/com.ci/' \
+            -e 's/YOUR_SPOTIFY_CLIENT_ID/placeholder/' \
+            -e 's/YOUR_GOOGLE_CLIENT_ID/placeholder/' \
+            project.yml.template > project.yml
+
+      - name: Patch mock flags into scheme environment
+        run: |
+          python3 - <<'PYEOF'
+          import re, pathlib
+
+          scheme = pathlib.Path('project.yml')
+          text = scheme.read_text()
+          # Flip all mock flags to 1 so the UI test runner uses fixture data
+          text = re.sub(r"(USE_MOCK_\w+: )'0'", r"\g<1>'1'", text)
+          scheme.write_text(text)
+          PYEOF
+
+      - name: Generate Xcode project
+        run: xcodegen generate
+
+      - name: Run UI tests on iOS Simulator
+        run: mise run tests-ui-ios
+
+  ui-mac:
+    name: UI Tests (Mac)
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v6
+      - uses: jdx/mise-action@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Generate project.yml from template
+        run: |
+          sed \
+            -e 's/YOUR_TEAM_ID//' \
+            -e 's/com\.yourteam/com.ci/' \
+            -e 's/YOUR_SPOTIFY_CLIENT_ID/placeholder/' \
+            -e 's/YOUR_GOOGLE_CLIENT_ID/placeholder/' \
+            project.yml.template > project.yml
+
+      - name: Patch mock flags into scheme environment
+        run: |
+          python3 - <<'PYEOF'
+          import re, pathlib
+
+          scheme = pathlib.Path('project.yml')
+          text = scheme.read_text()
+          # Flip all mock flags to 1 so the UI test runner uses fixture data
+          text = re.sub(r"(USE_MOCK_\w+: )'0'", r"\g<1>'1'", text)
+          scheme.write_text(text)
+          PYEOF
+
+      - name: Generate Xcode project
+        run: xcodegen generate
+
+      - name: Run UI tests
+        run: mise run tests-ui-mac
+
+  unit-contract-ios:
+    name: Unit & Contract Tests (iOS Simulator)
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v6
+      - uses: jdx/mise-action@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Generate project.yml from template
+        run: |
+          sed \
+            -e 's/YOUR_TEAM_ID//' \
+            -e 's/com\.yourteam/com.ci/' \
+            -e 's/YOUR_SPOTIFY_CLIENT_ID/placeholder/' \
+            -e 's/YOUR_GOOGLE_CLIENT_ID/placeholder/' \
+            project.yml.template > project.yml
+
+      - name: Generate Xcode project
+        run: xcodegen generate
+
+      - name: Run unit and contract tests on iOS Simulator
+        run: mise run tests-unit-ios
+
+  unit-contract-mac:
+    name: Unit & Contract Tests (Mac)
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v6
+      - uses: jdx/mise-action@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Generate project.yml from template
+        run: |
+          sed \
+            -e 's/YOUR_TEAM_ID//' \
+            -e 's/com\.yourteam/com.ci/' \
+            -e 's/YOUR_SPOTIFY_CLIENT_ID/placeholder/' \
+            -e 's/YOUR_GOOGLE_CLIENT_ID/placeholder/' \
+            project.yml.template > project.yml
+
+      - name: Generate Xcode project
+        run: xcodegen generate
+
+      - name: Run unit and contract tests
+        run: mise run tests-unit-mac
