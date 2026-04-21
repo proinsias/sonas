@@ -78,6 +78,7 @@ fastlane/test_output
 
 # Developer-configured files — copy from *.template and customise before building
 project.yml
+Sonas.xcodeproj/
 Sonas/Info.plist
 WatchSonas/Info.plist
 TVSonas/Info.plist
