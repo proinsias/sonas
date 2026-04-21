@@ -1,6 +1,44 @@
 # Quickstart: Sonas — iOS Family Command Center
 
-## Prerequisites
+## Contents
+
+<!--
+Table of contents updated via:
+uvx --from md-toc md_toc --in-place github -- quickstart.md
+-->
+<!--TOC-->
+
+- [Quickstart: Sonas — iOS Family Command Center](#quickstart-sonas--ios-family-command-center)
+  - [Contents](#contents)
+  - [Initial setup with mock data](#initial-setup-with-mock-data)
+    - [Prerequisites](#prerequisites)
+    - [Clone and install requirements](#clone-and-install-requirements)
+    - [Configure project.yml](#configure-projectyml)
+    - [Configure signing and mock data](#configure-signing-and-mock-data)
+    - [Run on simulator](#run-on-simulator)
+    - [First launch checklist (mock data)](#first-launch-checklist-mock-data)
+  - [Full setup with external service credentials](#full-setup-with-external-service-credentials)
+    - [Configure signing](#configure-signing)
+    - [Google Calendar](#google-calendar)
+    - [Spotify](#spotify)
+    - [Todoist](#todoist)
+    - [Run on simulator again](#run-on-simulator-again)
+    - [CloudKit schema setup (first run)](#cloudkit-schema-setup-first-run)
+    - [Launch checklist (real credentials)](#launch-checklist-real-credentials)
+  - [Run linters and tests](#run-linters-and-tests)
+    - [Linters](#linters)
+    - [Tests](#tests)
+    - [Testing on iPad / Mac](#testing-on-ipad--mac)
+  - [Project structure](#project-structure)
+  - [Troubleshooting](#troubleshooting)
+    - [Common problems and fixes](#common-problems-and-fixes)
+    - [Where to get help](#where-to-get-help)
+
+<!--TOC-->
+
+## Initial setup with mock data
+
+### Prerequisites
 
 | Tool                      | Version                                       | Install                      |
 | ------------------------- | --------------------------------------------- | ---------------------------- |
@@ -27,7 +65,7 @@
   sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
   ```
 
-## Clone and install requirements
+### Clone and install requirements
 
 ```bash
 git clone https://github.com/proinsias/sonas.git
@@ -42,7 +80,7 @@ xcodegen --version
 # Should print something like: XcodeGen Version: 2.45.3
 ```
 
-## Configure project.yml
+### Configure project.yml
 
 `project.yml` is gitignored. Copy the template:
 
@@ -77,24 +115,69 @@ open Sonas.xcodeproj
 Xcode will open. The first time it will resolve Swift package dependencies (GoogleSignIn and SpotifyiOS) — this takes
 1–3 minutes. You will see a spinner in the top bar. **Wait for it to finish before doing anything else.**
 
-## Configure signing
+### Configure signing and mock data
 
 1. In Xcode, select the `Sonas` target → Signing & Capabilities.
 2. Set Team to your Apple Developer team.
 3. Bundle ID: use the prefix you set in `project.yml` (e.g. `com.yourteam.sonas`).
-4. Enable **WeatherKit** capability (requires Apple Developer portal approval — can take minutes to hours; simulator
+
+Set these environment variables in the Xcode scheme (Product → Scheme → Edit Scheme → Run → Arguments → Environment
+Variables) to develop offline without any credentials:
+
+| Variable            | Value | Effect                                                |
+| ------------------- | ----- | ----------------------------------------------------- |
+| `USE_MOCK_LOCATION` | `1`   | Use `LocationServiceMock` with fixture family members |
+| `USE_MOCK_WEATHER`  | `1`   | Use `WeatherServiceMock` with fixture snapshot        |
+| `USE_MOCK_CALENDAR` | `1`   | Use fixture events; skip EventKit permission          |
+| `USE_MOCK_TASKS`    | `1`   | Use fixture Todoist tasks; skip network               |
+| `USE_MOCK_PHOTOS`   | `1`   | Use bundled test images; skip photo permission        |
+| `USE_MOCK_JAM`      | `1`   | Use `JamServiceMock`; skip Spotify SDK                |
+
+Setting all six mock flags enables a fully offline development session with no real credentials.
+
+### Run on simulator
+
+```bash
+# Build and run on iPhone 16 Pro simulator (iOS 18)
+xcodebuild \
+    -scheme Sonas \
+    -destination 'platform=iOS Simulator,name=iPhone 16 Pro' \
+    -configuration Debug \
+    build
+# Or press ⌘R in Xcode with the iPhone 16 Pro simulator selected
+```
+
+### First launch checklist (mock data)
+
+- [ ] The clock panel shows the current time and it ticks every second.
+- [ ] The Family panel shows three mock members: Alice (Dublin), Bob (Ranelagh), Carol (Location unavailable — this is
+      intentional in the mock).
+- [ ] The Events panel shows three upcoming mock events.
+- [ ] The Weather panel shows temperature, humidity, wind, pressure, AQI, sunrise/sunset, moon phase, and a 7-day
+      forecast strip.
+- [ ] The Tasks panel shows tasks grouped under "Home" and "Admin" projects.
+- [ ] The Photos panel shows a rotating placeholder gallery.
+- [ ] The Jam panel shows a "Start Jam" button. Tap it — a QR code should appear.
+- [ ] Tapping the gear icon (⚙) opens a Settings sheet.
+
+If any panel shows an error instead of mock data, double-check that the environment variables have been set correctly.
+
+## Full setup with external service credentials
+
+### Configure signing
+
+1. In Xcode, select the `Sonas` target → Signing & Capabilities.
+1. Enable **WeatherKit** capability (requires Apple Developer portal approval — can take minutes to hours; simulator
    fallback available via `WeatherServiceMock`). Go to [developer.apple.com](https://developer.apple.com) →
    Certificates, IDs & Profiles → Identifiers → your app's Bundle ID → enable **WeatherKit**.
-5. Enable **CloudKit** → container `iCloud.com.yourteam.sonas` (auto-derived from your bundle ID at runtime). Works
+1. Enable **CloudKit** → container `iCloud.com.yourteam.sonas` (auto-derived from your bundle ID at runtime). Works
    automatically once all family members have the app installed and have granted Location permission. No external
    account needed beyond iCloud.
-6. Enable **Background Modes** → Background fetch, Remote notifications.
-7. Enable **Push Notifications** (required by CloudKit subscriptions)
-8. Repeat these steps for the **SonasTests**, **SonasUITests**, **WatchSonas**, and **TVSonas** targets, using the same
+1. Enable **Background Modes** → Background fetch, Remote notifications.
+1. Enable **Push Notifications** (required by CloudKit subscriptions)
+1. Repeat these steps for the **SonasTests**, **SonasUITests**, **WatchSonas**, and **TVSonas** targets, using the same
    Team and a matching bundle ID suffix.
-9. In `project.yml`, uncomment the corresponding capability and entitlement lines.
-
-## Configure external service credentials
+1. In `project.yml`, uncomment the corresponding capability and entitlement lines.
 
 ### Google Calendar
 
@@ -125,33 +208,42 @@ prompt if the SDK is unavailable.
   stored in the device Keychain, not in the app bundle.
 - For contract tests: set `TODOIST_TEST_TOKEN` environment variable in the test scheme.
 
-## Run on simulator
+### Run on simulator again
 
-```bash
-# Build and run on iPhone 16 Pro simulator (iOS 18)
-xcodebuild \
-    -scheme Sonas \
-    -destination 'platform=iOS Simulator,name=iPhone 16 Pro' \
-    -configuration Debug \
-    build
-# Or press ⌘R in Xcode with the iPhone 16 Pro simulator selected
+Repeat the previous `xcodebuild` command.
+
+### CloudKit schema setup (first run)
+
+On the very first launch against a new CloudKit container, the app creates the `FamilyLocation` record type
+automatically (development containers only). Verify it exists in the
+[CloudKit Dashboard](https://icloud.developer.apple.com/dashboard):
+
+```text
+FamilyLocation
+  ├── displayName    (String)
+  ├── latitude       (Double)
+  ├── longitude      (Double)
+  ├── placeName      (String)
+  └── recordedAt     (Date/Time)
 ```
 
-**Feature flags for development**:
+Before TestFlight or App Store submission, export the schema from the development container and promote it to production
+via the CloudKit Dashboard.
 
-Set these environment variables in the Xcode scheme (Product → Scheme → Edit Scheme → Run → Arguments → Environment
-Variables) to develop offline without any credentials:
+### Launch checklist (real credentials)
 
-| Variable            | Value | Effect                                                |
-| ------------------- | ----- | ----------------------------------------------------- |
-| `USE_MOCK_LOCATION` | `1`   | Use `LocationServiceMock` with fixture family members |
-| `USE_MOCK_WEATHER`  | `1`   | Use `WeatherServiceMock` with fixture snapshot        |
-| `USE_MOCK_CALENDAR` | `1`   | Use fixture events; skip EventKit permission          |
-| `USE_MOCK_TASKS`    | `1`   | Use fixture Todoist tasks; skip network               |
-| `USE_MOCK_PHOTOS`   | `1`   | Use bundled test images; skip photo permission        |
-| `USE_MOCK_JAM`      | `1`   | Use `JamServiceMock`; skip Spotify SDK                |
+Once the app works with mocks, remove the environment variables one at a time to connect real services. Each service has
+a clear "connect" UI in the Settings sheet.
 
-Setting all six mock flags enables a fully offline development session with no real credentials.
+- [ ] App opens and shows all panels in loading state within 500ms.
+- [ ] Clock panel shows current time updating every second.
+- [ ] Weather panel loads within 2s for configured home location.
+- [ ] Location panel prompts "Enable location in Settings" if permission not granted.
+- [ ] Calendar panel shows iCloud events (EventKit permission requested on first launch).
+- [ ] Tasks panel shows "Connect Todoist" if not yet configured.
+- [ ] Photo gallery panel shows "Select a shared album" if not yet configured.
+- [ ] Jam panel shows "Connect Spotify" if Spotify not authenticated.
+- [ ] Airplane mode: all panels show cached data with "Last updated" labels.
 
 ## Run linters and tests
 
@@ -189,73 +281,59 @@ Coverage gate: `xcodebuild test ... -enableCodeCoverage YES` — CI fails if `So
 
 GitHub Actions runs tests both on every push and pull request — see `.github/workflows/tests.yml`.
 
-## First launch checklist
-
-### On device or simulator with mock data
-
-- [ ] The clock panel shows the current time and it ticks every second.
-- [ ] The Family panel shows three mock members: Alice (Dublin), Bob (Ranelagh), Carol (Location unavailable — this is
-      intentional in the mock).
-- [ ] The Events panel shows three upcoming mock events.
-- [ ] The Weather panel shows temperature, humidity, wind, pressure, AQI, sunrise/sunset, moon phase, and a 7-day
-      forecast strip.
-- [ ] The Tasks panel shows tasks grouped under "Home" and "Admin" projects.
-- [ ] The Photos panel shows a rotating placeholder gallery.
-- [ ] The Jam panel shows a "Start Jam" button. Tap it — a QR code should appear.
-- [ ] Tapping the gear icon (⚙) opens a Settings sheet.
-
-If any panel shows an error instead of mock data, double-check Step 9a — the environment variables may not have been set
-correctly.
-
-### On device or simulator with real credentials
-
-Once the app works with mocks, remove the environment variables one at a time to connect real services. Each service has
-a clear "connect" UI in the Settings sheet.
-
-- [ ] App opens and shows all panels in loading state within 500ms.
-- [ ] Clock panel shows current time updating every second.
-- [ ] Weather panel loads within 2s for configured home location.
-- [ ] Location panel prompts "Enable location in Settings" if permission not granted.
-- [ ] Calendar panel shows iCloud events (EventKit permission requested on first launch).
-- [ ] Tasks panel shows "Connect Todoist" if not yet configured.
-- [ ] Photo gallery panel shows "Select a shared album" if not yet configured.
-- [ ] Jam panel shows "Connect Spotify" if Spotify not authenticated.
-- [ ] Airplane mode: all panels show cached data with "Last updated" labels.
-
-## Testing on iPad / Mac
+### Testing on iPad / Mac
 
 - Select an iPad simulator (e.g., iPad Pro 13-inch) → the dashboard switches to the 3-column grid layout automatically
   via `horizontalSizeClass == .regular`.
 - For Mac (designed for iPad): Product → Destination → My Mac (Designed for iPad). Mouse/keyboard navigation should
   reach all controls.
 
-## CloudKit schema setup (first run)
+## Project structure
 
-On the very first launch against a new CloudKit container, the app creates the `FamilyLocation` record type
-automatically (development containers only). Verify it exists in the
-[CloudKit Dashboard](https://icloud.developer.apple.com/dashboard):
+Here is a map of the key folders so you know where to find things:
 
 ```text
-FamilyLocation
-  ├── displayName    (String)
-  ├── latitude       (Double)
-  ├── longitude      (Double)
-  ├── placeName      (String)
-  └── recordedAt     (Date/Time)
+Sonas/
+├── App/
+│   ├── SonasApp.swift          ← App entry point and background task setup
+│   └── AppConfiguration.swift  ← All user settings (home location, tokens)
+│
+├── Features/                   ← One folder per dashboard panel
+│   ├── Dashboard/              ← Root view + view model
+│   ├── Clock/                  ← Live clock (TimelineView)
+│   ├── Location/               ← Family member locations (CloudKit)
+│   ├── Weather/                ← WeatherKit + AQI
+│   ├── Calendar/               ← EventKit + Google Calendar
+│   ├── Tasks/                  ← Todoist REST API
+│   ├── Photos/                 ← iCloud Shared Album (PhotoKit)
+│   ├── SpotifyJam/             ← Spotify Jam QR code
+│   └── Settings/               ← Settings sheet
+│
+├── Shared/
+│   ├── Components/             ← PanelView, ErrorStateView, LoadingStateView
+│   ├── DesignSystem/           ← Colors, Typography, Icons
+│   ├── Cache/                  ← SwiftData on-device cache
+│   ├── Logging/                ← SonasLogger (OSLog wrapper)
+│   ├── Mocks/                  ← Fake implementations (used in tests + mock mode)
+│   ├── Models/                 ← Data structs (never depend on UI)
+│   └── Extensions/             ← View+Accessibility helpers
+│
+└── Platform/
+    ├── Watch/                  ← Apple Watch compact view
+    └── TV/                     ← Apple TV full-screen view
+
+SonasTests/
+├── Contract/                   ← API contract tests (URLProtocol stubs)
+├── Integration/                ← Multi-layer tests (service + view model)
+├── Performance/                ← XCTest measure{} baselines
+└── Unit/                       ← Single-class unit tests
+
+SonasUITests/                   ← Full end-to-end UI tests
 ```
 
-Before TestFlight or App Store submission, export the schema from the development container and promote it to production
-via the CloudKit Dashboard.
+## Troubleshooting
 
-## Where to get help
-
-- **Spec and architecture**: `specs/001-family-command-center/` — start with `spec.md` for requirements and `plan.md`
-  for the technical design.
-- **Task list**: `specs/001-family-command-center/tasks.md` — each task has a file path and acceptance criteria.
-- **Apple documentation**: [developer.apple.com/documentation](https://developer.apple.com/documentation)
-- **SwiftUI tutorials**: [developer.apple.com/tutorials/swiftui](https://developer.apple.com/tutorials/swiftui)
-
-## Common problems and fixes
+### Common problems and fixes
 
 <!-- editorconfig-checker-disable -->
 
@@ -276,19 +354,10 @@ via the CloudKit Dashboard.
 
 <!-- editorconfig-checker-enable -->
 
-## What to build next
+### Where to get help
 
-The following tasks are still open (not yet implemented):
-
-- **T082** — Offline "Last updated" badge: when the network is unavailable, `PanelView` should overlay a stale-data
-  badge with a retry button. The hook point in `PanelView.swift` is already documented with a comment.
-
-- **T092** — Expand `SettingsView` with: Todoist token entry, Spotify connect/disconnect, photo album picker, and
-  temperature unit toggle. The shell is at `Sonas/Features/Settings/SettingsView.swift` — look for the
-  `// T092 sections` comment.
-
-- **T091** — Memory profiling with Instruments. Once you have a real device, profile the app with Leaks + Allocations
-  while all six panels are active. Target: ≤150 MB peak RSS.
-
-- **T086–T088** — Run the quickstart checklist, SwiftLint, and code coverage gate. These are manual validation steps
-  described in `specs/001-family-command-center/quickstart.md`.
+- **Spec and architecture**: `specs/001-family-command-center/` — start with `spec.md` for requirements and `plan.md`
+  for the technical design.
+- **Task list**: `specs/001-family-command-center/tasks.md` — each task has a file path and acceptance criteria.
+- **Apple documentation**: [developer.apple.com/documentation](https://developer.apple.com/documentation)
+- **SwiftUI tutorials**: [developer.apple.com/tutorials/swiftui](https://developer.apple.com/tutorials/swiftui)
