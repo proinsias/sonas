@@ -71,6 +71,6 @@ extension Color {
         default:
             red = 0; green = 0; blue = 0
         }
-        self.init(red: red, green: green, blue: blue)
+        self.init(red: min(1, max(0, red)), green: min(1, max(0, green)), blue: min(1, max(0, blue)))
     }
 }
