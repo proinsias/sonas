@@ -84,7 +84,7 @@ custom_rules:
   no_lint_suppressions_without_issue:
     name: 'SwiftLint Suppression Requires Tracking Issue'
     message: 'swiftlint:disable comment MUST include a tracking issue URL or ticket ID (Constitution §I)'
-    regex: 'swiftlint:disable(?!.*#|.*http|.*SONAS-)'
+    regex: 'swiftlint:disable(?!.*(?:#|http|SONAS-)|[^\n]*\n[^\n]*(?:#|http|SONAS-))'
     match_kinds:
       - comment
     severity: warning

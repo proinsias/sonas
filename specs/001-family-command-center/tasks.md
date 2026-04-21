@@ -401,7 +401,7 @@ UI tests.
 - [ ] T091 [P] Profile memory for all four polling/subscription services using Instruments Leaks + Allocations on a real
       device or simulator; document peak RSS measurements in plan.md Complexity Tracking table; confirm total ≤ 150 MB
       peak with all services active _(Constitution §IV — memory MUST be profiled for polling services)_
-- [ ] T092 [P] Expand `SettingsView` (built in T093) with remaining account management: Todoist API token entry with
+- [x] T092 [P] Expand `SettingsView` (built in T093) with remaining account management: Todoist API token entry with
       validation, Spotify connect/disconnect, photo album picker, temperature unit toggle in
       `Sonas/Features/Settings/SettingsView.swift`
 - [x] T094 [P] Implement `SettingsUITests` in `SonasUITests/SettingsUITests.swift`: (a) assert home location picker

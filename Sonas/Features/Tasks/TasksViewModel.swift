@@ -55,6 +55,20 @@ final class TasksViewModel {
         await fetchLive()
     }
 
+    // MARK: - Todoist connection (called from SettingsView)
+
+    func connectTodoist(apiToken: String) async throws {
+        try await service.connectTodoist(apiToken: apiToken)
+        await start()
+    }
+
+    func disconnectTodoist() async {
+        await service.disconnectTodoist()
+        tasksByProject = [:]
+        error = nil
+        isLoading = false
+    }
+
     // MARK: - Optimistic task completion
 
     func completeTask(_ task: Task) async {

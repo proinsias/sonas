@@ -35,7 +35,7 @@ struct DashboardView: View {
                     get: { viewModel.isShowingSettings },
                     set: { if !$0 { viewModel.hideSettings() } },
                 )) {
-                    SettingsView()
+                    SettingsView(tasksVM: tasksVM, jamVM: jamVM, photoVM: photoVM)
                 }
         }
         .background(Color.dashboardBackground.ignoresSafeArea())

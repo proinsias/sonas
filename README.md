@@ -100,10 +100,6 @@ The following tasks are still open (not yet implemented):
 - **T082** — Offline "Last updated" badge: when the network is unavailable, `PanelView` should overlay a stale-data
   badge with a retry button. The hook point in `PanelView.swift` is already documented with a comment.
 
-- **T092** — Expand `SettingsView` with: Todoist token entry, Spotify connect/disconnect, photo album picker, and
-  temperature unit toggle. The shell is at `Sonas/Features/Settings/SettingsView.swift` — look for the
-  `// T092 sections` comment.
-
 - **T091** — Memory profiling with Instruments. Once you have a real device, profile the app with Leaks + Allocations
   while all six panels are active. Target: ≤150 MB peak RSS.
 
