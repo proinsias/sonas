@@ -97,9 +97,6 @@ services under the user's own account. No other fork or family can read or write
 
 The following tasks are still open (not yet implemented):
 
-- **T082** — Offline "Last updated" badge: when the network is unavailable, `PanelView` should overlay a stale-data
-  badge with a retry button. The hook point in `PanelView.swift` is already documented with a comment.
-
 - **T091** — Memory profiling with Instruments. Once you have a real device, profile the app with Leaks + Allocations
   while all six panels are active. Target: ≤150 MB peak RSS.
 

@@ -20,6 +20,7 @@ protocol CacheServiceProtocol: Sendable {
     // Tasks
     func saveTasks(_ tasks: [Task]) async throws
     func loadTasks() async -> [Task]
+    func loadTasksSavedAt() async -> Date?
 
     // Jam
     func saveJamSession(_ session: JamSession?) async throws
@@ -229,6 +230,11 @@ extension CacheService {
         let context = modelContainer.mainContext
         guard let cached = try? context.fetch(FetchDescriptor<CachedTask>()) else { return [] }
         return cached.map { $0.toTask() }
+    }
+
+    func loadTasksSavedAt() async -> Date? {
+        guard let modelContainer else { return nil }
+        return try? modelContainer.mainContext.fetch(FetchDescriptor<CachedTask>()).first?.lastUpdated
     }
 }
 

@@ -1,4 +1,5 @@
 @testable import Sonas
+import SwiftData
 import SwiftUI
 import Testing
 
@@ -46,6 +47,62 @@ struct DashboardIntegrationTests {
         let carolMember = vm.locationVM.members.first { $0.displayName == "Carol" }
         #expect(carolMember != nil, "Carol fixture member must be present")
         #expect(carolMember?.isStale == true, "Carol's location must be stale/nil")
+    }
+
+    // MARK: - T082.1: Tasks panel shows cached data + lastUpdated when network unavailable
+
+    @Test
+    func `given tasks in cache when network unavailable then tasks panel shows cached data with lastUpdated set`(
+    ) async throws {
+        let schema = Schema([CachedWeatherSnapshot.self, CachedLocationSnapshot.self,
+                             CachedCalendarEvent.self, CachedTask.self, CachedJamSession.self])
+        let cache = try CacheService(container: ModelContainer(
+            for: schema, configurations: ModelConfiguration(isStoredInMemoryOnly: true)
+        ))
+        try await cache.saveTasks(TaskServiceMock.fixtures)
+
+        final class FailingTaskService: TaskServiceProtocol, @unchecked Sendable {
+            var isConnected: Bool = true
+            func fetchTasks() async throws -> [Task] {
+                throw URLError(.notConnectedToInternet)
+            }
+
+            func completeTask(id _: String) async throws {}
+            func connectTodoist(apiToken _: String) async throws {}
+            func disconnectTodoist() async {}
+        }
+
+        let vm = TasksViewModel(service: FailingTaskService(), cache: cache)
+        await vm.start()
+
+        #expect(!vm.tasksByProject.isEmpty, "Cached tasks must be shown when network fails")
+        #expect(vm.lastUpdated != nil, "lastUpdated must be set from cache timestamp")
+        #expect(vm.error == nil, "No error shown when cached data is available")
+    }
+
+    // MARK: - T082.2: Tasks failure does not affect other panels
+
+    @Test
+    func `given tasks service throws when dashboard loads then other panels remain functional`() async {
+        final class FailingTaskService: TaskServiceProtocol, @unchecked Sendable {
+            var isConnected: Bool = true
+            func fetchTasks() async throws -> [Task] {
+                throw URLError(.notConnectedToInternet)
+            }
+
+            func completeTask(id _: String) async throws {}
+            func connectTodoist(apiToken _: String) async throws {}
+            func disconnectTodoist() async {}
+        }
+
+        let tasksVM = TasksViewModel(service: FailingTaskService())
+        let eventsVM = EventsViewModel(service: CalendarServiceMock())
+
+        await tasksVM.start()
+        await eventsVM.load()
+
+        #expect(tasksVM.isLoading == false, "Tasks VM must finish loading even when network fails")
+        #expect(!eventsVM.events.isEmpty, "Events panel must load independently of Tasks failure")
     }
 
     // MARK: - T043.3: Empty calendar events → "Nothing scheduled" state

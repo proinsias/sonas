@@ -12,6 +12,7 @@ final class TasksViewModel {
     private(set) var isLoading: Bool = true
     private(set) var error: PanelError?
     private(set) var completionErrorToast: String?
+    private(set) var lastUpdated: Date?
 
     // MARK: Dependencies
 
@@ -40,6 +41,7 @@ final class TasksViewModel {
         let cached = await cache.loadTasks()
         if !cached.isEmpty {
             tasksByProject = Dictionary(grouping: cached, by: \.projectName)
+            lastUpdated = await cache.loadTasksSavedAt()
             isLoading = false
         }
         await fetchLive()
@@ -109,6 +111,7 @@ final class TasksViewModel {
         do {
             let tasks = try await service.fetchTasks()
             tasksByProject = Dictionary(grouping: tasks, by: \.projectName)
+            lastUpdated = Date()
             error = nil
             isLoading = false
             try? await cache.saveTasks(tasks)

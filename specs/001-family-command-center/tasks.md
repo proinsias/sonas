@@ -373,7 +373,7 @@ UI tests.
 
 **Purpose**: Background refresh, offline degradation, integration tests, and quality gates across all user stories
 
-- [ ] T082 [P] Implement offline degraded mode in `PanelView`: when `CacheService` returns stale data, display the
+- [x] T082 [P] Implement offline degraded mode in `PanelView`: when `CacheService` returns stale data, display the
       cached value overlaid with a "Last updated [timestamp]" badge and a retry affordance; assert all panels remain
       functional when one source throws `networkUnavailable` in `Sonas/Shared/Components/PanelView.swift`
 - [x] T083 [P] Implement `WeatherIntegrationTests` (requires WeatherKit entitlement; fetch real `WeatherSnapshot` for a

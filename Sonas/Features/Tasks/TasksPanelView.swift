@@ -6,7 +6,7 @@ struct TasksPanelView: View {
     @State var viewModel: TasksViewModel
 
     var body: some View {
-        PanelView(title: "Tasks", icon: Icon.tasks) {
+        PanelView(title: "Tasks", icon: Icon.tasks, lastUpdated: viewModel.lastUpdated) {
             content
         }
         .task { await viewModel.start() }
@@ -33,6 +33,9 @@ struct TasksPanelView: View {
             emptyState
         } else {
             taskList
+                .staleDataBadge(lastUpdated: viewModel.lastUpdated ?? .now) {
+                    Swift.Task { await viewModel.refresh() }
+                }
         }
     }
 
