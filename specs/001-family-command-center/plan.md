@@ -15,13 +15,14 @@ single SwiftUI codebase with adaptive layouts targets iOS, iPadOS, macOS, watchO
 ## Technical Context
 
 - **Language/Version**: Swift 5.10 / SwiftUI, iOS 18+ (minimum deployment target: iOS 17 for SwiftData)
+- **Tooling**: `mise` for tool version management (XcodeGen, SwiftLint, Prek); GitHub Actions for CI/CD
 - **Primary Dependencies**: WeatherKit, EventKit, PhotoKit, CoreLocation, CloudKit, GoogleSignIn-iOS SDK, Google
   Calendar REST API v3, Todoist REST API v2, Spotify iOS SDK (SpotifyiOS), CoreImage (QR), SwiftData, BackgroundTasks,
   UserNotifications
 - **Storage**: SwiftData (on-device cache only); CloudKit private container for location relay — no custom server-side
   database
-- **Testing**: Swift Testing framework (iOS 17+) + XCTest; contract tests via URLProtocol stubbing for REST APIs; UI
-  tests via XCUITest
+- **Testing**: Swift Testing framework (iOS 17+) + XCTest; 3-tier strategy (Unit, Integration, UI) mandatory for all
+  features; contract tests via URLProtocol stubbing for REST APIs
 - **Target Platform**: iOS 18+ (primary); iPadOS 18+ / macOS 15+ (Catalyst or native SwiftUI) / watchOS 11+ / tvOS 18+
   (adaptive layout extensions)
 - **Project Type**: Mobile app (SwiftUI multi-platform, single codebase)
@@ -41,13 +42,14 @@ _GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 ### Pre-Research Check
 
 - [x] **I. Code Quality**: Swift's type system enforces explicit typing on all public surfaces. SwiftUI composability
-      maps to single-responsibility views. SwiftLint configured as a CI gate. All dependencies (WeatherKit, EventKit,
-      PhotoKit, GoogleSignIn, Todoist SDK, SpotifyiOS) have active maintenance and clear licenses. No dead code
-      permitted in PRs.
+      maps to single-responsibility views. SwiftLint configured as a CI gate via GitHub Actions. All dependencies
+      (WeatherKit, EventKit, PhotoKit, GoogleSignIn, Todoist SDK, SpotifyiOS) have active maintenance and clear
+      licenses. No dead code permitted in PRs.
 
-- [x] **II. Test-First**: Swift Testing + XCTest covers all layers. Contract tests via URLProtocol stubbing are
-      identified for Todoist REST v2, Google Calendar REST v3, and Spotify Web API. CloudKit integration tests via
-      `CKContainer` test environment. Coverage gate ≥80% on `Sonas/` source target.
+- [x] **II. Test-First**: 3-tier testing (Unit, Integration, UI) required for all features. Swift Testing + XCTest
+      covers all layers. Contract tests via URLProtocol stubbing are identified for Todoist REST v2, Google Calendar
+      REST v3, and Spotify Web API. CloudKit integration tests via `CKContainer` test environment. Coverage gate ≥80% on
+      `Sonas/` source target. CI enforcement via GitHub Workflows.
 
 - [x] **III. UX Consistency**: Shared SwiftUI component library defined (PanelView, ErrorStateView, LoadingStateView,
       RefreshablePanel). Dynamic Type + `.accessibilityLabel` + `.accessibilityHint` required on all interactive

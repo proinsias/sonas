@@ -76,6 +76,8 @@ targets:
         UIBackgroundModes:
           - fetch
           - remote-notification
+        BGTaskSchedulerPermittedIdentifiers:
+          - com.sonas.refresh
         # Orientation support (iPad requires all 4; iPhone excludes upside-down)
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
@@ -88,6 +90,7 @@ targets:
           - UIInterfaceOrientationLandscapeRight
         # Plist-based launch screen (iOS 14+; no storyboard file required)
         UILaunchScreen: {}
+        ITSAppUsesNonExemptEncryption: NO
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.yourteam.sonas

@@ -37,7 +37,8 @@ final class PhotoServiceMock: PhotoServiceProtocol, @unchecked Sendable {
 
 private extension UIColor {
     func image(size: CGSize) -> UIImage {
-        UIGraphicsImageRenderer(size: size).image { ctx in
+        guard size.width > 0, size.height > 0 else { return UIImage() }
+        return UIGraphicsImageRenderer(size: size).image { ctx in
             self.setFill()
             ctx.fill(CGRect(origin: .zero, size: size))
         }

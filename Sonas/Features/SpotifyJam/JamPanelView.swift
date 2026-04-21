@@ -142,13 +142,11 @@ struct JamPanelView: View {
         guard let outputImage = filter.outputImage else { return nil }
 
         let scaledImage = outputImage.transformed(by: CGAffineTransform(scaleX: 10, y: 10))
-        // Clamp to sRGB so UIColor components stay in [0, 1] — CIContext defaults to the
-        // display's extended linear space where intermediate values can exceed 1.0.
+        // Convert to CGImage in sRGB color space to ensure components stay in [0, 1]
+        // range and avoid UIColor out-of-range warnings on modern displays.
         guard let cgImage = context.createCGImage(
             scaledImage,
-            from: scaledImage.extent,
-            format: .RGBA8,
-            colorSpace: CGColorSpaceCreateDeviceRGB(),
+            from: scaledImage.extent
         ) else { return nil }
         return UIImage(cgImage: cgImage)
     }

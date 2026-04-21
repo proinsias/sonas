@@ -345,6 +345,7 @@ private struct LocationSearchView: View {
                     .foregroundStyle(Color.secondaryLabel)
             }
             .searchable(text: $searchText, prompt: "Search for a city or address")
+            .accessibilityLabel("Location Search")
             .navigationTitle("Set Home Location")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

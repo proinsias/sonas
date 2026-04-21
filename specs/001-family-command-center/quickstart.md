@@ -252,33 +252,28 @@ Prek (An optimized version of pre-commit) runs automatically on `git commit` onc
 across every file:
 
 ```bash
-prek run --all-files
+mise run lint
 ```
 
-GitHub Actions runs linters both on every push and pull request — see `.github/workflows/lint.yml`.
+GitHub Actions runs the same linting suite on every push and pull request via the `lint.yml` workflow.
 
 ### Tests
 
-The test suite uses **Swift Testing** (unit and contract tests) and **XCTest** (UI tests). Contract tests stub the
-network layer via `URLProtocol` — no live credentials are needed.
+The test suite follows a mandatory 3-tier strategy using **Swift Testing** (unit and contract tests) and **XCTest**
+(integration and UI tests). Contract tests stub the network layer via `URLProtocol` — no live credentials are needed.
 
 ```bash
-# All unit + contract tests (no device required)
+# Tier 1: Unit + Contract tests (no device required)
 mise run tests-unit
 
-# Integration tests (require iCloud sign-in in simulator + test CloudKit container)
-xcodebuild test -scheme SonasIntegrationTests -destination 'platform=iOS Simulator,name=iPhone 16 Pro'
+# Tier 2: Integration tests (require iCloud sign-in in simulator + test CloudKit container)
+mise run tests-integration
 
-# UI tests
+# Tier 3: UI tests
 mise run tests-ui
 ```
 
-Contract tests exist for every service protocol (LocationService, WeatherService, CalendarService, TaskService,
-PhotoService, JamService, CacheService).
-
-Coverage gate: `xcodebuild test ... -enableCodeCoverage YES` — CI fails if `Sonas/` coverage drops below 80%.
-
-GitHub Actions runs tests both on every push and pull request — see `.github/workflows/tests.yml`.
+GitHub Actions runs the full 3-tier test suite on every push and pull request via the `tests.yml` workflow.
 
 ### Testing on iPad / Mac
 

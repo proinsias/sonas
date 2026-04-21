@@ -302,6 +302,23 @@ screen size with an adapted layout that makes use of the additional space.
 - **SC-010**: 90% of first-time users can identify the location of all family members and the next upcoming event within
   30 seconds of opening the app for the first time, without any tutorial or onboarding assistance.
 
+## Quality & Engineering Standards
+
+### Mandatory Testing Strategy
+
+Every user-facing feature and functional requirement MUST be verified using a three-tier testing strategy:
+
+1. **Unit Tests**: Verify individual business logic, service components, and data mapping in isolation.
+2. **Integration Tests**: Verify the interaction between services, view models, and mock data sources. Every service
+   MUST have a corresponding integration test.
+3. **UI Tests**: Verify critical user journeys, layout adaptations across platforms, and accessibility compliance. Every
+   user story MUST have at least one corresponding UI test.
+
+### CI/CD Integration
+
+All tests and linting rules are enforced via GitHub Workflows. Development tools are managed via `mise` to ensure
+environment parity between local development and CI.
+
 ## Assumptions
 
 - Family members all use Apple devices and have Apple ID accounts; non-Apple devices are out of scope for v1.
