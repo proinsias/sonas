@@ -9,6 +9,10 @@ gpg_verify = true
 status.missing_tools = "always"
 status.show_env = true
 
+[tasks.lint]
+description = 'Run all linters'
+run = 'prek run --all-files'
+
 [tasks.tests-ui-ios]
 description = 'Run UI tests on iOS Simulator'
 run = '''
@@ -113,9 +117,3 @@ swiftformat = { version = "latest", no_app = "true", rename_exe = "swiftformat" 
 swiftlint = "latest"
 xcodegen = "latest"
 yamllint = "latest"
-
-[env]
-CCR_API_KEY = { required = "Set API key to access Claude Code Router" }
-GEMINI_API_KEY = { required = "Set API key to access Gemini" }
-GROQ_API_KEY = { required = "Set API key to access Groq" }
-OPENAI_API_KEY = { required = "Set API key to access OpenAI" }
