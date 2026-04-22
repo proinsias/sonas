@@ -5,6 +5,7 @@ import SwiftUI
 
 struct SettingsView: View {
     var tasksVM: TasksViewModel
+    var eventsVM: EventsViewModel
     var jamVM: JamViewModel
     var photoVM: PhotoViewModel
 
@@ -98,22 +99,36 @@ struct SettingsView: View {
 
     private var googleCalendarSection: some View {
         Section("Google Calendar") {
-            // Full GoogleSignIn flow integrated once GoogleSignIn SDK is linked (T032/T033).
-            HStack {
-                Image(systemName: "g.circle.fill")
-                    .foregroundStyle(Color.accent)
-                    .accessibilityHidden(true)
-                Text("Google Calendar")
-                Spacer()
-                Text(!config.homeLocationName.isEmpty ? "Connected" : "Not Connected")
-                    .font(.caption)
-                    .foregroundStyle(Color.secondaryLabel)
+            if eventsVM.isGoogleConnected {
+                HStack {
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundStyle(.green)
+                        .accessibilityHidden(true)
+                    Text("Connected")
+                    Spacer()
+                    Button("Disconnect") {
+                        Swift.Task { await eventsVM.disconnectGoogle() }
+                    }
+                    .foregroundStyle(.red)
+                    .accessibilityInfo("Disconnect Google Calendar", hint: "Remove your Google account")
+                }
+            } else {
+                HStack {
+                    Image(systemName: "g.circle.fill")
+                        .foregroundStyle(Color.accent)
+                        .accessibilityHidden(true)
+                    Text("Google Calendar")
+                    Spacer()
+                    Text("Not Connected")
+                        .font(.caption)
+                        .foregroundStyle(Color.secondaryLabel)
+                }
+                Button("Connect Google Calendar") {
+                    Swift.Task { await eventsVM.reconnectGoogle() }
+                }
+                .foregroundStyle(Color.accent)
+                .accessibilityInfo("Connect Google Calendar", hint: "Sign in with your Google account to sync events")
             }
-            Button("Connect Google Calendar") {
-                // CalendarService.connectGoogleAccount() called here once SDK is linked
-            }
-            .foregroundStyle(Color.accent)
-            .accessibilityInfo("Connect Google Calendar", hint: "Sign in with your Google account to sync events")
         }
     }
 }

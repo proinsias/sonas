@@ -1,5 +1,6 @@
 import EventKit
 import Foundation
+import GoogleSignIn
 
 // MARK: - CalendarServiceProtocol (T027)
 
@@ -23,6 +24,7 @@ enum CalendarServiceError: LocalizedError {
     case eventKitPermissionDenied
     case googleAuthFailed(Error)
     case fetchFailed(Error)
+    case missingConfiguration(String)
 
     var errorDescription: String? {
         switch self {
@@ -32,6 +34,8 @@ enum CalendarServiceError: LocalizedError {
             "Google Calendar connection failed: \(err.localizedDescription)"
         case let .fetchFailed(err):
             "Could not load calendar events: \(err.localizedDescription)"
+        case let .missingConfiguration(key):
+            "Missing configuration: \(key). See SETUP.md."
         }
     }
 }
@@ -153,13 +157,12 @@ private struct GoogleCalendarItem: Decodable {
 final class CalendarService: CalendarServiceProtocol {
     private let eventStore = EKEventStore()
     private let googleClient: GoogleCalendarClient
-    private(set) var isGoogleConnected: Bool = false
+    private(set) var isGoogleConnected: Bool
     private(set) var needsGoogleReconnect: Bool = false
 
     init(googleClient: GoogleCalendarClient = GoogleCalendarClient()) {
         self.googleClient = googleClient
-        isGoogleConnected = AppConfiguration.shared.todoistAPIToken != nil // re-use Keychain check pattern
-        // Actually GoogleSignIn SDK manages tokens; check SDK's hasPreviousSignIn
+        isGoogleConnected = GIDSignIn.sharedInstance.hasPreviousSignIn()
     }
 
     func fetchUpcomingEvents(hours: Int = 48) async throws -> [CalendarEvent] {
@@ -178,24 +181,47 @@ final class CalendarService: CalendarServiceProtocol {
     }
 
     func connectGoogleAccount() async throws {
-        // GoogleSignIn SDK presents ASWebAuthenticationSession.
-        // Full implementation requires GoogleSignIn framework integration.
-        // Placeholder: marks connected state.
-        isGoogleConnected = true
-        needsGoogleReconnect = false
+        guard let clientID = Bundle.main.object(forInfoDictionaryKey: "GIDClientID") as? String,
+              !clientID.isEmpty
+        else {
+            throw CalendarServiceError.missingConfiguration("GIDClientID in Info.plist")
+        }
+        GIDSignIn.sharedInstance.configuration = GIDConfiguration(clientID: clientID)
+
+        guard let rootVC = rootViewController() else {
+            throw CalendarServiceError.googleAuthFailed(
+                NSError(
+                    domain: "GoogleSignIn",
+                    code: -1,
+                    userInfo: [NSLocalizedDescriptionKey: "No presenting view controller available"]
+                )
+            )
+        }
+
+        do {
+            _ = try await GIDSignIn.sharedInstance.signIn(
+                withPresenting: rootVC,
+                hint: nil,
+                additionalScopes: ["https://www.googleapis.com/auth/calendar.readonly"]
+            )
+            isGoogleConnected = true
+            needsGoogleReconnect = false
+            SonasLogger.calendar.info("CalendarService: Google account connected")
+        } catch {
+            throw CalendarServiceError.googleAuthFailed(error)
+        }
     }
 
     func disconnectGoogleAccount() async {
+        GIDSignIn.sharedInstance.signOut()
         isGoogleConnected = false
         needsGoogleReconnect = false
-        // GoogleSignIn SDK: GIDSignIn.sharedInstance.signOut()
-        // Keychain token deletion happens inside GoogleSignIn SDK
+        SonasLogger.calendar.info("CalendarService: Google account disconnected")
     }
 
     // MARK: - Private
 
     private func fetchEventKitEvents(from start: Date, to end: Date) async throws -> [CalendarEvent] {
-        // Request access if not already granted
         let granted = try await eventStore.requestFullAccessToEvents()
         guard granted else {
             throw CalendarServiceError.eventKitPermissionDenied
@@ -221,12 +247,60 @@ final class CalendarService: CalendarServiceProtocol {
         }
     }
 
-    private func fetchGoogleEvents(from _: Date, to _: Date) async throws -> [CalendarEvent] {
+    private func fetchGoogleEvents(from start: Date, to end: Date) async throws -> [CalendarEvent] {
         guard isGoogleConnected else { return [] }
-        // Retrieve fresh access token from GoogleSignIn SDK
-        // Placeholder returns empty; real implementation calls
-        // GIDSignIn.sharedInstance.currentUser?.refreshTokensIfNeeded
-        return []
+
+        // Silently restore a previous sign-in if we have credentials but no active user.
+        if GIDSignIn.sharedInstance.currentUser == nil {
+            do {
+                try await GIDSignIn.sharedInstance.restorePreviousSignIn()
+            } catch {
+                needsGoogleReconnect = true
+                isGoogleConnected = false
+                SonasLogger.calendar.info("CalendarService: silent restore failed — reconnect needed")
+                return []
+            }
+        }
+
+        guard let user = GIDSignIn.sharedInstance.currentUser else {
+            needsGoogleReconnect = true
+            isGoogleConnected = false
+            return []
+        }
+
+        do {
+            let refreshedUser = try await user.refreshTokensIfNeeded()
+            let token = refreshedUser.accessToken.tokenString
+            return try await googleClient.fetchEvents(accessToken: token, timeMin: start, timeMax: end)
+        } catch let calendarError as CalendarServiceError {
+            // HTTP 401 from the REST client — token is invalid despite successful refresh
+            if case .googleAuthFailed = calendarError {
+                needsGoogleReconnect = true
+                isGoogleConnected = false
+            }
+            throw calendarError
+        } catch {
+            // GIDSignIn token-refresh errors
+            let nsError = error as NSError
+            let isAuthError = nsError.domain == "com.google.GIDSignIn" &&
+                (nsError.code == -4 || nsError.code == -7) // hasNoAuthInKeychain, noCurrentUser
+            if isAuthError {
+                needsGoogleReconnect = true
+                isGoogleConnected = false
+                SonasLogger.calendar.info("CalendarService: token refresh auth failure — reconnect needed")
+                return []
+            }
+            throw CalendarServiceError.fetchFailed(error)
+        }
+    }
+
+    private func rootViewController() -> UIViewController? {
+        UIApplication.shared.connectedScenes
+            .compactMap { $0 as? UIWindowScene }
+            .first { $0.activationState == .foregroundActive }?
+            .windows
+            .first(where: \.isKeyWindow)?
+            .rootViewController
     }
 
     private func deduplicated(_ events: [CalendarEvent]) -> [CalendarEvent] {

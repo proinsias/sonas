@@ -1,4 +1,5 @@
 import BackgroundTasks
+import GoogleSignIn
 import SwiftData
 import SwiftUI
 
@@ -11,6 +12,14 @@ struct SonasApp: App {
     var body: some Scene {
         WindowGroup {
             DashboardView()
+                .onOpenURL { url in
+                    // Google OAuth redirect (com.googleusercontent.apps.* scheme)
+                    GIDSignIn.sharedInstance.handle(url)
+                    // Spotify OAuth redirect (sonas:// scheme)
+                    if url.scheme == "sonas" {
+                        NotificationCenter.default.post(name: .spotifyOpenURL, object: url)
+                    }
+                }
         }
         .onChange(of: scenePhase) { _, newPhase in
             if newPhase == .background {

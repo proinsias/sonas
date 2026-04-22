@@ -11,6 +11,7 @@ final class EventsViewModel {
     private(set) var events: [CalendarEvent] = []
     private(set) var isLoading: Bool = true
     private(set) var error: PanelError?
+    private(set) var isGoogleConnected: Bool
     private(set) var needsGoogleReconnect: Bool = false
 
     // MARK: Dependencies
@@ -19,6 +20,7 @@ final class EventsViewModel {
 
     init(service: any CalendarServiceProtocol) {
         self.service = service
+        isGoogleConnected = service.isGoogleConnected
     }
 
     // MARK: - Data loading
@@ -28,6 +30,7 @@ final class EventsViewModel {
         error = nil
         do {
             events = try await service.fetchUpcomingEvents(hours: 48)
+            isGoogleConnected = service.isGoogleConnected
             needsGoogleReconnect = service.needsGoogleReconnect
         } catch CalendarServiceError.eventKitPermissionDenied {
             error = .permissionDenied
@@ -45,9 +48,17 @@ final class EventsViewModel {
         await load()
     }
 
+    func disconnectGoogle() async {
+        await service.disconnectGoogleAccount()
+        isGoogleConnected = false
+        needsGoogleReconnect = false
+        events = []
+    }
+
     func reconnectGoogle() async {
         do {
             try await service.connectGoogleAccount()
+            isGoogleConnected = true
             needsGoogleReconnect = false
             await load()
         } catch {
