@@ -20,13 +20,12 @@ final class TasksViewModel {
     private let cache: CacheServiceProtocol
     private var refreshTimer: Timer?
 
-    var isConnected: Bool {
-        service.isConnected
-    }
+    private(set) var isConnected: Bool
 
     init(service: any TaskServiceProtocol, cache: CacheServiceProtocol? = nil) {
         self.service = service
         self.cache = cache ?? CacheService.shared
+        isConnected = service.isConnected
     }
 
     static func makeDefault() -> TasksViewModel {
@@ -61,11 +60,13 @@ final class TasksViewModel {
 
     func connectTodoist(apiToken: String) async throws {
         try await service.connectTodoist(apiToken: apiToken)
+        isConnected = true
         await start()
     }
 
     func disconnectTodoist() async {
         await service.disconnectTodoist()
+        isConnected = false
         tasksByProject = [:]
         error = nil
         isLoading = false
