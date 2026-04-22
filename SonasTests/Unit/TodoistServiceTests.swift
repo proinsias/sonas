@@ -41,6 +41,68 @@ struct TodoistServiceTests {
         #expect(vm.completionErrorToast != nil, "Error toast must be shown on rollback")
     }
 
+    // MARK: - T095.3: availableProjects populated after connectTodoist
+
+    @Test
+    func `given service with projects when connectTodoist called then availableProjects populated on viewModel`(
+    ) async throws {
+        final class ProjectService: TaskServiceProtocol, @unchecked Sendable {
+            var isConnected: Bool = false
+            func fetchTasks() async throws -> [Task] {
+                []
+            }
+
+            func fetchProjects() async throws -> [TaskProject] {
+                [TaskProject(id: "p1", name: "Work"), TaskProject(id: "p2", name: "Home")]
+            }
+
+            func completeTask(id _: String) async throws {}
+            func connectTodoist(apiToken _: String) async throws {
+                isConnected = true
+            }
+
+            func disconnectTodoist() async {
+                isConnected = false
+            }
+        }
+
+        let vm = TasksViewModel(service: ProjectService())
+        try await vm.connectTodoist(apiToken: "test-token")
+
+        #expect(vm.availableProjects.count == 2, "availableProjects must be populated after connect")
+        #expect(vm.availableProjects[0].name == "Work")
+        #expect(vm.availableProjects[1].name == "Home")
+    }
+
+    // MARK: - T095.4: availableProjects cleared on disconnect
+
+    @Test
+    func `given connected viewModel when disconnectTodoist called then availableProjects is empty`() async {
+        final class AlwaysConnectedService: TaskServiceProtocol, @unchecked Sendable {
+            var isConnected: Bool = true
+            func fetchTasks() async throws -> [Task] {
+                []
+            }
+
+            func fetchProjects() async throws -> [TaskProject] {
+                [TaskProject(id: "p1", name: "Work")]
+            }
+
+            func completeTask(id _: String) async throws {}
+            func connectTodoist(apiToken _: String) async throws {}
+            func disconnectTodoist() async {
+                isConnected = false
+            }
+        }
+
+        let vm = TasksViewModel(service: AlwaysConnectedService())
+        await vm.start()
+        #expect(!vm.availableProjects.isEmpty, "precondition: projects must load on start")
+
+        await vm.disconnectTodoist()
+        #expect(vm.availableProjects.isEmpty, "availableProjects must be cleared on disconnect")
+    }
+
     // MARK: - T059.2: authenticationFailed on 401
 
     @Test

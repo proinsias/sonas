@@ -49,6 +49,45 @@ final class SettingsUITests: XCTestCase {
         XCTAssertTrue(app.otherElements["TasksPanel"].waitForExistence(timeout: 3))
     }
 
+    // MARK: - T095.5: Todoist project list appears in Settings when already connected
+
+    func testTodoistProjectListShownWhenConnected() {
+        // USE_MOCK_TASKS=1 starts with isConnected=true and projects=[Home, Admin]
+        let settingsButton = app.buttons["Settings"]
+        XCTAssertTrue(settingsButton.waitForExistence(timeout: 2))
+        settingsButton.tap()
+
+        XCTAssertTrue(app.navigationBars["Settings"].waitForExistence(timeout: 2))
+
+        // "Todoist Projects" section header and both mock project rows must be visible
+        XCTAssertTrue(app.staticTexts["TODOIST PROJECTS"].waitForExistence(timeout: 3))
+        XCTAssertTrue(app.buttons["todoistProject_proj-1"].waitForExistence(timeout: 3))
+        XCTAssertTrue(app.buttons["todoistProject_proj-2"].waitForExistence(timeout: 3))
+    }
+
+    // MARK: - T095.6: Tapping a project row toggles its selected state
+
+    func testTodoistProjectRowTogglesSelection() {
+        let settingsButton = app.buttons["Settings"]
+        XCTAssertTrue(settingsButton.waitForExistence(timeout: 2))
+        settingsButton.tap()
+        XCTAssertTrue(app.navigationBars["Settings"].waitForExistence(timeout: 2))
+
+        let homeRow = app.buttons["todoistProject_proj-1"]
+        XCTAssertTrue(homeRow.waitForExistence(timeout: 3))
+
+        // Initially not selected
+        XCTAssertEqual(homeRow.value as? String, "Not selected")
+
+        // Tap to select
+        homeRow.tap()
+        XCTAssertEqual(homeRow.value as? String, "Selected")
+
+        // Tap again to deselect
+        homeRow.tap()
+        XCTAssertEqual(homeRow.value as? String, "Not selected")
+    }
+
     // MARK: - T094.3: Photo album picker selection persists after app restart
 
     func testPhotoAlbumPickerPersistsAfterRestart() {

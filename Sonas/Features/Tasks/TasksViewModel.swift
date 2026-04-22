@@ -21,6 +21,7 @@ final class TasksViewModel {
     private var refreshTimer: Timer?
 
     private(set) var isConnected: Bool
+    private(set) var availableProjects: [TaskProject] = []
 
     init(service: any TaskServiceProtocol, cache: CacheServiceProtocol? = nil) {
         self.service = service
@@ -36,6 +37,9 @@ final class TasksViewModel {
     // MARK: - Data loading
 
     func start() async {
+        if isConnected, availableProjects.isEmpty {
+            availableProjects = await (try? service.fetchProjects()) ?? []
+        }
         // Load cached tasks first
         let cached = await cache.loadTasks()
         if !cached.isEmpty {
@@ -61,12 +65,14 @@ final class TasksViewModel {
     func connectTodoist(apiToken: String) async throws {
         try await service.connectTodoist(apiToken: apiToken)
         isConnected = true
+        availableProjects = await (try? service.fetchProjects()) ?? []
         await start()
     }
 
     func disconnectTodoist() async {
         await service.disconnectTodoist()
         isConnected = false
+        availableProjects = []
         tasksByProject = [:]
         error = nil
         isLoading = false

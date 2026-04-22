@@ -105,4 +105,50 @@ struct TodoistContractTests {
             try await service.completeTask(id: taskID)
         }
     }
+
+    // MARK: - T095.1: fetchProjects returns TaskProject array
+
+    @Test
+    func `given projects endpoint when fetchProjects called then returns array of TaskProject with correct names`(
+    ) async throws {
+        TodoistURLProtocolStub.responses["/rest/v2/projects"] = .init(
+            data: Data("""
+            [{"id":"proj1","name":"Home"},{"id":"proj2","name":"Admin"}]
+            """.utf8),
+            statusCode: 200, headers: [:],
+        )
+
+        let service = makeService()
+        let projects = try await service.fetchProjects()
+
+        #expect(projects.count == 2, "fetchProjects must return all projects from the API")
+        #expect(projects[0].id == "proj1")
+        #expect(projects[0].name == "Home")
+        #expect(projects[1].id == "proj2")
+        #expect(projects[1].name == "Admin")
+    }
+
+    // MARK: - T095.2: fetchTasks populates projectName from project list
+
+    @Test
+    func `given projects and tasks stubs when fetchTasks called then tasks have projectName populated`() async throws {
+        TodoistURLProtocolStub.responses["/rest/v2/projects"] = .init(
+            data: Data("""
+            [{"id":"proj1","name":"Home"}]
+            """.utf8),
+            statusCode: 200, headers: [:],
+        )
+        TodoistURLProtocolStub.responses["/rest/v2/tasks"] = .init(
+            data: Data("""
+            [{"id":"t1","content":"Buy milk","description":"","project_id":"proj1","priority":2,"due":null}]
+            """.utf8),
+            statusCode: 200, headers: [:],
+        )
+
+        let service = makeService()
+        AppConfiguration.shared.selectedTodoistProjectIDs = []
+
+        let tasks = try await service.fetchTasks()
+        #expect(tasks.first?.projectName == "Home", "projectName must be populated from the projects list")
+    }
 }

@@ -5,6 +5,7 @@ import Foundation
 @MainActor
 protocol TaskServiceProtocol: AnyObject, Sendable {
     func fetchTasks() async throws -> [Task]
+    func fetchProjects() async throws -> [TaskProject]
     func completeTask(id: String) async throws
     func connectTodoist(apiToken: String) async throws
     func disconnectTodoist() async
@@ -85,15 +86,49 @@ final class TodoistService: TaskServiceProtocol {
         }
         SonasLogger.tasks.info("TodoistService: fetchTasks")
 
-        let projectIDs = try await fetchSelectedProjectIDs(token: token)
+        let allProjects = try await fetchProjects()
+        let selected = AppConfiguration.shared.selectedTodoistProjectIDs
+        let projects = selected.isEmpty ? allProjects : allProjects.filter { selected.contains($0.id) }
         var allTasks: [Task] = []
 
-        for projectID in projectIDs {
+        for project in projects {
             try await Swift.Task.sleep(nanoseconds: 300_000_000) // 300ms inter-request delay
-            let tasks = try await fetchTasksForProject(id: projectID, token: token)
-            allTasks.append(contentsOf: tasks)
+            let tasks = try await fetchTasksForProject(id: project.id, token: token)
+            allTasks.append(contentsOf: tasks.map { task in
+                Task(
+                    id: task.id, content: task.content, description: task.description,
+                    projectID: task.projectID, projectName: project.name,
+                    due: task.due, priority: task.priority,
+                    isCompleted: task.isCompleted, isCompleting: task.isCompleting,
+                    createdAt: task.createdAt, orderIndex: task.orderIndex
+                )
+            })
         }
         return allTasks
+    }
+
+    func fetchProjects() async throws -> [TaskProject] {
+        guard let token = resolvedToken else {
+            throw TaskServiceError.notConnected
+        }
+        guard let url = URL(string: Endpoint.projects) else {
+            throw TaskServiceError.networkError(NSError(domain: "Todoist", code: -1))
+        }
+        var request = URLRequest(url: url)
+        request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        let (data, response) = try await session.data(for: request)
+        guard let http = response as? HTTPURLResponse else {
+            throw TaskServiceError.networkError(NSError(domain: "Todoist", code: -1))
+        }
+        switch http.statusCode {
+        case 200:
+            let decoded = try JSONDecoder().decode([TodoistProjectResponse].self, from: data)
+            return decoded.map { TaskProject(id: $0.id, name: $0.name) }
+        case 401:
+            throw TaskServiceError.authenticationFailed
+        default:
+            throw TaskServiceError.networkError(NSError(domain: "Todoist", code: http.statusCode))
+        }
     }
 
     func completeTask(id: String) async throws {
@@ -126,21 +161,6 @@ final class TodoistService: TaskServiceProtocol {
     }
 
     // MARK: - Private
-
-    private func fetchSelectedProjectIDs(token: String) async throws -> [String] {
-        let selectedIDs = AppConfiguration.shared.selectedTodoistProjectIDs
-        if !selectedIDs.isEmpty { return selectedIDs }
-
-        // Fall back to all projects if none configured
-        guard let projectsURL = URL(string: Endpoint.projects) else {
-            throw TaskServiceError.networkError(NSError(domain: "Todoist", code: -1))
-        }
-        var request = URLRequest(url: projectsURL)
-        request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-        let (data, _) = try await session.data(for: request)
-        let projects = try JSONDecoder().decode([TodoistProject].self, from: data)
-        return projects.map(\.id)
-    }
 
     private func fetchTasksForProject(id: String, token: String) async throws -> [Task] {
         var tasks: [Task] = []
@@ -182,7 +202,7 @@ final class TodoistService: TaskServiceProtocol {
 
 // MARK: - Todoist API response types
 
-private struct TodoistProject: Decodable {
+private struct TodoistProjectResponse: Decodable {
     let id: String
     let name: String
 }

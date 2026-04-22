@@ -6,7 +6,12 @@
 protocol TaskServiceProtocol {
     /// Fetch all open tasks across the configured family project IDs.
     /// Returns tasks grouped by project, sorted by priority then due date.
+    /// Each task's projectName is populated from the project list.
     func fetchTasks() async throws -> [Task]
+
+    /// Fetch all available Todoist projects for the authenticated user.
+    /// Used to populate the project picker in SettingsView.
+    func fetchProjects() async throws -> [TaskProject]
 
     /// Mark a task as complete in Todoist.
     /// Optimistic: caller should update local state before this resolves.
@@ -72,7 +77,11 @@ Authorization: Bearer {api_token}
 // Given: URLProtocol stub returning fixture /projects and /tasks JSON
 // When: fetchTasks() called
 // Then: returns [Task] grouped by projectName, sorted priority-then-due
-//       task content matches fixture
+//       task content matches fixture; projectName populated from project list
+
+// Given: URLProtocol stub returning fixture /projects JSON
+// When: fetchProjects() called
+// Then: returns [TaskProject] with correct id and name fields
 
 // Given: URLProtocol stub returning 204 for /tasks/{id}/close
 // When: completeTask(id: "123") called
