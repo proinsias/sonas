@@ -56,15 +56,16 @@ struct TodoistContractTests {
 
     @Test
     func `given projects and tasks stubs when fetchTasks called then tasks grouped by projectName`() async throws {
-        TodoistURLProtocolStub.responses["/rest/v2/projects"] = .init(
+        TodoistURLProtocolStub.responses["/api/v1/projects"] = .init(
             data: Data("""
-            [{"id":"proj1","name":"Home"},{"id":"proj2","name":"Admin"}]
+            {"results":[{"id":"proj1","name":"Home"},{"id":"proj2","name":"Admin"}],"next_cursor":null}
             """.utf8),
             statusCode: 200, headers: [:],
         )
-        TodoistURLProtocolStub.responses["/rest/v2/tasks"] = .init(
+        TodoistURLProtocolStub.responses["/api/v1/tasks"] = .init(
             data: Data("""
-            [{"id":"t1","content":"Buy milk","description":"","project_id":"proj1","priority":2,"due":null}]
+            {"results":[{"id":"t1","content":"Buy milk","description":"",
+            "project_id":"proj1","priority":2,"due":null}],"next_cursor":null}
             """.utf8),
             statusCode: 200, headers: [:],
         )
@@ -76,13 +77,13 @@ struct TodoistContractTests {
         #expect(!tasks.isEmpty, "Tasks must be returned from stub")
     }
 
-    // MARK: - T056.2: completeTask succeeds on 204
+    // MARK: - T056.2: completeTask succeeds on 200 (API v1 returns 200, not 204)
 
     @Test
-    func `given close endpoint returns 204 when completeTask called then no error thrown`() async throws {
+    func `given close endpoint returns 200 when completeTask called then no error thrown`() async throws {
         let taskID = "task-abc"
-        TodoistURLProtocolStub.responses["/rest/v2/tasks/\(taskID)/close"] = .init(
-            data: Data(), statusCode: 204, headers: [:],
+        TodoistURLProtocolStub.responses["/api/v1/tasks/\(taskID)/close"] = .init(
+            data: Data(), statusCode: 200, headers: [:],
         )
 
         let service = makeService()
@@ -96,7 +97,7 @@ struct TodoistContractTests {
     func `given close endpoint returns 429 with Retry-After when completeTask called then throws rateLimitExceeded`(
     ) async throws {
         let taskID = "task-xyz"
-        TodoistURLProtocolStub.responses["/rest/v2/tasks/\(taskID)/close"] = .init(
+        TodoistURLProtocolStub.responses["/api/v1/tasks/\(taskID)/close"] = .init(
             data: Data(), statusCode: 429, headers: ["Retry-After": "60"],
         )
 
@@ -111,9 +112,9 @@ struct TodoistContractTests {
     @Test
     func `given projects endpoint when fetchProjects called then returns array of TaskProject with correct names`(
     ) async throws {
-        TodoistURLProtocolStub.responses["/rest/v2/projects"] = .init(
+        TodoistURLProtocolStub.responses["/api/v1/projects"] = .init(
             data: Data("""
-            [{"id":"proj1","name":"Home"},{"id":"proj2","name":"Admin"}]
+            {"results":[{"id":"proj1","name":"Home"},{"id":"proj2","name":"Admin"}],"next_cursor":null}
             """.utf8),
             statusCode: 200, headers: [:],
         )
@@ -132,15 +133,16 @@ struct TodoistContractTests {
 
     @Test
     func `given projects and tasks stubs when fetchTasks called then tasks have projectName populated`() async throws {
-        TodoistURLProtocolStub.responses["/rest/v2/projects"] = .init(
+        TodoistURLProtocolStub.responses["/api/v1/projects"] = .init(
             data: Data("""
-            [{"id":"proj1","name":"Home"}]
+            {"results":[{"id":"proj1","name":"Home"}],"next_cursor":null}
             """.utf8),
             statusCode: 200, headers: [:],
         )
-        TodoistURLProtocolStub.responses["/rest/v2/tasks"] = .init(
+        TodoistURLProtocolStub.responses["/api/v1/tasks"] = .init(
             data: Data("""
-            [{"id":"t1","content":"Buy milk","description":"","project_id":"proj1","priority":2,"due":null}]
+            {"results":[{"id":"t1","content":"Buy milk","description":"",
+            "project_id":"proj1","priority":2,"due":null}],"next_cursor":null}
             """.utf8),
             statusCode: 200, headers: [:],
         )

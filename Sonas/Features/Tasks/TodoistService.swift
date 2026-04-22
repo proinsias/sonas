@@ -36,12 +36,12 @@ enum TaskServiceError: LocalizedError {
 
 // MARK: - TodoistService (T055)
 
-// Todoist REST API v2 — personal API token auth, cursor pagination, optimistic complete + rollback.
+// Todoist API v1 — personal API token auth, cursor pagination, optimistic complete + rollback.
 
 @MainActor
 final class TodoistService: TaskServiceProtocol {
     private enum Endpoint {
-        static let base = "https://api.todoist.com/rest/v2"
+        static let base = "https://api.todoist.com/api/v1"
         static let projects = "\(base)/projects"
         static func tasks(projectID: String) -> String {
             "\(base)/tasks?project_id=\(projectID)"
@@ -111,24 +111,36 @@ final class TodoistService: TaskServiceProtocol {
         guard let token = resolvedToken else {
             throw TaskServiceError.notConnected
         }
-        guard let url = URL(string: Endpoint.projects) else {
-            throw TaskServiceError.networkError(NSError(domain: "Todoist", code: -1))
-        }
-        var request = URLRequest(url: url)
-        request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-        let (data, response) = try await session.data(for: request)
-        guard let http = response as? HTTPURLResponse else {
-            throw TaskServiceError.networkError(NSError(domain: "Todoist", code: -1))
-        }
-        switch http.statusCode {
-        case 200:
-            let decoded = try JSONDecoder().decode([TodoistProjectResponse].self, from: data)
-            return decoded.map { TaskProject(id: $0.id, name: $0.name) }
-        case 401:
-            throw TaskServiceError.authenticationFailed
-        default:
-            throw TaskServiceError.networkError(NSError(domain: "Todoist", code: http.statusCode))
-        }
+        var allProjects: [TaskProject] = []
+        var cursor: String?
+
+        repeat {
+            var urlString = Endpoint.projects
+            if let cursor { urlString += "?cursor=\(cursor)" }
+            guard let url = URL(string: urlString) else {
+                throw TaskServiceError.networkError(NSError(domain: "Todoist", code: -1))
+            }
+            var request = URLRequest(url: url)
+            request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+            let (data, response) = try await session.data(for: request)
+            guard let http = response as? HTTPURLResponse else {
+                throw TaskServiceError.networkError(NSError(domain: "Todoist", code: -1))
+            }
+            switch http.statusCode {
+            case 200:
+                let decoded = try JSONDecoder().decode(
+                    TodoistPagedResponse<TodoistProjectResponse>.self, from: data
+                )
+                allProjects.append(contentsOf: decoded.results.map { TaskProject(id: $0.id, name: $0.name) })
+                cursor = decoded.nextCursor
+            case 401:
+                throw TaskServiceError.authenticationFailed
+            default:
+                throw TaskServiceError.networkError(NSError(domain: "Todoist", code: http.statusCode))
+            }
+        } while cursor != nil
+
+        return allProjects
     }
 
     func completeTask(id: String) async throws {
@@ -146,7 +158,7 @@ final class TodoistService: TaskServiceProtocol {
         guard let http = response as? HTTPURLResponse else { return }
 
         switch http.statusCode {
-        case 204:
+        case 200, 204:
             SonasLogger.tasks.info("TodoistService: task \(id) completed")
         case 401:
             throw TaskServiceError.authenticationFailed
@@ -191,9 +203,9 @@ final class TodoistService: TaskServiceProtocol {
                 )
             }
 
-            let decoded = try JSONDecoder().decode([TodoistTask].self, from: data)
-            tasks.append(contentsOf: decoded.map { $0.toTask(orderIndex: &orderIndex) })
-            cursor = http.value(forHTTPHeaderField: "X-Next-Cursor")
+            let decoded = try JSONDecoder().decode(TodoistPagedResponse<TodoistTask>.self, from: data)
+            tasks.append(contentsOf: decoded.results.map { $0.toTask(orderIndex: &orderIndex) })
+            cursor = decoded.nextCursor
         } while cursor != nil
 
         return tasks
@@ -201,6 +213,16 @@ final class TodoistService: TaskServiceProtocol {
 }
 
 // MARK: - Todoist API response types
+
+private struct TodoistPagedResponse<T: Decodable>: Decodable {
+    let results: [T]
+    let nextCursor: String?
+
+    enum CodingKeys: String, CodingKey {
+        case results
+        case nextCursor = "next_cursor"
+    }
+}
 
 private struct TodoistProjectResponse: Decodable {
     let id: String

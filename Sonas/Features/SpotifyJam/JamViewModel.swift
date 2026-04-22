@@ -15,6 +15,9 @@ final class JamViewModel {
         session?.status ?? .none
     }
 
+    private(set) var isSpotifyConnected: Bool
+    private(set) var isSpotifyInstalled: Bool
+
     // MARK: Dependencies
 
     private let service: any JamServiceProtocol
@@ -22,6 +25,8 @@ final class JamViewModel {
     init(service: any JamServiceProtocol) {
         self.service = service
         session = service.currentSession
+        isSpotifyConnected = service.isSpotifyConnected
+        isSpotifyInstalled = service.isSpotifyInstalled
     }
 
     static func makeDefault() -> JamViewModel {
@@ -37,6 +42,7 @@ final class JamViewModel {
         error = nil
         do {
             session = try await service.startJam()
+            isSpotifyConnected = service.isSpotifyConnected
             SonasLogger.jam.info("JamViewModel: session started")
         } catch JamServiceError.spotifyNotInstalled {
             let errorDescription = JamServiceError.spotifyNotInstalled.errorDescription ?? "Spotify is not installed"
@@ -62,19 +68,10 @@ final class JamViewModel {
         isLoading = true
         do {
             try await service.connectSpotify()
+            isSpotifyConnected = true
         } catch {
             self.error = PanelError(title: "Connection Failed", message: error.localizedDescription, isRetryable: true)
         }
         isLoading = false
-    }
-
-    // MARK: - Computed helpers
-
-    var isSpotifyInstalled: Bool {
-        service.isSpotifyInstalled
-    }
-
-    var isSpotifyConnected: Bool {
-        service.isSpotifyConnected
     }
 }
