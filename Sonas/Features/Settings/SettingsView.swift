@@ -183,10 +183,26 @@ private extension SettingsView {
     var todoistProjectsSection: some View {
         if tasksVM.isConnected {
             Section {
-                if tasksVM.availableProjects.isEmpty {
-                    Text("Loading projects…")
+                if tasksVM.isLoadingProjects {
+                    HStack(spacing: 8) {
+                        ProgressView()
+                            .scaleEffect(0.8)
+                        Text("Loading projects…")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                } else if tasksVM.projectsLoadFailed {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("Could not load projects.")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                        Button("Retry") {
+                            Swift.Task { await tasksVM.reloadProjects() }
+                        }
                         .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(Color.accent)
+                        .accessibilityInfo("Retry loading projects", hint: "Fetch your Todoist project list again")
+                    }
                 } else {
                     ForEach(tasksVM.availableProjects) { project in
                         projectToggleRow(project)

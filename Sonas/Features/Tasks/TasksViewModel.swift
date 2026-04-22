@@ -22,6 +22,8 @@ final class TasksViewModel {
 
     private(set) var isConnected: Bool
     private(set) var availableProjects: [TaskProject] = []
+    private(set) var isLoadingProjects: Bool = false
+    private(set) var projectsLoadFailed: Bool = false
 
     init(service: any TaskServiceProtocol, cache: CacheServiceProtocol? = nil) {
         self.service = service
@@ -37,8 +39,8 @@ final class TasksViewModel {
     // MARK: - Data loading
 
     func start() async {
-        if isConnected, availableProjects.isEmpty {
-            availableProjects = await (try? service.fetchProjects()) ?? []
+        if isConnected, availableProjects.isEmpty, !projectsLoadFailed {
+            await loadProjects()
         }
         // Load cached tasks first
         let cached = await cache.loadTasks()
@@ -65,7 +67,7 @@ final class TasksViewModel {
     func connectTodoist(apiToken: String) async throws {
         try await service.connectTodoist(apiToken: apiToken)
         isConnected = true
-        availableProjects = await (try? service.fetchProjects()) ?? []
+        await loadProjects()
         await start()
     }
 
@@ -73,9 +75,15 @@ final class TasksViewModel {
         await service.disconnectTodoist()
         isConnected = false
         availableProjects = []
+        isLoadingProjects = false
+        projectsLoadFailed = false
         tasksByProject = [:]
         error = nil
         isLoading = false
+    }
+
+    func reloadProjects() async {
+        await loadProjects()
     }
 
     // MARK: - Optimistic task completion
@@ -109,6 +117,18 @@ final class TasksViewModel {
     }
 
     // MARK: - Private
+
+    private func loadProjects() async {
+        isLoadingProjects = true
+        projectsLoadFailed = false
+        do {
+            availableProjects = try await service.fetchProjects()
+        } catch {
+            projectsLoadFailed = true
+            SonasLogger.error(SonasLogger.tasks, "TasksViewModel: fetchProjects failed", error: error)
+        }
+        isLoadingProjects = false
+    }
 
     private func fetchLive() async {
         guard service.isConnected else {
