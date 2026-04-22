@@ -65,6 +65,8 @@ targets:
         # Spotify — replace with your Spotify Client ID from developer.spotify.com/dashboard
         SPTClientID: 'YOUR_SPOTIFY_CLIENT_ID'
         SPTRedirectURL: 'sonas://spotify-callback'
+        LSApplicationQueriesSchemes:
+          - spotify
         # URL Schemes
         CFBundleURLTypes:
           - CFBundleURLSchemes:
