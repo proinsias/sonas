@@ -10,15 +10,18 @@ protocol CalendarServiceProtocol {
     /// - Parameter hours: look-ahead window; default 48
     func fetchUpcomingEvents(hours: Int) async throws -> [CalendarEvent]
 
-    /// Connect a Google Calendar account via OAuth.
-    /// Presents ASWebAuthenticationSession if no valid token exists.
+    /// Connect a Google Calendar account via OAuth (GIDSignIn.signIn).
+    /// Reads GIDClientID from Info.plist and presents the sign-in UI.
     func connectGoogleAccount() async throws
 
-    /// Disconnect the currently connected Google account and clear Keychain token.
-    func disconnectGoogleAccount() async throws
+    /// Revoke Google token and remove from Keychain (GIDSignIn.signOut).
+    func disconnectGoogleAccount() async
 
-    /// Whether a Google account is currently connected.
+    /// True when a valid Google OAuth token is stored (hasPreviousSignIn or active user).
     var isGoogleConnected: Bool { get }
+
+    /// True when the last Google token refresh returned a 401 or auth error.
+    var needsGoogleReconnect: Bool { get }
 }
 ```
 
@@ -46,10 +49,11 @@ Authorization: Bearer {access_token}
 
 **Error cases**:
 
-- `CalendarServiceError.eventKitDenied` — EventKit permission denied; returns Google-only events
-- `CalendarServiceError.googleTokenExpired` — triggers silent refresh; if refresh fails, returns iCloud-only events and
-  sets `needsGoogleReconnect = true`
-- `CalendarServiceError.googleAPIError(statusCode:)` — HTTP 4xx/5xx from Google
+- `CalendarServiceError.eventKitPermissionDenied` — EventKit permission denied
+- `CalendarServiceError.googleAuthFailed(Error)` — OAuth sign-in or HTTP 401 from REST; sets
+  `needsGoogleReconnect = true`
+- `CalendarServiceError.fetchFailed(Error)` — network or decoding error
+- `CalendarServiceError.missingConfiguration(String)` — `GIDClientID` absent from Info.plist
 
 **Contract test fixtures** (`GoogleCalendarContractTests.swift`):
 
