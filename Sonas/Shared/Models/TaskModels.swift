@@ -1,5 +1,12 @@
 import Foundation
 
+// MARK: - TaskProject
+
+struct TaskProject: Identifiable, Hashable {
+    let id: String
+    let name: String
+}
+
 // MARK: - Task
 
 /// A single Todoist task from a family project.

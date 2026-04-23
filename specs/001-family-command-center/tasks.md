@@ -409,6 +409,14 @@ UI tests.
       assert Todoist token entry invokes `TaskService.connectTodoist` and panel transitions from "Connect Todoist" to
       task list; (c) assert photo album picker selection persists after app restart _(Constitution §II — every
       user-facing feature MUST have at least one acceptance/integration test)_
+- [x] T095 [P] Add Todoist project picker to `SettingsView`'s connected state: (a) add
+      `fetchProjects() async throws     -> [TaskProject]` to `TaskServiceProtocol` and `TaskService.md` contract; (b)
+      implement in `TodoistService`, refactoring `fetchTasks` to populate `task.projectName` from the project list
+      (previously always `""`); (c) add `availableProjects: [TaskProject]` to `TasksViewModel`, loaded in
+      `connectTodoist` and lazily in `start()`; (d) add `todoistProjectsSection` to `SettingsView` showing each project
+      with a checkmark when selected, writing to `AppConfiguration.selectedTodoistProjectIDs`; (e) contract tests
+      T095.1–T095.2 in `TodoistContractTests.swift`; (f) unit tests T095.3–T095.4 in `TodoistServiceTests.swift`; (g) UI
+      tests T095.5–T095.6 in `SettingsUITests.swift`
 
 ---
 

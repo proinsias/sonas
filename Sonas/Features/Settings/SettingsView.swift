@@ -1,11 +1,11 @@
 import CoreLocation
-import Photos
 import SwiftUI
 
 // MARK: - SettingsView (T092)
 
 struct SettingsView: View {
     var tasksVM: TasksViewModel
+    var eventsVM: EventsViewModel
     var jamVM: JamViewModel
     var photoVM: PhotoViewModel
 
@@ -15,6 +15,7 @@ struct SettingsView: View {
     @State private var todoistInput: String = ""
     @State private var isConnectingTodoist: Bool = false
     @State private var todoistConnectError: String?
+    @State private var selectedProjectIDs: Set<String> = []
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
@@ -23,6 +24,7 @@ struct SettingsView: View {
                 homeLocationSection
                 googleCalendarSection
                 todoistSection
+                todoistProjectsSection
                 spotifySection
                 photoAlbumSection
                 temperatureSection
@@ -34,6 +36,12 @@ struct SettingsView: View {
                     Button("Done") { dismiss() }
                         .accessibilityInfo("Done", hint: "Close settings")
                 }
+            }
+            .task {
+                selectedProjectIDs = Set(config.selectedTodoistProjectIDs)
+            }
+            .onChange(of: tasksVM.availableProjects) { _, _ in
+                selectedProjectIDs = Set(config.selectedTodoistProjectIDs)
             }
         }
         // Sheets attached to the NavigationStack root rather than to sections inside the Form,
@@ -91,22 +99,36 @@ struct SettingsView: View {
 
     private var googleCalendarSection: some View {
         Section("Google Calendar") {
-            // Full GoogleSignIn flow integrated once GoogleSignIn SDK is linked (T032/T033).
-            HStack {
-                Image(systemName: "g.circle.fill")
-                    .foregroundStyle(Color.accent)
-                    .accessibilityHidden(true)
-                Text("Google Calendar")
-                Spacer()
-                Text(!config.homeLocationName.isEmpty ? "Connected" : "Not Connected")
-                    .font(.caption)
-                    .foregroundStyle(Color.secondaryLabel)
+            if eventsVM.isGoogleConnected {
+                HStack {
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundStyle(.green)
+                        .accessibilityHidden(true)
+                    Text("Connected")
+                    Spacer()
+                    Button("Disconnect") {
+                        Swift.Task { await eventsVM.disconnectGoogle() }
+                    }
+                    .foregroundStyle(.red)
+                    .accessibilityInfo("Disconnect Google Calendar", hint: "Remove your Google account")
+                }
+            } else {
+                HStack {
+                    Image(systemName: "g.circle.fill")
+                        .foregroundStyle(Color.accent)
+                        .accessibilityHidden(true)
+                    Text("Google Calendar")
+                    Spacer()
+                    Text("Not Connected")
+                        .font(.caption)
+                        .foregroundStyle(Color.secondaryLabel)
+                }
+                Button("Connect Google Calendar") {
+                    Swift.Task { await eventsVM.reconnectGoogle() }
+                }
+                .foregroundStyle(Color.accent)
+                .accessibilityInfo("Connect Google Calendar", hint: "Sign in with your Google account to sync events")
             }
-            Button("Connect Google Calendar") {
-                // CalendarService.connectGoogleAccount() called here once SDK is linked
-            }
-            .foregroundStyle(Color.accent)
-            .accessibilityInfo("Connect Google Calendar", hint: "Sign in with your Google account to sync events")
         }
     }
 }
@@ -168,6 +190,71 @@ private extension SettingsView {
                 .accessibilityInfo("Connect Todoist", hint: "Validate and store your Todoist API token")
             }
         }
+    }
+
+    // MARK: - Todoist project picker
+
+    @ViewBuilder
+    var todoistProjectsSection: some View {
+        if tasksVM.isConnected {
+            Section {
+                if tasksVM.isLoadingProjects {
+                    HStack(spacing: 8) {
+                        ProgressView()
+                            .scaleEffect(0.8)
+                        Text("Loading projects…")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                } else if tasksVM.projectsLoadFailed {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("Could not load projects.")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                        Button("Retry") {
+                            Swift.Task { await tasksVM.reloadProjects() }
+                        }
+                        .font(.caption)
+                        .foregroundStyle(Color.accent)
+                        .accessibilityInfo("Retry loading projects", hint: "Fetch your Todoist project list again")
+                    }
+                } else {
+                    ForEach(tasksVM.availableProjects) { project in
+                        projectToggleRow(project)
+                    }
+                }
+            } header: {
+                Text("Todoist Projects")
+            } footer: {
+                Text("Selected projects appear in Tasks. Leave all unselected to show everything.")
+            }
+        }
+    }
+
+    private func projectToggleRow(_ project: TaskProject) -> some View {
+        Button {
+            if selectedProjectIDs.contains(project.id) {
+                selectedProjectIDs.remove(project.id)
+            } else {
+                selectedProjectIDs.insert(project.id)
+            }
+            config.selectedTodoistProjectIDs = Array(selectedProjectIDs)
+        } label: {
+            HStack {
+                Text(project.name)
+                    .foregroundStyle(.primary)
+                Spacer()
+                if selectedProjectIDs.contains(project.id) {
+                    Image(systemName: "checkmark")
+                        .foregroundStyle(Color.accent)
+                        .accessibilityHidden(true)
+                }
+            }
+        }
+        .accessibilityIdentifier("todoistProject_\(project.id)")
+        .accessibilityLabel(project.name)
+        .accessibilityValue(selectedProjectIDs.contains(project.id) ? "Selected" : "Not selected")
+        .accessibilityHint("Double tap to toggle project selection")
     }
 
     // MARK: - Spotify
@@ -234,99 +321,6 @@ private extension SettingsView {
             Toggle("Use Fahrenheit", isOn: $config.useFahrenheit)
                 .accessibilityInfo("Use Fahrenheit", hint: "Display temperatures in Fahrenheit instead of Celsius")
         }
-    }
-}
-
-// MARK: - AlbumPickerView
-
-private struct AlbumItem: Identifiable {
-    let id: String
-    let name: String
-    let count: Int
-}
-
-private struct AlbumPickerView: View {
-    var photoVM: PhotoViewModel
-    @Binding var isPresented: Bool
-    @State private var albums: [AlbumItem] = []
-    @State private var isLoading = true
-
-    var body: some View {
-        NavigationStack {
-            Group {
-                if isLoading {
-                    ProgressView("Loading albums…")
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                } else if albums.isEmpty {
-                    ContentUnavailableView(
-                        "No Albums Found",
-                        systemImage: "photo.on.rectangle",
-                        description: Text("Grant photo access in Settings to see your albums."),
-                    )
-                } else {
-                    List(albums) { album in
-                        Button {
-                            AppConfiguration.shared.selectedAlbumIdentifier = album.id
-                            AppConfiguration.shared.selectedAlbumName = album.name
-                            Swift.Task { await photoVM.reload() }
-                            isPresented = false
-                        } label: {
-                            HStack {
-                                Text(album.name)
-                                    .foregroundStyle(Color.primary)
-                                Spacer()
-                                Text("\(album.count)")
-                                    .foregroundStyle(Color.secondaryLabel)
-                                    .font(.caption)
-                            }
-                        }
-                    }
-                }
-            }
-            .navigationTitle("Select Album")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button("Cancel") { isPresented = false }
-                }
-            }
-        }
-        .task { await loadAlbums() }
-    }
-
-    private func loadAlbums() async {
-        let status = await PHPhotoLibrary.requestAuthorization(for: .readWrite)
-        guard status == .authorized || status == .limited else {
-            isLoading = false
-            return
-        }
-
-        var result: [AlbumItem] = []
-
-        let userAlbums = PHAssetCollection.fetchAssetCollections(with: .album, subtype: .any, options: nil)
-        userAlbums.enumerateObjects { collection, _, _ in
-            let count = PHAsset.fetchAssets(in: collection, options: nil).count
-            // swiftlint:disable:next empty_count
-            if count > 0, let title = collection.localizedTitle { // SONAS-001
-                result.append(AlbumItem(id: collection.localIdentifier, name: title, count: count))
-            }
-        }
-
-        let smartAlbums = PHAssetCollection.fetchAssetCollections(
-            with: .smartAlbum,
-            subtype: .smartAlbumUserLibrary,
-            options: nil,
-        )
-        smartAlbums.enumerateObjects { collection, _, _ in
-            let count = PHAsset.fetchAssets(in: collection, options: nil).count
-            // swiftlint:disable:next empty_count
-            if count > 0, let title = collection.localizedTitle { // SONAS-001
-                result.append(AlbumItem(id: collection.localIdentifier, name: title, count: count))
-            }
-        }
-
-        albums = result.sorted { $0.name < $1.name }
-        isLoading = false
     }
 }
 

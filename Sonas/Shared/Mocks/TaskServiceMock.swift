@@ -13,6 +13,10 @@ final class TaskServiceMock: TaskServiceProtocol, @unchecked Sendable {
         // Immediate success
     }
 
+    func fetchProjects() async throws -> [TaskProject] {
+        [TaskProject(id: "proj-1", name: "Home"), TaskProject(id: "proj-2", name: "Admin")]
+    }
+
     func connectTodoist(apiToken _: String) async throws {
         isConnected = true
     }

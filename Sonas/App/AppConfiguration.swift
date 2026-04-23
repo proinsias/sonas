@@ -5,6 +5,7 @@ import Security
 // MARK: - AppConfiguration
 
 // UserDefaults-backed app settings. Sensitive tokens are stored in iOS Keychain.
+// All computed properties call access/withMutation so @Observable tracks them correctly.
 
 @Observable
 final class AppConfiguration {
@@ -17,6 +18,7 @@ final class AppConfiguration {
     /// Home location coordinate used by WeatherService and as the map origin.
     var homeLocation: CLLocationCoordinate2D? {
         get {
+            access(keyPath: \.homeLocation)
             guard
                 let lat = defaults.object(forKey: Keys.homeLat) as? Double,
                 let lon = defaults.object(forKey: Keys.homeLon) as? Double
@@ -24,51 +26,95 @@ final class AppConfiguration {
             return CLLocationCoordinate2D(latitude: lat, longitude: lon)
         }
         set {
-            defaults.set(newValue?.latitude, forKey: Keys.homeLat)
-            defaults.set(newValue?.longitude, forKey: Keys.homeLon)
+            withMutation(keyPath: \.homeLocation) {
+                defaults.set(newValue?.latitude, forKey: Keys.homeLat)
+                defaults.set(newValue?.longitude, forKey: Keys.homeLon)
+            }
         }
     }
 
     /// Human-readable home location name (e.g., "Dublin, Ireland")
     var homeLocationName: String {
-        get { defaults.string(forKey: Keys.homeLocationName) ?? "" }
-        set { defaults.set(newValue, forKey: Keys.homeLocationName) }
+        get {
+            access(keyPath: \.homeLocationName)
+            return defaults.string(forKey: Keys.homeLocationName) ?? ""
+        }
+        set {
+            withMutation(keyPath: \.homeLocationName) {
+                defaults.set(newValue, forKey: Keys.homeLocationName)
+            }
+        }
     }
 
     // MARK: Todoist
 
     /// Todoist API token stored securely in Keychain
     var todoistAPIToken: String? {
-        get { Keychain.load(service: Keys.todoistToken) }
-        set { Keychain.save(newValue, service: Keys.todoistToken) }
+        get {
+            access(keyPath: \.todoistAPIToken)
+            return Keychain.load(service: Keys.todoistToken)
+        }
+        set {
+            withMutation(keyPath: \.todoistAPIToken) {
+                Keychain.save(newValue, service: Keys.todoistToken)
+            }
+        }
     }
 
     /// User-selected Todoist project IDs to display (comma-separated in UserDefaults)
     var selectedTodoistProjectIDs: [String] {
-        get { defaults.stringArray(forKey: Keys.todoistProjects) ?? [] }
-        set { defaults.set(newValue, forKey: Keys.todoistProjects) }
+        get {
+            access(keyPath: \.selectedTodoistProjectIDs)
+            return defaults.stringArray(forKey: Keys.todoistProjects) ?? []
+        }
+        set {
+            withMutation(keyPath: \.selectedTodoistProjectIDs) {
+                defaults.set(newValue, forKey: Keys.todoistProjects)
+            }
+        }
     }
 
     // MARK: Photos
 
     /// Local identifier of the selected iCloud Shared Album (`PHAssetCollection.localIdentifier`)
     var selectedAlbumIdentifier: String? {
-        get { defaults.string(forKey: Keys.albumIdentifier) }
-        set { defaults.set(newValue, forKey: Keys.albumIdentifier) }
+        get {
+            access(keyPath: \.selectedAlbumIdentifier)
+            return defaults.string(forKey: Keys.albumIdentifier)
+        }
+        set {
+            withMutation(keyPath: \.selectedAlbumIdentifier) {
+                defaults.set(newValue, forKey: Keys.albumIdentifier)
+            }
+        }
     }
 
     /// Display name of the selected album, cached for UI
     var selectedAlbumName: String? {
-        get { defaults.string(forKey: Keys.albumName) }
-        set { defaults.set(newValue, forKey: Keys.albumName) }
+        get {
+            access(keyPath: \.selectedAlbumName)
+            return defaults.string(forKey: Keys.albumName)
+        }
+        set {
+            withMutation(keyPath: \.selectedAlbumName) {
+                defaults.set(newValue, forKey: Keys.albumName)
+            }
+        }
     }
 
     // MARK: Display preferences
 
     /// Temperature unit: true = Fahrenheit, false = Celsius
     var useFahrenheit: Bool {
-        get { defaults.bool(forKey: Keys.useFahrenheit) }
-        set { defaults.set(newValue, forKey: Keys.useFahrenheit) }
+        get {
+            access(keyPath: \.useFahrenheit)
+            return defaults.bool(forKey: Keys.useFahrenheit)
+        }
+        set {
+            withMutation(keyPath: \.useFahrenheit) {
+                defaults.set(newValue, forKey: Keys.useFahrenheit)
+            }
+        }
     }
 
     // MARK: Private

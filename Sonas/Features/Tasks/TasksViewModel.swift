@@ -20,13 +20,15 @@ final class TasksViewModel {
     private let cache: CacheServiceProtocol
     private var refreshTimer: Timer?
 
-    var isConnected: Bool {
-        service.isConnected
-    }
+    private(set) var isConnected: Bool
+    private(set) var availableProjects: [TaskProject] = []
+    private(set) var isLoadingProjects: Bool = false
+    private(set) var projectsLoadFailed: Bool = false
 
     init(service: any TaskServiceProtocol, cache: CacheServiceProtocol? = nil) {
         self.service = service
         self.cache = cache ?? CacheService.shared
+        isConnected = service.isConnected
     }
 
     static func makeDefault() -> TasksViewModel {
@@ -37,6 +39,9 @@ final class TasksViewModel {
     // MARK: - Data loading
 
     func start() async {
+        if isConnected, availableProjects.isEmpty, !projectsLoadFailed {
+            await loadProjects()
+        }
         // Load cached tasks first
         let cached = await cache.loadTasks()
         if !cached.isEmpty {
@@ -61,14 +66,24 @@ final class TasksViewModel {
 
     func connectTodoist(apiToken: String) async throws {
         try await service.connectTodoist(apiToken: apiToken)
+        isConnected = true
+        await loadProjects()
         await start()
     }
 
     func disconnectTodoist() async {
         await service.disconnectTodoist()
+        isConnected = false
+        availableProjects = []
+        isLoadingProjects = false
+        projectsLoadFailed = false
         tasksByProject = [:]
         error = nil
         isLoading = false
+    }
+
+    func reloadProjects() async {
+        await loadProjects()
     }
 
     // MARK: - Optimistic task completion
@@ -102,6 +117,18 @@ final class TasksViewModel {
     }
 
     // MARK: - Private
+
+    private func loadProjects() async {
+        isLoadingProjects = true
+        projectsLoadFailed = false
+        do {
+            availableProjects = try await service.fetchProjects()
+        } catch {
+            projectsLoadFailed = true
+            SonasLogger.error(SonasLogger.tasks, "TasksViewModel: fetchProjects failed", error: error)
+        }
+        isLoadingProjects = false
+    }
 
     private func fetchLive() async {
         guard service.isConnected else {
