@@ -106,7 +106,7 @@ struct DashboardView: View {
         RefreshableScrollView {
             await viewModel.refreshAll()
         } content: {
-            LazyVStack(spacing: 16) {
+            VStack(spacing: 16) {
                 ClockPanelView()
 
                 LocationPanelView(viewModel: viewModel.locationVM)
