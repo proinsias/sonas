@@ -9,8 +9,8 @@ jobs:
     name: UI Tests (iOS Simulator)
     runs-on: macos-15
     steps:
-      - uses: actions/checkout@v6
-      - uses: jdx/mise-action@v4
+      - uses: actions/checkout@v4
+      - uses: jdx/mise-action@v2
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -45,8 +45,8 @@ jobs:
     name: UI Tests (Mac)
     runs-on: macos-15
     steps:
-      - uses: actions/checkout@v6
-      - uses: jdx/mise-action@v4
+      - uses: actions/checkout@v4
+      - uses: jdx/mise-action@v2
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -81,8 +81,8 @@ jobs:
     name: Unit & Contract Tests (iOS Simulator)
     runs-on: macos-15
     steps:
-      - uses: actions/checkout@v6
-      - uses: jdx/mise-action@v4
+      - uses: actions/checkout@v4
+      - uses: jdx/mise-action@v2
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -105,8 +105,8 @@ jobs:
     name: Unit & Contract Tests (Mac)
     runs-on: macos-15
     steps:
-      - uses: actions/checkout@v6
-      - uses: jdx/mise-action@v4
+      - uses: actions/checkout@v4
+      - uses: jdx/mise-action@v2
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
