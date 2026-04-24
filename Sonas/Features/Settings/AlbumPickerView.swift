@@ -32,7 +32,7 @@ struct AlbumPickerView: View {
                         Button {
                             AppConfiguration.shared.selectedAlbumIdentifier = album.id
                             AppConfiguration.shared.selectedAlbumName = album.name
-                            Swift.Task { await photoVM.reload() }
+                            Task { await photoVM.reload() }
                             isPresented = false
                         } label: {
                             HStack {

@@ -14,7 +14,7 @@ struct TodoistServiceTests {
         final class FailingTaskService: TaskServiceProtocol, @unchecked Sendable {
             var isConnected: Bool = true
             var fetchCalled = false
-            func fetchTasks() async throws -> [Task] {
+            func fetchTasks() async throws -> [TodoTask] {
                 fetchCalled = true
                 return TaskServiceMock.fixtures
             }
@@ -52,7 +52,7 @@ struct TodoistServiceTests {
     ) async throws {
         final class ProjectService: TaskServiceProtocol, @unchecked Sendable {
             var isConnected: Bool = false
-            func fetchTasks() async throws -> [Task] {
+            func fetchTasks() async throws -> [TodoTask] {
                 []
             }
 
@@ -84,7 +84,7 @@ struct TodoistServiceTests {
     func `given connected viewModel when disconnectTodoist called then availableProjects is empty`() async {
         final class AlwaysConnectedService: TaskServiceProtocol, @unchecked Sendable {
             var isConnected: Bool = true
-            func fetchTasks() async throws -> [Task] {
+            func fetchTasks() async throws -> [TodoTask] {
                 []
             }
 

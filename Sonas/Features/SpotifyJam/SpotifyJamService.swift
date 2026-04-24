@@ -183,7 +183,7 @@ enum JamServiceError: LocalizedError {
 
     extension SpotifyJamService: SPTSessionManagerDelegate {
         nonisolated func sessionManager(manager _: SPTSessionManager, didInitiate session: SPTSession) {
-            Swift.Task { @MainActor in
+            Task { @MainActor in
                 self.accessToken = session.accessToken
                 self.isSpotifyConnected = true
                 self.authContinuation?.resume()
@@ -193,14 +193,14 @@ enum JamServiceError: LocalizedError {
         }
 
         nonisolated func sessionManager(manager _: SPTSessionManager, didFailWith error: Error) {
-            Swift.Task { @MainActor in
+            Task { @MainActor in
                 self.authContinuation?.resume(throwing: JamServiceError.spotifyAuthFailed(error))
                 self.authContinuation = nil
             }
         }
 
         nonisolated func sessionManager(manager _: SPTSessionManager, didRenew session: SPTSession) {
-            Swift.Task { @MainActor in
+            Task { @MainActor in
                 self.accessToken = session.accessToken
                 SonasLogger.jam.info("SpotifyJamService: session renewed")
             }
@@ -211,7 +211,7 @@ enum JamServiceError: LocalizedError {
 
     extension SpotifyJamService: SPTAppRemoteDelegate {
         nonisolated func appRemoteDidEstablishConnection(_: SPTAppRemote) {
-            Swift.Task { @MainActor in
+            Task { @MainActor in
                 self.connectContinuation?.resume()
                 self.connectContinuation = nil
                 SonasLogger.jam.info("SpotifyJamService: app remote connected")
@@ -222,7 +222,7 @@ enum JamServiceError: LocalizedError {
             _: SPTAppRemote,
             didFailConnectionAttemptWithError error: Error?
         ) {
-            Swift.Task { @MainActor in
+            Task { @MainActor in
                 let err = error ?? NSError(
                     domain: "Spotify", code: -1,
                     userInfo: [NSLocalizedDescriptionKey: "App remote connection failed"]
@@ -233,7 +233,7 @@ enum JamServiceError: LocalizedError {
         }
 
         nonisolated func appRemote(_: SPTAppRemote, didDisconnectWithError error: Error?) {
-            Swift.Task { @MainActor in
+            Task { @MainActor in
                 if let error {
                     SonasLogger.error(SonasLogger.jam, "SpotifyJamService: app remote disconnected", error: error)
                 }

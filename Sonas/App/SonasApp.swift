@@ -46,7 +46,7 @@ struct SonasApp: App {
             // on success/error, and once from the expiration handler on timeout).
             var completed = false
 
-            let refreshTask = Swift.Task {
+            let refreshTask = Task {
                 do {
                     // Weather + AQI (concurrent)
                     if let coord = AppConfiguration.shared.homeLocation {
@@ -74,7 +74,7 @@ struct SonasApp: App {
 
             // Expiry handler: cancel in-flight work AND immediately mark the task done.
             // Calling setTaskCompleted here (not only from the async body) is required because
-            // cooperative Swift Task cancellation may not propagate before the OS watchdog fires.
+            // cooperative Task cancellation may not propagate before the OS watchdog fires.
             task.expirationHandler = {
                 refreshTask.cancel()
                 if !completed { completed = true; task.setTaskCompleted(success: false) }

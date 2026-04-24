@@ -88,11 +88,11 @@ extension CachedCalendarEvent {
 }
 
 extension CachedTask {
-    func toTask() -> Task {
+    func toTodoTask() -> TodoTask {
         let due: TaskDue? = dueString.map {
             TaskDue(date: dueDate, string: $0, isRecurring: isRecurring)
         }
-        return Task(
+        return TodoTask(
             id: taskID,
             content: content,
             description: taskDescription,

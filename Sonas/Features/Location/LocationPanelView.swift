@@ -10,7 +10,7 @@ struct LocationPanelView: View {
             content
         }
         .task { await viewModel.start() }
-        .onDisappear { Swift.Task { await viewModel.stop() } }
+        .onDisappear { Task { await viewModel.stop() } }
     }
 
     @ViewBuilder
@@ -19,7 +19,7 @@ struct LocationPanelView: View {
             LoadingStateView(rows: 3)
         } else if let error = viewModel.error {
             ErrorStateView(error: error) {
-                Swift.Task { await viewModel.refresh() }
+                Task { await viewModel.refresh() }
             }
         } else if viewModel.members.isEmpty {
             permissionPrompt

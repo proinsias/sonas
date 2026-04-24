@@ -63,7 +63,7 @@ struct DashboardIntegrationTests {
 
         final class FailingTaskService: TaskServiceProtocol, @unchecked Sendable {
             var isConnected: Bool = true
-            func fetchTasks() async throws -> [Task] {
+            func fetchTasks() async throws -> [TodoTask] {
                 throw URLError(.notConnectedToInternet)
             }
 
@@ -90,7 +90,7 @@ struct DashboardIntegrationTests {
     func `given tasks service throws when dashboard loads then other panels remain functional`() async {
         final class FailingTaskService: TaskServiceProtocol, @unchecked Sendable {
             var isConnected: Bool = true
-            func fetchTasks() async throws -> [Task] {
+            func fetchTasks() async throws -> [TodoTask] {
                 throw URLError(.notConnectedToInternet)
             }
 

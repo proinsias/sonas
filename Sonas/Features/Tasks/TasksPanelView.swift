@@ -28,13 +28,13 @@ struct TasksPanelView: View {
         } else if viewModel.isLoading, viewModel.tasksByProject.isEmpty {
             LoadingStateView(rows: 3)
         } else if let error = viewModel.error {
-            ErrorStateView(error: error) { Swift.Task { await viewModel.refresh() } }
+            ErrorStateView(error: error) { Task { await viewModel.refresh() } }
         } else if viewModel.tasksByProject.isEmpty {
             emptyState
         } else {
             taskList
                 .staleDataBadge(lastUpdated: viewModel.lastUpdated ?? .now) {
-                    Swift.Task { await viewModel.refresh() }
+                    Task { await viewModel.refresh() }
                 }
         }
     }
@@ -59,7 +59,7 @@ struct TasksPanelView: View {
 
             ForEach(viewModel.tasksByProject[project] ?? []) { task in
                 TaskRow(task: task) {
-                    Swift.Task { await viewModel.completeTask(task) }
+                    Task { await viewModel.completeTask(task) }
                 }
             }
         }
@@ -99,7 +99,7 @@ struct TasksPanelView: View {
 // MARK: - TaskRow
 
 private struct TaskRow: View {
-    let task: Task
+    let task: TodoTask
     let onComplete: () -> Void
 
     var body: some View {

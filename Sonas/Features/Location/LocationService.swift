@@ -192,7 +192,7 @@ final class LocationService: NSObject, LocationServiceProtocol {
 
 extension LocationService: CLLocationManagerDelegate {
     nonisolated func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
-        Swift.Task { @MainActor in
+        Task { @MainActor in
             if manager.authorizationStatus == .authorizedWhenInUse ||
                 manager.authorizationStatus == .authorizedAlways {
                 manager.startUpdatingLocation()
@@ -205,7 +205,7 @@ extension LocationService: CLLocationManagerDelegate {
         didUpdateLocations locations: [CLLocation],
     ) {
         guard let loc = locations.last else { return }
-        Swift.Task { @MainActor in
+        Task { @MainActor in
             await publish(location: loc)
         }
     }

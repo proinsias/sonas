@@ -18,8 +18,8 @@ protocol CacheServiceProtocol: Sendable {
     func loadEvents() async -> [CalendarEvent]
 
     // Tasks
-    func saveTasks(_ tasks: [Task]) async throws
-    func loadTasks() async -> [Task]
+    func saveTasks(_ tasks: [TodoTask]) async throws
+    func loadTasks() async -> [TodoTask]
     func loadTasksSavedAt() async -> Date?
 
     // Jam
@@ -201,7 +201,7 @@ extension CacheService {
 // MARK: - Tasks
 
 extension CacheService {
-    func saveTasks(_ tasks: [Task]) async throws {
+    func saveTasks(_ tasks: [TodoTask]) async throws {
         guard let modelContainer else { return }
         let context = modelContainer.mainContext
         try context.delete(model: CachedTask.self)
@@ -225,11 +225,11 @@ extension CacheService {
         try context.save()
     }
 
-    func loadTasks() async -> [Task] {
+    func loadTasks() async -> [TodoTask] {
         guard let modelContainer else { return [] }
         let context = modelContainer.mainContext
         guard let cached = try? context.fetch(FetchDescriptor<CachedTask>()) else { return [] }
-        return cached.map { $0.toTask() }
+        return cached.map { $0.toTodoTask() }
     }
 
     func loadTasksSavedAt() async -> Date? {

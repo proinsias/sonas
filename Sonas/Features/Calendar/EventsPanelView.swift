@@ -18,7 +18,7 @@ struct EventsPanelView: View {
             LoadingStateView(rows: 3)
         } else if let error = viewModel.error {
             ErrorStateView(error: error) {
-                Swift.Task { await viewModel.refresh() }
+                Task { await viewModel.refresh() }
             }
         } else if viewModel.needsGoogleReconnect {
             googleReconnectPrompt
@@ -59,7 +59,7 @@ struct EventsPanelView: View {
                 .foregroundStyle(Color.secondaryLabel)
                 .multilineTextAlignment(.center)
             Button("Reconnect Google") {
-                Swift.Task { await viewModel.reconnectGoogle() }
+                Task { await viewModel.reconnectGoogle() }
             }
             .font(.buttonLabel)
             .foregroundStyle(Color.accent)

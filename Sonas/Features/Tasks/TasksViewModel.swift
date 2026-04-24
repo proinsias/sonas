@@ -8,7 +8,7 @@ import Observation
 final class TasksViewModel {
     // MARK: Published state
 
-    private(set) var tasksByProject: [String: [Task]] = [:]
+    private(set) var tasksByProject: [String: [TodoTask]] = [:]
     private(set) var isLoading: Bool = true
     private(set) var error: PanelError?
     private(set) var completionErrorToast: String?
@@ -88,7 +88,7 @@ final class TasksViewModel {
 
     // MARK: - Optimistic task completion
 
-    func completeTask(_ task: Task) async {
+    func completeTask(_ task: TodoTask) async {
         // Optimistic: remove from UI immediately
         var updated = tasksByProject
         for project in updated.keys where updated[project]?.contains(where: { $0.id == task.id }) == true {
@@ -159,7 +159,7 @@ final class TasksViewModel {
 
     private func startRefreshTimer() {
         refreshTimer = Timer.scheduledTimer(withTimeInterval: 5 * 60, repeats: true) { [weak self] _ in
-            Swift.Task { @MainActor in await self?.fetchLive() }
+            Task { @MainActor in await self?.fetchLive() }
         }
     }
 }
