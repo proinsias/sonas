@@ -22,10 +22,11 @@ run = '''
         echo "No iOS Simulator runtime found. Install one via Xcode > Settings > Components." >&2
         exit 1
     fi
+    mkdir -p .build/DerivedData/ui-ios
     xcodebuild test \
         -scheme SonasUITests \
         -destination "platform=iOS Simulator,id=$SIM" \
-        -derivedDataPath .build/DerivedData/ui-ios \
+        -derivedDataPath "$(pwd)/.build/DerivedData/ui-ios" \
         -enableCodeCoverage YES \
         -configuration Debug \
         CODE_SIGN_IDENTITY="" \
@@ -37,10 +38,14 @@ run = '''
 description = 'Run UI tests on Mac'
 run = '''
     set -euo pipefail
+    # SpotifyiOS.xcframework has no Mac Catalyst slice; mark it iOS-only in the build phase.
+    sed -i '' 's/\(SpotifyiOS in Frameworks.*isa = PBXBuildFile;\)/\1 platformFilter = ios;/' \
+        Sonas.xcodeproj/project.pbxproj
+    mkdir -p .build/DerivedData/ui-mac
     xcodebuild build-for-testing \
         -scheme SonasUITests \
         -destination 'platform=macOS,variant=Mac Catalyst' \
-        -derivedDataPath .build/DerivedData/ui-mac \
+        -derivedDataPath "$(pwd)/.build/DerivedData/ui-mac" \
         -enableCodeCoverage YES \
         -configuration Debug \
         CODE_SIGN_IDENTITY="" \
@@ -53,7 +58,7 @@ run = '''
     xcodebuild test-without-building \
         -scheme SonasUITests \
         -destination 'platform=macOS,variant=Mac Catalyst' \
-        -derivedDataPath .build/DerivedData/ui-mac \
+        -derivedDataPath "$(pwd)/.build/DerivedData/ui-mac" \
         -enableCodeCoverage YES \
         -configuration Debug \
         CODE_SIGN_IDENTITY="" \
@@ -74,10 +79,11 @@ run = '''
         echo "No iOS Simulator runtime found. Install one via Xcode > Settings > Components." >&2
         exit 1
     fi
+    mkdir -p .build/DerivedData/unit-ios
     xcodebuild test \
         -scheme SonasTests \
         -destination "platform=iOS Simulator,id=$SIM" \
-        -derivedDataPath .build/DerivedData/unit-ios \
+        -derivedDataPath "$(pwd)/.build/DerivedData/unit-ios" \
         -configuration Debug \
         -enableCodeCoverage YES \
         CODE_SIGN_IDENTITY="" \
@@ -92,10 +98,11 @@ run = '''
     # SpotifyiOS.xcframework has no Mac Catalyst slice; mark it iOS-only in the build phase.
     sed -i '' 's/\(SpotifyiOS in Frameworks.*isa = PBXBuildFile;\)/\1 platformFilter = ios;/' \
         Sonas.xcodeproj/project.pbxproj
+    mkdir -p .build/DerivedData/unit-mac
     xcodebuild test \
         -scheme SonasTests \
         -destination 'platform=macOS,variant=Mac Catalyst' \
-        -derivedDataPath .build/DerivedData/unit-mac \
+        -derivedDataPath "$(pwd)/.build/DerivedData/unit-mac" \
         -configuration Debug \
         -enableCodeCoverage YES \
         CODE_SIGN_IDENTITY="" \
