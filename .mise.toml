@@ -123,8 +123,8 @@ depends = [
 ]
 
 [tasks.ci]
-description = 'Run GitHub Actions locally using act'
-run = 'act -j prek' # Run the prek job as a smoke test
+description = 'Run GitHub Actions linting locally using act'
+run = 'act -j prek --container-architecture linux/amd64'
 
 [tools]
 act = "latest"
