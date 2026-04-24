@@ -8,13 +8,17 @@ jobs:
   ui-ios:
     name: UI Tests (iOS Simulator)
     runs-on: macos-15
-    env:
-      DEVELOPER_DIR: /Applications/Xcode_16.3.app/Contents/Developer
     steps:
       - uses: actions/checkout@v6
       - uses: jdx/mise-action@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Select Xcode 16.3 (if available)
+        run: |
+          if [ -d /Applications/Xcode_16.3.app ]; then
+            echo "DEVELOPER_DIR=/Applications/Xcode_16.3.app/Contents/Developer" >> "$GITHUB_ENV"
+          fi
 
       - name: Install iOS 18.4 Simulator runtime
         run: xcodebuild -downloadPlatform iOS
@@ -49,13 +53,17 @@ jobs:
   ui-mac:
     name: UI Tests (Mac)
     runs-on: macos-15
-    env:
-      DEVELOPER_DIR: /Applications/Xcode_16.3.app/Contents/Developer
     steps:
       - uses: actions/checkout@v6
       - uses: jdx/mise-action@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Select Xcode 16.3 (if available)
+        run: |
+          if [ -d /Applications/Xcode_16.3.app ]; then
+            echo "DEVELOPER_DIR=/Applications/Xcode_16.3.app/Contents/Developer" >> "$GITHUB_ENV"
+          fi
 
       - name: Generate project.yml from template
         run: |
@@ -87,13 +95,17 @@ jobs:
   unit-contract-ios:
     name: Unit & Contract Tests (iOS Simulator)
     runs-on: macos-15
-    env:
-      DEVELOPER_DIR: /Applications/Xcode_16.3.app/Contents/Developer
     steps:
       - uses: actions/checkout@v6
       - uses: jdx/mise-action@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Select Xcode 16.3 (if available)
+        run: |
+          if [ -d /Applications/Xcode_16.3.app ]; then
+            echo "DEVELOPER_DIR=/Applications/Xcode_16.3.app/Contents/Developer" >> "$GITHUB_ENV"
+          fi
 
       - name: Install iOS 18.4 Simulator runtime
         run: xcodebuild -downloadPlatform iOS
@@ -116,13 +128,17 @@ jobs:
   unit-contract-mac:
     name: Unit & Contract Tests (Mac)
     runs-on: macos-15
-    env:
-      DEVELOPER_DIR: /Applications/Xcode_16.3.app/Contents/Developer
     steps:
       - uses: actions/checkout@v6
       - uses: jdx/mise-action@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Select Xcode 16.3 (if available)
+        run: |
+          if [ -d /Applications/Xcode_16.3.app ]; then
+            echo "DEVELOPER_DIR=/Applications/Xcode_16.3.app/Contents/Developer" >> "$GITHUB_ENV"
+          fi
 
       - name: Generate project.yml from template
         run: |
