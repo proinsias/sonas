@@ -122,7 +122,12 @@ depends = [
     "tests-unit",
 ]
 
+[tasks.ci]
+description = 'Run GitHub Actions locally using act'
+run = 'act -j prek' # Run the prek job as a smoke test
+
 [tools]
+act = "latest"
 actionlint = "latest"
 editorconfig-checker = "latest"
 prek = "latest"
