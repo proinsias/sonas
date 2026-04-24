@@ -118,7 +118,6 @@ depends = [
 [tools]
 actionlint = "latest"
 editorconfig-checker = "latest"
-lychee = "latest"
 prek = "latest"
 prettier = "latest"
 ripsecrets = "latest"
