@@ -9,23 +9,32 @@ gpg_verify = true
 status.missing_tools = "always"
 status.show_env = true
 
+[tasks.ci-clean]
+description = 'Wipe local DerivedData so the next ci-* run starts fresh like CI'
+run = 'rm -rf .build/DerivedData'
+
 [tasks.ci-prek]
+depends = ["ci-clean"]
 description = 'Run GitHub Actions prek linting locally using act'
 run = 'act --job prek --platform macos-15=-self-hosted'
 
 [tasks.ci-ui-ios]
+depends = ["ci-clean"]
 description = 'Run GitHub Actions ui-ios tests locally using act'
 run = 'act --job ui-ios --platform macos-15=-self-hosted'
 
 [tasks.ci-ui-mac]
+depends = ["ci-clean"]
 description = 'Run GitHub Actions ui-mac tests locally using act'
 run = 'act --job ui-mac --platform macos-15=-self-hosted'
 
 [tasks.ci-unit-contract-ios]
+depends = ["ci-clean"]
 description = 'Run GitHub Actions unit-contract-ios tests locally using act'
 run = 'act --job unit-contract-ios --platform macos-15=-self-hosted'
 
 [tasks.ci-unit-contract-mac]
+depends = ["ci-clean"]
 description = 'Run GitHub Actions unit-contract-mac tests locally using act'
 run = 'act --job unit-contract-mac --platform macos-15=-self-hosted'
 
