@@ -25,6 +25,7 @@ run = '''
     xcodebuild test \
         -scheme SonasUITests \
         -destination "platform=iOS Simulator,id=$SIM" \
+        -derivedDataPath .build/DerivedData/ui-ios \
         -enableCodeCoverage YES \
         -configuration Debug \
         CODE_SIGN_IDENTITY="" \
@@ -39,18 +40,20 @@ run = '''
     xcodebuild build-for-testing \
         -scheme SonasUITests \
         -destination 'platform=macOS,variant=Mac Catalyst' \
+        -derivedDataPath .build/DerivedData/ui-mac \
         -enableCodeCoverage YES \
         -configuration Debug \
         CODE_SIGN_IDENTITY="" \
         CODE_SIGNING_REQUIRED=NO \
         CODE_SIGNING_ALLOWED=NO
 
-    RUNNER=$(find ~/Library/Developer/Xcode/DerivedData -name "SonasUITests-Runner.app" -type d | head -1)
+    RUNNER=$(find .build/DerivedData/ui-mac -name "SonasUITests-Runner.app" -type d | head -1)
     codesign --force --sign - "$RUNNER"
 
     xcodebuild test-without-building \
         -scheme SonasUITests \
         -destination 'platform=macOS,variant=Mac Catalyst' \
+        -derivedDataPath .build/DerivedData/ui-mac \
         -enableCodeCoverage YES \
         -configuration Debug \
         CODE_SIGN_IDENTITY="" \
@@ -59,6 +62,7 @@ run = '''
 '''
 
 [tasks.tests-ui]
+description = 'Run all UI tests'
 depends = ["tests-ui-*"]
 
 [tasks.tests-unit-ios]
@@ -73,6 +77,7 @@ run = '''
     xcodebuild test \
         -scheme SonasTests \
         -destination "platform=iOS Simulator,id=$SIM" \
+        -derivedDataPath .build/DerivedData/unit-ios \
         -configuration Debug \
         -enableCodeCoverage YES \
         CODE_SIGN_IDENTITY="" \
@@ -84,9 +89,13 @@ run = '''
 [tasks.tests-unit-mac]
 description = 'Run unit tests on Mac'
 run = '''
+    # SpotifyiOS.xcframework has no Mac Catalyst slice; mark it iOS-only in the build phase.
+    sed -i '' 's/\(SpotifyiOS in Frameworks.*isa = PBXBuildFile;\)/\1 platformFilter = ios;/' \
+        Sonas.xcodeproj/project.pbxproj
     xcodebuild test \
         -scheme SonasTests \
         -destination 'platform=macOS,variant=Mac Catalyst' \
+        -derivedDataPath .build/DerivedData/unit-mac \
         -configuration Debug \
         -enableCodeCoverage YES \
         CODE_SIGN_IDENTITY="" \
@@ -96,9 +105,11 @@ run = '''
 '''
 
 [tasks.tests-unit]
+description = 'Run all unit tests'
 depends = ["tests-unit-*"]
 
 [tasks.tests]
+description = 'Run all tests'
 depends = [
     "tests-ui",
     "tests-unit",
