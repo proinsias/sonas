@@ -144,7 +144,7 @@ final class SpotifyJamService: NSObject, JamServiceProtocol {
             jamContinuation = continuation
             appRemote?.playerAPI?.startGroupSession { [weak self] result, error in
                 guard let self else { return }
-                Task { @MainActor in
+                Swift.Task { @MainActor in
                     if let error {
                         self.jamContinuation?.resume(throwing: JamServiceError.sessionStartFailed(error))
                         self.jamContinuation = nil
@@ -202,7 +202,7 @@ final class SpotifyJamService: NSObject, JamServiceProtocol {
 
 extension SpotifyJamService: SPTSessionManagerDelegate {
     nonisolated func sessionManager(_: SPTSessionManager, didInitiate session: SPTSession) {
-        Task { @MainActor in
+        Swift.Task { @MainActor in
             self.accessToken = session.accessToken
             self.isSpotifyConnected = true
             self.authContinuation?.resume()
@@ -211,15 +211,15 @@ extension SpotifyJamService: SPTSessionManagerDelegate {
         }
     }
 
-    nonisolated func sessionManager(_: SPTSessionManager, didFailWith error: Error) {
-        Task { @MainActor in
+    nonisolated func sessionManager(manager _: SPTSessionManager, didFailWith error: Error) {
+        Swift.Task { @MainActor in
             self.authContinuation?.resume(throwing: JamServiceError.spotifyAuthFailed(error))
             self.authContinuation = nil
         }
     }
 
     nonisolated func sessionManager(_: SPTSessionManager, didRenew session: SPTSession) {
-        Task { @MainActor in
+        Swift.Task { @MainActor in
             self.accessToken = session.accessToken
             SonasLogger.jam.info("SpotifyJamService: session renewed")
         }
@@ -230,7 +230,7 @@ extension SpotifyJamService: SPTSessionManagerDelegate {
 
 extension SpotifyJamService: SPTAppRemoteDelegate {
     nonisolated func appRemoteDidEstablishConnection(_: SPTAppRemote) {
-        Task { @MainActor in
+        Swift.Task { @MainActor in
             self.connectContinuation?.resume()
             self.connectContinuation = nil
             SonasLogger.jam.info("SpotifyJamService: app remote connected")
@@ -241,7 +241,7 @@ extension SpotifyJamService: SPTAppRemoteDelegate {
         _: SPTAppRemote,
         didFailConnectionAttemptWithError error: Error?
     ) {
-        Task { @MainActor in
+        Swift.Task { @MainActor in
             let err = error ?? NSError(
                 domain: "Spotify", code: -1,
                 userInfo: [NSLocalizedDescriptionKey: "App remote connection failed"]
@@ -252,7 +252,7 @@ extension SpotifyJamService: SPTAppRemoteDelegate {
     }
 
     nonisolated func appRemote(_: SPTAppRemote, didDisconnectWithError error: Error?) {
-        Task { @MainActor in
+        Swift.Task { @MainActor in
             if let error {
                 SonasLogger.error(SonasLogger.jam, "SpotifyJamService: app remote disconnected", error: error)
             }

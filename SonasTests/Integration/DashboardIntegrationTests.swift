@@ -67,6 +67,10 @@ struct DashboardIntegrationTests {
                 throw URLError(.notConnectedToInternet)
             }
 
+            func fetchProjects() async throws -> [TaskProject] {
+                []
+            }
+
             func completeTask(id _: String) async throws {}
             func connectTodoist(apiToken _: String) async throws {}
             func disconnectTodoist() async {}
@@ -88,6 +92,10 @@ struct DashboardIntegrationTests {
             var isConnected: Bool = true
             func fetchTasks() async throws -> [Task] {
                 throw URLError(.notConnectedToInternet)
+            }
+
+            func fetchProjects() async throws -> [TaskProject] {
+                []
             }
 
             func completeTask(id _: String) async throws {}

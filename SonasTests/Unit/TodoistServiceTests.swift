@@ -23,6 +23,10 @@ struct TodoistServiceTests {
                 throw TaskServiceError.networkError(NSError(domain: "test", code: -1))
             }
 
+            func fetchProjects() async throws -> [TaskProject] {
+                []
+            }
+
             func connectTodoist(apiToken _: String) async throws {}
             func disconnectTodoist() async {}
         }
