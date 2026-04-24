@@ -39,6 +39,10 @@ struct SettingsView: View {
             }
             .task {
                 selectedProjectIDs = Set(config.selectedTodoistProjectIDs)
+                if tasksVM.isConnected, tasksVM.availableProjects.isEmpty,
+                   !tasksVM.isLoadingProjects, !tasksVM.projectsLoadFailed {
+                    await tasksVM.reloadProjects()
+                }
             }
             .onChange(of: tasksVM.availableProjects) { _, _ in
                 selectedProjectIDs = Set(config.selectedTodoistProjectIDs)
