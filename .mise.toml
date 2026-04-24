@@ -9,6 +9,26 @@ gpg_verify = true
 status.missing_tools = "always"
 status.show_env = true
 
+[tasks.ci-prek]
+description = 'Run GitHub Actions prek linting locally using act'
+run = 'act --job prek --platform macos-15=-self-hosted'
+
+[tasks.ci-ui-ios]
+description = 'Run GitHub Actions ui-ios tests locally using act'
+run = 'act --job ui-ios --platform macos-15=-self-hosted'
+
+[tasks.ci-ui-mac]
+description = 'Run GitHub Actions ui-mac tests locally using act'
+run = 'act --job ui-mac --platform macos-15=-self-hosted'
+
+[tasks.ci-unit-contract-ios]
+description = 'Run GitHub Actions unit-contract-ios tests locally using act'
+run = 'act --job unit-contract-ios --platform macos-15=-self-hosted'
+
+[tasks.ci-unit-contract-mac]
+description = 'Run GitHub Actions unit-contract-mac tests locally using act'
+run = 'act --job unit-contract-mac --platform macos-15=-self-hosted'
+
 [tasks.lint]
 description = 'Run all linters'
 run = 'prek run --all-files'
@@ -121,10 +141,6 @@ depends = [
     "tests-ui",
     "tests-unit",
 ]
-
-[tasks.ci]
-description = 'Run GitHub Actions linting locally using act'
-run = 'act -j prek --container-architecture linux/amd64'
 
 [tools]
 act = "latest"
