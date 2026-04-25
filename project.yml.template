@@ -107,7 +107,7 @@ targets:
     dependencies:
       - package: GoogleSignIn
       - package: SpotifyiOS
-        platforms: [iOS]
+        platformFilter: ios
     scheme:
       environmentVariables:
         USE_MOCK_LOCATION: '0'

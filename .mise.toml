@@ -67,9 +67,6 @@ run = '''
 description = 'Run UI tests on Mac'
 run = '''
     set -euo pipefail
-    # SpotifyiOS.xcframework has no Mac Catalyst slice; mark it iOS-only in the build phase.
-    sed -i '' 's/\(SpotifyiOS in Frameworks.*isa = PBXBuildFile;\)/\1 platformFilter = ios;/' \
-        Sonas.xcodeproj/project.pbxproj
     mkdir -p .build/DerivedData/ui-mac
     xcodebuild build-for-testing \
         -scheme SonasUITests \
@@ -124,9 +121,7 @@ run = '''
 [tasks.tests-unit-mac]
 description = 'Run unit tests on Mac'
 run = '''
-    # SpotifyiOS.xcframework has no Mac Catalyst slice; mark it iOS-only in the build phase.
-    sed -i '' 's/\(SpotifyiOS in Frameworks.*isa = PBXBuildFile;\)/\1 platformFilter = ios;/' \
-        Sonas.xcodeproj/project.pbxproj
+    set -euo pipefail
     mkdir -p .build/DerivedData/unit-mac
     xcodebuild test \
         -scheme SonasTests \
