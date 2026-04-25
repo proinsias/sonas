@@ -1,5 +1,5 @@
 import BackgroundTasks
-import GoogleSignIn
+@preconcurrency import GoogleSignIn
 import SwiftData
 import SwiftUI
 
