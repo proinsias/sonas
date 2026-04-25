@@ -131,8 +131,8 @@ data loss.
 
 ### Implementation for User Story 4
 
-- [ ] T019 [US4] Set `UIWindowScene.SizeRestrictions.minimumSize` in a `UIWindowSceneDelegate` (new file or modify
-      existing)
+- [ ] T019 [US4] Set `UIWindowScene.SizeRestrictions.minimumSize` in `Sonas/App/SceneDelegates/iPadSceneDelegate.swift`
+      (new file)
 
 **Checkpoint**: All user stories should now be independently functional
 

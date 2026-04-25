@@ -84,8 +84,8 @@ elements overflow their containers. Then open a second Sonas window and confirm 
 
 1. **Given** Sonas is placed in Slide Over or a 1/3 Split View column, **When** the app renders at compact width,
    **Then** it switches to a single-column layout and all content remains accessible.
-2. **Given** Sonas is in a 1/2 Split View column, **When** the app renders, **Then** it shows a two-panel layout without
-   overflow or clipping.
+2. **Given** Sonas is in a 1/2 Split View column, **When** the app renders, **Then** it shows a two-column layout
+   (sidebar + content) without overflow or clipping.
 3. **Given** multi-window is available on the device, **When** the user long-presses the app icon or uses the
    multitasking menu, **Then** a new independent Sonas window opens with its own state.
 4. **Given** two Sonas windows are open, **When** data refreshes in one window, **Then** both windows reflect the
@@ -101,14 +101,14 @@ with other windows, and switch between it and other apps without Sonas losing it
 **Why this priority**: Stage Manager is the primary desktop-like multitasking mode on modern iPads. Compatibility is
 expected by iPadOS 16+ users and failure here causes visible crashes or broken layouts.
 
-**Independent Test**: Enable Stage Manager on an iPadOS 16+ device. Open Sonas, resize its window to the minimum and
-maximum supported dimensions, then bring it back to foreground after switching to another app. Confirm no crashes and no
-data loss.
+**Independent Test**: Enable Stage Manager on an iPadOS 16+ device. Open Sonas, resize its window to the minimum
+supported dimensions (320pt x 400pt width) and maximum (unbounded), then bring it back to foreground after switching to
+another app. Confirm no crashes and no data loss.
 
 **Acceptance Scenarios**:
 
-1. **Given** Stage Manager is active, **When** the Sonas window is resized to the minimum supported width, **Then** the
-   layout adapts without clipping, overflow, or crash.
+1. **Given** Stage Manager is active, **When** the Sonas window is resized to the minimum supported width (320pt x
+   400pt), **Then** the layout adapts without clipping, overflow, or crash.
 2. **Given** Stage Manager is active, **When** the user switches away and returns to Sonas, **Then** the previously
    visible content is restored without requiring a full reload.
 3. **Given** Stage Manager is active, **When** Sonas runs alongside three other apps simultaneously, **Then** Sonas
@@ -160,8 +160,8 @@ rather than replacing the sidebar.
   panel, calendar panel, and weather panel simultaneously in landscape without scrolling.
 - **FR-002**: The dashboard layout MUST respond to size class changes in real time — switching between multi-column and
   single-column based on available horizontal space.
-- **FR-003**: The app MUST register and respond to keyboard shortcuts for navigating between all primary sections,
-  refreshing data, and triggering the most common per-section actions.
+- **FR-003**: The app MUST register and respond to keyboard shortcuts for navigating between all primary sections (⌘+1
+  through ⌘+7), opening Settings (⌘+,), and refreshing all panels (⌘+R).
 - **FR-004**: The app MUST display a Command key shortcut overlay when the user holds the Command key on a connected
   hardware keyboard.
 - **FR-005**: Interactive elements MUST display hover states when the user interacts with a connected pointer device

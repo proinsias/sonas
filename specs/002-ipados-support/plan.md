@@ -13,7 +13,7 @@ and Stage Manager compatibility via scene size restrictions. The iPhone layout a
 
 ## Technical Context
 
-- **Language/Version**: Swift 5.10 / SwiftUI, iOS 18+ (minimum deployment target: iOS 17)
+- **Language/Version**: Swift 5.10 / SwiftUI, iPadOS 17+ (minimum deployment target: iOS 17)
 - **Tooling**: `mise` for tool version management (XcodeGen, SwiftLint); GitHub Actions for CI/CD
 - **Primary Dependencies**: SwiftUI (NavigationSplitView, .commands, .hoverEffect, .contextMenu), UIKit
   (UIWindowScene.SizeRestrictions for Stage Manager)
