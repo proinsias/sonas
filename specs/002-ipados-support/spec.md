@@ -3,6 +3,16 @@
 **Feature Branch**: `002-ipados-support` **Created**: 2026-04-25 **Status**: Draft **Input**: User description: "Sonas
 should fully support iPadOS capabilities, rather than just being an iOS application viewed on an iPad."
 
+## Clarifications
+
+### Session 2026-04-25
+
+- Q: When Sonas is on iPad at compact horizontal size class (Slide Over or ⅓ Split View), should it display a sidebar or
+  a tab bar? → A: Tab bar at compact width, sidebar only at Regular horizontal size class — aligns with Apple HIG.
+  FR-011, FR-012, and FR-014 are scoped to Regular width only.
+- Q: Should this feature include the ability for users to reorder or show/hide dashboard panels? → A: Out of scope;
+  panel layout is fixed. Panel customisation is a separate future feature.
+
 ## User Scenarios & Testing _(mandatory)_
 
 ### User Story 1 — Expanded Multi-Panel Dashboard (Priority: P1)
@@ -124,9 +134,12 @@ rather than replacing the sidebar.
    primary sections and is persistently visible.
 2. **Given** the sidebar is visible, **When** the user selects a section, **Then** the detail content loads in the
    trailing panel without dismissing the sidebar.
-3. **Given** the app is on an iPad in portrait, **When** the navigation renders, **Then** the sidebar is accessible via
-   a swipe or toolbar button and overlays rather than disappearing entirely.
-4. **Given** the app is switched to an iPhone (e.g., on a universal build), **When** the navigation renders, **Then**
+3. **Given** the app is on an iPad at Regular horizontal size class in portrait, **When** the navigation renders,
+   **Then** the sidebar is accessible via a swipe or toolbar button and overlays rather than disappearing entirely.
+4. **Given** the app is on an iPad at Compact horizontal size class (Slide Over or ⅓ Split View), **When** the
+   navigation renders, **Then** the app displays a tab bar — identical to the iPhone navigation — without any visual
+   breakage.
+5. **Given** the app is switched to an iPhone (e.g., on a universal build), **When** the navigation renders, **Then**
    the app falls back to tab bar navigation without any visual breakage.
 
 ---
@@ -163,14 +176,15 @@ rather than replacing the sidebar.
   cycle.
 - **FR-010**: The app MUST be compatible with Stage Manager on iPadOS 16+ — resizeable to minimum and maximum window
   dimensions without crashing or losing visible state.
-- **FR-011**: On iPad in landscape orientation, the primary navigation MUST be presented as a persistent sidebar rather
-  than a bottom tab bar.
-- **FR-012**: On iPad in portrait orientation, the primary sidebar MUST be accessible via a toolbar button or swipe
-  gesture and MUST overlay rather than disappear.
+- **FR-011**: On iPad at Regular horizontal size class (full-screen and large Split View), the primary navigation MUST
+  be presented as a persistent sidebar rather than a bottom tab bar.
+- **FR-012**: On iPad at Regular horizontal size class in portrait orientation, the primary sidebar MUST be accessible
+  via a toolbar button or swipe gesture and MUST overlay rather than disappear.
 - **FR-013**: The iPhone layout and navigation (tab bar, single-column) MUST remain fully intact and unaffected by
   iPadOS-specific changes.
-- **FR-014**: The app MUST NOT display iPhone-only layout patterns (bottom tab bar as primary navigation, full-screen
-  push navigation) when running natively on iPad.
+- **FR-014**: The app MUST NOT display a bottom tab bar as the primary navigation when running natively on iPad at
+  Regular horizontal size class; tab bar is permitted only when Compact horizontal size class is active (e.g., Slide
+  Over, ⅓ Split View).
 
 ### Key Entities
 
@@ -207,7 +221,8 @@ rather than replacing the sidebar.
   of scope for Stage Manager-specific behaviour.
 - Apple Pencil interaction (drawing, annotation) is out of scope for this feature.
 - Custom drag-and-drop between Sonas and other apps (e.g., dragging a calendar event out of Sonas) is out of scope for
-  v1 of this feature; drag-and-drop within the app is in scope only if it improves layout customisation.
+  this feature. Panel reordering and show/hide customisation are also out of scope; panel layout is fixed. Panel
+  personalisation is a separate future feature.
 - The sidebar navigation pattern applies when horizontal size class is Regular (iPad full-screen and large Split View);
   Compact size class continues to use the existing iPhone tab bar.
 - All existing Sonas data sources (location, calendar, weather, photos, Todoist, Spotify) remain unchanged; this feature
