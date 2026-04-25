@@ -22,5 +22,12 @@ Swift 5.10 / SwiftUI, iOS 18+ (minimum deployment target: iOS 17 for SwiftData):
   PhotoKit, CoreLocation, CloudKit, GoogleSignIn-iOS SDK, Google Calendar REST API v3, Todoist REST API v2, Spotify iOS
   SDK (SpotifyiOS), CoreImage (QR), SwiftData, BackgroundTasks, UserNotifications
 
+<!-- SPECKIT START -->
+
+For additional context about technologies to be used, project structure, shell commands, and other important
+information, read the current plan at `specs/002-ipados-support/plan.md`.
+
+<!-- SPECKIT END -->
+
 <!-- MANUAL ADDITIONS START -->
 <!-- MANUAL ADDITIONS END -->
