@@ -1,4 +1,4 @@
-import Photos
+@preconcurrency import Photos
 import SwiftUI
 
 // MARK: - AlbumPickerView

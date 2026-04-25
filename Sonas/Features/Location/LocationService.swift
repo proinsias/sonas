@@ -1,4 +1,4 @@
-import CloudKit
+@preconcurrency import CloudKit
 @preconcurrency import CoreLocation
 import Foundation
 
