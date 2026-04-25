@@ -1,4 +1,4 @@
-import BackgroundTasks
+@preconcurrency import BackgroundTasks
 @preconcurrency import GoogleSignIn
 import SwiftData
 import SwiftUI
