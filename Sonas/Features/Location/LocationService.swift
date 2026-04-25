@@ -1,5 +1,5 @@
 import CloudKit
-import CoreLocation
+@preconcurrency import CoreLocation
 import Foundation
 
 // MARK: - LocationServiceProtocol (T026)
@@ -191,11 +191,11 @@ final class LocationService: NSObject, LocationServiceProtocol {
 // MARK: - CLLocationManagerDelegate
 
 extension LocationService: CLLocationManagerDelegate {
-    nonisolated func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
-        Task { @MainActor in
-            if manager.authorizationStatus == .authorizedWhenInUse ||
-                manager.authorizationStatus == .authorizedAlways {
-                manager.startUpdatingLocation()
+    nonisolated func locationManagerDidChangeAuthorization(_: CLLocationManager) {
+        Task { @MainActor [self] in
+            if locationManager.authorizationStatus == .authorizedWhenInUse ||
+                locationManager.authorizationStatus == .authorizedAlways {
+                locationManager.startUpdatingLocation()
             }
         }
     }
