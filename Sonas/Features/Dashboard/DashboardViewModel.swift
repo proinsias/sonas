@@ -48,8 +48,8 @@ final class DashboardViewModel {
     // MARK: - Dashboard-level refresh
 
     func refreshAll() async {
-        async let locationRefresh: () = eventsVM.refresh()
-        async let calendarRefresh: () = locationVM.refresh()
+        async let locationRefresh: () = locationVM.refresh()
+        async let calendarRefresh: () = eventsVM.refresh()
         _ = await (locationRefresh, calendarRefresh)
     }
 }

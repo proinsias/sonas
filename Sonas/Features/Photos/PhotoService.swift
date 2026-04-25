@@ -1,5 +1,5 @@
 import Foundation
-import Photos
+@preconcurrency import Photos
 
 // MARK: - PhotoServiceProtocol (T061)
 
@@ -38,7 +38,7 @@ final class PhotoService: NSObject, PhotoServiceProtocol, PHPhotoLibraryChangeOb
         AppConfiguration.shared.selectedAlbumName
     }
 
-    private var changeObservationTask: Swift.Task<Void, Never>?
+    private var changeObservationTask: Task<Void, Never>?
     private var onAlbumChanged: (() -> Void)?
 
     override init() {
@@ -133,7 +133,7 @@ final class PhotoService: NSObject, PhotoServiceProtocol, PHPhotoLibraryChangeOb
     // MARK: - PHPhotoLibraryChangeObserver
 
     nonisolated func photoLibraryDidChange(_: PHChange) {
-        Swift.Task { @MainActor in
+        Task { @MainActor in
             SonasLogger.photos.info("PhotoService: library changed — triggering re-fetch")
             onAlbumChanged?()
         }

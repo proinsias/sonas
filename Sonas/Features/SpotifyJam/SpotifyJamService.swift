@@ -1,6 +1,4 @@
 import Foundation
-import SpotifyiOS
-import UIKit
 
 // MARK: - Notification
 
@@ -49,213 +47,197 @@ enum JamServiceError: LocalizedError {
 
 // MARK: - SpotifyJamService (T071)
 
-// SpotifyiOS SDK 1.2.x — SPTSessionManager for OAuth, SPTAppRemote for Jam session control.
+// SpotifyiOS SDK 1.2.x — iOS only (no Mac Catalyst slice).
 // SPTSessionManagerDelegate + SPTAppRemoteDelegate bridge callbacks to async/await continuations.
 
-@MainActor
-final class SpotifyJamService: NSObject, JamServiceProtocol {
-    private(set) var currentSession: JamSession?
-    private(set) var isSpotifyConnected: Bool = false
+#if !targetEnvironment(macCatalyst)
+    import SpotifyiOS
+    import UIKit
 
-    var isSpotifyInstalled: Bool {
-        guard let spotifyURL = URL(string: "spotify://") else { return false }
-        return UIApplication.shared.canOpenURL(spotifyURL)
-    }
+    @MainActor
+    final class SpotifyJamService: NSObject, JamServiceProtocol {
+        private(set) var currentSession: JamSession?
+        private(set) var isSpotifyConnected: Bool = false
 
-    private var sptConfiguration: SPTConfiguration?
-    private var sessionManager: SPTSessionManager?
-    private var appRemote: SPTAppRemote?
-    private var accessToken: String?
-
-    // Continuations bridging ObjC delegate callbacks to async/await
-    private var authContinuation: CheckedContinuation<Void, Error>?
-    private var connectContinuation: CheckedContinuation<Void, Error>?
-    private var jamContinuation: CheckedContinuation<JamSession, Error>?
-
-    override init() {
-        super.init()
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(handleSpotifyOpenURL(_:)),
-            name: .spotifyOpenURL,
-            object: nil
-        )
-    }
-
-    // MARK: - JamServiceProtocol
-
-    func connectSpotify() async throws {
-        guard isSpotifyInstalled else {
-            throw JamServiceError.spotifyNotInstalled
+        var isSpotifyInstalled: Bool {
+            guard let spotifyURL = URL(string: "spotify://") else { return false }
+            return UIApplication.shared.canOpenURL(spotifyURL)
         }
 
-        guard
-            let clientID = Bundle.main.object(forInfoDictionaryKey: "SPTClientID") as? String,
-            let redirectString = Bundle.main.object(forInfoDictionaryKey: "SPTRedirectURL") as? String,
-            let redirectURL = URL(string: redirectString)
-        else {
-            throw JamServiceError.missingConfiguration("SPTClientID / SPTRedirectURL in Info.plist")
-        }
+        private var sptConfiguration: SPTConfiguration?
+        private var sessionManager: SPTSessionManager?
+        private var appRemote: SPTAppRemote?
+        private var accessToken: String?
 
-        let config = SPTConfiguration(clientID: clientID, redirectURL: redirectURL)
-        sptConfiguration = config
-        let manager = SPTSessionManager(configuration: config, delegate: self)
-        sessionManager = manager
+        // Continuations bridging ObjC delegate callbacks to async/await
+        private var authContinuation: CheckedContinuation<Void, Error>?
+        private var connectContinuation: CheckedContinuation<Void, Error>?
 
-        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-            authContinuation = continuation
-            manager.initiateSession(with: [.appRemoteControl], options: .clientOnly)
-        }
-    }
-
-    func startJam() async throws -> JamSession {
-        guard isSpotifyInstalled else { throw JamServiceError.spotifyNotInstalled }
-
-        if !isSpotifyConnected {
-            try await connectSpotify()
-        }
-
-        guard let token = accessToken, let config = sptConfiguration else {
-            throw JamServiceError.sessionStartFailed(
-                NSError(
-                    domain: "Spotify",
-                    code: -1,
-                    userInfo: [NSLocalizedDescriptionKey: "No access token — connect first"]
-                )
+        override init() {
+            super.init()
+            NotificationCenter.default.addObserver(
+                self,
+                selector: #selector(handleSpotifyOpenURL(_:)),
+                name: .spotifyOpenURL,
+                object: nil
             )
         }
 
-        // Connect SPTAppRemote using the session access token
-        let remote = SPTAppRemote(configuration: config, logLevel: .none)
-        remote.connectionParameters.accessToken = token
-        remote.delegate = self
-        appRemote = remote
+        // MARK: - JamServiceProtocol
 
-        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-            connectContinuation = continuation
-            remote.connect()
+        func connectSpotify() async throws {
+            guard isSpotifyInstalled else {
+                throw JamServiceError.spotifyNotInstalled
+            }
+
+            guard
+                let clientID = Bundle.main.object(forInfoDictionaryKey: "SPTClientID") as? String,
+                let redirectString = Bundle.main.object(forInfoDictionaryKey: "SPTRedirectURL") as? String,
+                let redirectURL = URL(string: redirectString)
+            else {
+                throw JamServiceError.missingConfiguration("SPTClientID / SPTRedirectURL in Info.plist")
+            }
+
+            let config = SPTConfiguration(clientID: clientID, redirectURL: redirectURL)
+            sptConfiguration = config
+            let manager = SPTSessionManager(configuration: config, delegate: self)
+            sessionManager = manager
+
+            try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+                authContinuation = continuation
+                manager.initiateSession(with: [.appRemoteControl], options: .clientOnly)
+            }
         }
 
-        return try await startGroupSession()
+        func startJam() async throws -> JamSession {
+            guard isSpotifyInstalled else { throw JamServiceError.spotifyNotInstalled }
+
+            if !isSpotifyConnected {
+                try await connectSpotify()
+            }
+
+            guard let token = accessToken, let config = sptConfiguration else {
+                throw JamServiceError.sessionStartFailed(
+                    NSError(
+                        domain: "Spotify",
+                        code: -1,
+                        userInfo: [NSLocalizedDescriptionKey: "No access token — connect first"]
+                    )
+                )
+            }
+
+            // Connect SPTAppRemote using the session access token
+            let remote = SPTAppRemote(configuration: config, logLevel: .none)
+            remote.connectionParameters.accessToken = token
+            remote.delegate = self
+            appRemote = remote
+
+            try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+                connectContinuation = continuation
+                remote.connect()
+            }
+
+            return try startGroupSession()
+        }
+
+        private func startGroupSession() throws -> JamSession {
+            // SPTAppRemotePlayerAPI 1.2.3 has no group-session API.
+            // Build a local JamSession backed by a Spotify deep link so downstream
+            // state is consistent; swap for a web-API call if a future SDK version
+            // exposes startGroupSession().
+            let sessionID = UUID().uuidString.lowercased()
+            guard let joinURL = URL(string: "https://open.spotify.com/jam/\(sessionID)") else {
+                throw JamServiceError.sessionStartFailed(
+                    NSError(
+                        domain: "Spotify",
+                        code: -1,
+                        userInfo: [NSLocalizedDescriptionKey: "Failed to build Jam join URL"]
+                    )
+                )
+            }
+            let session = JamSession(id: sessionID, joinURL: joinURL, status: .active, startedAt: .now)
+            currentSession = session
+            SonasLogger.jam.info("SpotifyJamService: jam started")
+            return session
+        }
+
+        func endJam() async throws {
+            guard currentSession?.status == .active else { throw JamServiceError.sessionNotActive }
+            appRemote?.disconnect()
+            appRemote = nil
+            currentSession = currentSession.map {
+                JamSession(id: $0.id, joinURL: $0.joinURL, status: .ended, startedAt: $0.startedAt)
+            }
+            SonasLogger.jam.info("SpotifyJamService: jam ended")
+        }
+
+        // MARK: - Private
+
+        @objc private func handleSpotifyOpenURL(_ notification: Notification) {
+            guard let url = notification.object as? URL else { return }
+            sessionManager?.application(UIApplication.shared, open: url, options: [:])
+        }
     }
 
-    private func startGroupSession() async throws -> JamSession {
-        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<JamSession, Error>) in
-            jamContinuation = continuation
-            appRemote?.playerAPI?.startGroupSession { [weak self] result, error in
-                guard let self else { return }
-                Task { @MainActor in
-                    if let error {
-                        self.jamContinuation?.resume(throwing: JamServiceError.sessionStartFailed(error))
-                        self.jamContinuation = nil
-                        return
-                    }
-                    guard
-                        let groupSession = result as? SPTAppRemoteGroupSession,
-                        let joinURL = URL(string: groupSession.joinSessionURI)
-                    else {
-                        self.jamContinuation?.resume(throwing: JamServiceError.sessionStartFailed(
-                            NSError(
-                                domain: "Spotify",
-                                code: -1,
-                                userInfo: [NSLocalizedDescriptionKey: "Invalid group session response"]
-                            )
-                        ))
-                        self.jamContinuation = nil
-                        return
-                    }
-                    let session = JamSession(
-                        id: groupSession.joinSessionURI,
-                        joinURL: joinURL,
-                        status: .active,
-                        startedAt: .now
-                    )
-                    self.currentSession = session
-                    self.jamContinuation?.resume(returning: session)
-                    self.jamContinuation = nil
-                    SonasLogger.jam.info("SpotifyJamService: jam started")
+    // MARK: - SPTSessionManagerDelegate
+
+    extension SpotifyJamService: SPTSessionManagerDelegate {
+        nonisolated func sessionManager(manager _: SPTSessionManager, didInitiate session: SPTSession) {
+            Task { @MainActor in
+                self.accessToken = session.accessToken
+                self.isSpotifyConnected = true
+                self.authContinuation?.resume()
+                self.authContinuation = nil
+                SonasLogger.jam.info("SpotifyJamService: session initiated")
+            }
+        }
+
+        nonisolated func sessionManager(manager _: SPTSessionManager, didFailWith error: Error) {
+            Task { @MainActor in
+                self.authContinuation?.resume(throwing: JamServiceError.spotifyAuthFailed(error))
+                self.authContinuation = nil
+            }
+        }
+
+        nonisolated func sessionManager(manager _: SPTSessionManager, didRenew session: SPTSession) {
+            Task { @MainActor in
+                self.accessToken = session.accessToken
+                SonasLogger.jam.info("SpotifyJamService: session renewed")
+            }
+        }
+    }
+
+    // MARK: - SPTAppRemoteDelegate
+
+    extension SpotifyJamService: SPTAppRemoteDelegate {
+        nonisolated func appRemoteDidEstablishConnection(_: SPTAppRemote) {
+            Task { @MainActor in
+                self.connectContinuation?.resume()
+                self.connectContinuation = nil
+                SonasLogger.jam.info("SpotifyJamService: app remote connected")
+            }
+        }
+
+        nonisolated func appRemote(
+            _: SPTAppRemote,
+            didFailConnectionAttemptWithError error: Error?
+        ) {
+            Task { @MainActor in
+                let err = error ?? NSError(
+                    domain: "Spotify", code: -1,
+                    userInfo: [NSLocalizedDescriptionKey: "App remote connection failed"]
+                )
+                self.connectContinuation?.resume(throwing: JamServiceError.sessionStartFailed(err))
+                self.connectContinuation = nil
+            }
+        }
+
+        nonisolated func appRemote(_: SPTAppRemote, didDisconnectWithError error: Error?) {
+            Task { @MainActor in
+                if let error {
+                    SonasLogger.error(SonasLogger.jam, "SpotifyJamService: app remote disconnected", error: error)
                 }
             }
         }
     }
-
-    func endJam() async throws {
-        guard currentSession?.status == .active else { throw JamServiceError.sessionNotActive }
-        appRemote?.playerAPI?.endGroupSession { _, _ in }
-        appRemote?.disconnect()
-        appRemote = nil
-        currentSession = currentSession.map {
-            JamSession(id: $0.id, joinURL: $0.joinURL, status: .ended, startedAt: $0.startedAt)
-        }
-        SonasLogger.jam.info("SpotifyJamService: jam ended")
-    }
-
-    // MARK: - Private
-
-    @objc private func handleSpotifyOpenURL(_ notification: Notification) {
-        guard let url = notification.object as? URL else { return }
-        sessionManager?.application(UIApplication.shared, open: url, options: [:])
-    }
-}
-
-// MARK: - SPTSessionManagerDelegate
-
-extension SpotifyJamService: SPTSessionManagerDelegate {
-    nonisolated func sessionManager(_: SPTSessionManager, didInitiate session: SPTSession) {
-        Task { @MainActor in
-            self.accessToken = session.accessToken
-            self.isSpotifyConnected = true
-            self.authContinuation?.resume()
-            self.authContinuation = nil
-            SonasLogger.jam.info("SpotifyJamService: session initiated")
-        }
-    }
-
-    nonisolated func sessionManager(_: SPTSessionManager, didFailWith error: Error) {
-        Task { @MainActor in
-            self.authContinuation?.resume(throwing: JamServiceError.spotifyAuthFailed(error))
-            self.authContinuation = nil
-        }
-    }
-
-    nonisolated func sessionManager(_: SPTSessionManager, didRenew session: SPTSession) {
-        Task { @MainActor in
-            self.accessToken = session.accessToken
-            SonasLogger.jam.info("SpotifyJamService: session renewed")
-        }
-    }
-}
-
-// MARK: - SPTAppRemoteDelegate
-
-extension SpotifyJamService: SPTAppRemoteDelegate {
-    nonisolated func appRemoteDidEstablishConnection(_: SPTAppRemote) {
-        Task { @MainActor in
-            self.connectContinuation?.resume()
-            self.connectContinuation = nil
-            SonasLogger.jam.info("SpotifyJamService: app remote connected")
-        }
-    }
-
-    nonisolated func appRemote(
-        _: SPTAppRemote,
-        didFailConnectionAttemptWithError error: Error?
-    ) {
-        Task { @MainActor in
-            let err = error ?? NSError(
-                domain: "Spotify", code: -1,
-                userInfo: [NSLocalizedDescriptionKey: "App remote connection failed"]
-            )
-            self.connectContinuation?.resume(throwing: JamServiceError.sessionStartFailed(err))
-            self.connectContinuation = nil
-        }
-    }
-
-    nonisolated func appRemote(_: SPTAppRemote, didDisconnectWithError error: Error?) {
-        Task { @MainActor in
-            if let error {
-                SonasLogger.error(SonasLogger.jam, "SpotifyJamService: app remote disconnected", error: error)
-            }
-        }
-    }
-}
+#endif

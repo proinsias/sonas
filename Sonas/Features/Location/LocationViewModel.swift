@@ -15,7 +15,7 @@ final class LocationViewModel {
     // MARK: Dependencies
 
     private let service: any LocationServiceProtocol
-    private var streamTask: Swift.Task<Void, Never>?
+    private var streamTask: Task<Void, Never>?
 
     init(service: any LocationServiceProtocol) {
         self.service = service
@@ -32,10 +32,10 @@ final class LocationViewModel {
             members = initial.sorted { $0.displayName < $1.displayName }
             isLoading = false
         }
-        streamTask = Swift.Task { [weak self] in
+        streamTask = Task { [weak self] in
             var iter = iterator
             while let updated = await iter.next() {
-                guard !Swift.Task<Never, Never>.isCancelled else { break }
+                guard !Task<Never, Never>.isCancelled else { break }
                 await MainActor.run {
                     self?.members = updated.sorted { $0.displayName < $1.displayName }
                 }

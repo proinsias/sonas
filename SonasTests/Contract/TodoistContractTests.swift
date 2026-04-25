@@ -44,7 +44,7 @@ final class TodoistURLProtocolStub: URLProtocol {
 }
 
 @MainActor
-@Suite("Todoist Service Contract Tests")
+@Suite("Todoist Service Contract Tests", .serialized)
 struct TodoistContractTests {
     private func makeService() -> TodoistService {
         let config = URLSessionConfiguration.ephemeral

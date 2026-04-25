@@ -39,6 +39,10 @@ struct SettingsView: View {
             }
             .task {
                 selectedProjectIDs = Set(config.selectedTodoistProjectIDs)
+                if tasksVM.isConnected, tasksVM.availableProjects.isEmpty,
+                   !tasksVM.isLoadingProjects, !tasksVM.projectsLoadFailed {
+                    await tasksVM.reloadProjects()
+                }
             }
             .onChange(of: tasksVM.availableProjects) { _, _ in
                 selectedProjectIDs = Set(config.selectedTodoistProjectIDs)
@@ -107,7 +111,7 @@ struct SettingsView: View {
                     Text("Connected")
                     Spacer()
                     Button("Disconnect") {
-                        Swift.Task { await eventsVM.disconnectGoogle() }
+                        Task { await eventsVM.disconnectGoogle() }
                     }
                     .foregroundStyle(.red)
                     .accessibilityInfo("Disconnect Google Calendar", hint: "Remove your Google account")
@@ -124,7 +128,7 @@ struct SettingsView: View {
                         .foregroundStyle(Color.secondaryLabel)
                 }
                 Button("Connect Google Calendar") {
-                    Swift.Task { await eventsVM.reconnectGoogle() }
+                    Task { await eventsVM.reconnectGoogle() }
                 }
                 .foregroundStyle(Color.accent)
                 .accessibilityInfo("Connect Google Calendar", hint: "Sign in with your Google account to sync events")
@@ -148,7 +152,7 @@ private extension SettingsView {
                     Text("Connected")
                     Spacer()
                     Button("Disconnect") {
-                        Swift.Task { await tasksVM.disconnectTodoist() }
+                        Task { await tasksVM.disconnectTodoist() }
                     }
                     .foregroundStyle(.red)
                     .accessibilityInfo("Disconnect Todoist", hint: "Remove your Todoist API token")
@@ -169,7 +173,7 @@ private extension SettingsView {
                     }
                     isConnectingTodoist = true
                     todoistConnectError = nil
-                    Swift.Task {
+                    Task {
                         do {
                             try await tasksVM.connectTodoist(apiToken: todoistInput)
                             todoistInput = ""
@@ -212,7 +216,7 @@ private extension SettingsView {
                             .font(.caption)
                             .foregroundStyle(.secondary)
                         Button("Retry") {
-                            Swift.Task { await tasksVM.reloadProjects() }
+                            Task { await tasksVM.reloadProjects() }
                         }
                         .font(.caption)
                         .foregroundStyle(Color.accent)
@@ -270,7 +274,7 @@ private extension SettingsView {
                 }
             } else if jamVM.isSpotifyInstalled {
                 Button("Connect Spotify") {
-                    Swift.Task { await jamVM.connectSpotify() }
+                    Task { await jamVM.connectSpotify() }
                 }
                 .foregroundStyle(Color.accent)
                 .accessibilityInfo("Connect Spotify", hint: "Authenticate with your Spotify account to start jams")

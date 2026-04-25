@@ -100,7 +100,7 @@ final class WeatherViewModel {
 
     private func startRefreshTimer() {
         refreshTimer = Timer.scheduledTimer(withTimeInterval: 15 * 60, repeats: true) { [weak self] _ in
-            Swift.Task { @MainActor in await self?.fetchLive() }
+            Task { @MainActor in await self?.fetchLive() }
         }
     }
 }

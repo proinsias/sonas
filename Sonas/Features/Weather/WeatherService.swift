@@ -1,6 +1,6 @@
-import CoreLocation
+@preconcurrency import CoreLocation
 import Foundation
-import WeatherKit
+@preconcurrency import WeatherKit
 
 // MARK: - WeatherServiceProtocol (T044)
 

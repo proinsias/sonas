@@ -1,6 +1,6 @@
-import EventKit
+@preconcurrency import EventKit
 import Foundation
-import GoogleSignIn
+@preconcurrency import GoogleSignIn
 
 // MARK: - CalendarServiceProtocol (T027)
 

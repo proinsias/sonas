@@ -9,6 +9,35 @@ gpg_verify = true
 status.missing_tools = "always"
 status.show_env = true
 
+[tasks.ci-clean]
+description = 'Wipe local DerivedData so the next ci-* run starts fresh like CI'
+run = 'rm -rf .build/DerivedData'
+
+[tasks.ci-prek]
+depends = ["ci-clean"]
+description = 'Run GitHub Actions prek linting locally using act'
+run = 'act --job prek --platform macos-15=-self-hosted'
+
+[tasks.ci-ui-ios]
+depends = ["ci-clean"]
+description = 'Run GitHub Actions ui-ios tests locally using act'
+run = 'act --job ui-ios --platform macos-15=-self-hosted'
+
+[tasks.ci-ui-mac]
+depends = ["ci-clean"]
+description = 'Run GitHub Actions ui-mac tests locally using act'
+run = 'act --job ui-mac --platform macos-15=-self-hosted'
+
+[tasks.ci-unit-contract-ios]
+depends = ["ci-clean"]
+description = 'Run GitHub Actions unit-contract-ios tests locally using act'
+run = 'act --job unit-contract-ios --platform macos-15=-self-hosted'
+
+[tasks.ci-unit-contract-mac]
+depends = ["ci-clean"]
+description = 'Run GitHub Actions unit-contract-mac tests locally using act'
+run = 'act --job unit-contract-mac --platform macos-15=-self-hosted'
+
 [tasks.lint]
 description = 'Run all linters'
 run = 'prek run --all-files'
@@ -22,9 +51,11 @@ run = '''
         echo "No iOS Simulator runtime found. Install one via Xcode > Settings > Components." >&2
         exit 1
     fi
+    mkdir -p .build/DerivedData/ui-ios
     xcodebuild test \
         -scheme SonasUITests \
         -destination "platform=iOS Simulator,id=$SIM" \
+        -derivedDataPath "$(pwd)/.build/DerivedData/ui-ios" \
         -enableCodeCoverage YES \
         -configuration Debug \
         CODE_SIGN_IDENTITY="" \
@@ -36,21 +67,28 @@ run = '''
 description = 'Run UI tests on Mac'
 run = '''
     set -euo pipefail
+    # SpotifyiOS.xcframework has no Mac Catalyst slice; mark it iOS-only in the build phase.
+    # xcodegen does not reliably emit platformFilter=ios for SPM package products, so we patch.
+    sed -i '' 's/\(SpotifyiOS in Frameworks.*isa = PBXBuildFile;\)/\1 platformFilter = ios;/' \
+        Sonas.xcodeproj/project.pbxproj
+    mkdir -p .build/DerivedData/ui-mac
     xcodebuild build-for-testing \
         -scheme SonasUITests \
         -destination 'platform=macOS,variant=Mac Catalyst' \
+        -derivedDataPath "$(pwd)/.build/DerivedData/ui-mac" \
         -enableCodeCoverage YES \
         -configuration Debug \
         CODE_SIGN_IDENTITY="" \
         CODE_SIGNING_REQUIRED=NO \
         CODE_SIGNING_ALLOWED=NO
 
-    RUNNER=$(find ~/Library/Developer/Xcode/DerivedData -name "SonasUITests-Runner.app" -type d | head -1)
+    RUNNER=$(find .build/DerivedData/ui-mac -name "SonasUITests-Runner.app" -type d | head -1)
     codesign --force --sign - "$RUNNER"
 
     xcodebuild test-without-building \
         -scheme SonasUITests \
         -destination 'platform=macOS,variant=Mac Catalyst' \
+        -derivedDataPath "$(pwd)/.build/DerivedData/ui-mac" \
         -enableCodeCoverage YES \
         -configuration Debug \
         CODE_SIGN_IDENTITY="" \
@@ -59,6 +97,7 @@ run = '''
 '''
 
 [tasks.tests-ui]
+description = 'Run all UI tests'
 depends = ["tests-ui-*"]
 
 [tasks.tests-unit-ios]
@@ -70,9 +109,11 @@ run = '''
         echo "No iOS Simulator runtime found. Install one via Xcode > Settings > Components." >&2
         exit 1
     fi
+    mkdir -p .build/DerivedData/unit-ios
     xcodebuild test \
         -scheme SonasTests \
         -destination "platform=iOS Simulator,id=$SIM" \
+        -derivedDataPath "$(pwd)/.build/DerivedData/unit-ios" \
         -configuration Debug \
         -enableCodeCoverage YES \
         CODE_SIGN_IDENTITY="" \
@@ -84,9 +125,16 @@ run = '''
 [tasks.tests-unit-mac]
 description = 'Run unit tests on Mac'
 run = '''
+    set -euo pipefail
+    # SpotifyiOS.xcframework has no Mac Catalyst slice; mark it iOS-only in the build phase.
+    # xcodegen does not reliably emit platformFilter=ios for SPM package products, so we patch.
+    sed -i '' 's/\(SpotifyiOS in Frameworks.*isa = PBXBuildFile;\)/\1 platformFilter = ios;/' \
+        Sonas.xcodeproj/project.pbxproj
+    mkdir -p .build/DerivedData/unit-mac
     xcodebuild test \
         -scheme SonasTests \
         -destination 'platform=macOS,variant=Mac Catalyst' \
+        -derivedDataPath "$(pwd)/.build/DerivedData/unit-mac" \
         -configuration Debug \
         -enableCodeCoverage YES \
         CODE_SIGN_IDENTITY="" \
@@ -96,18 +144,20 @@ run = '''
 '''
 
 [tasks.tests-unit]
+description = 'Run all unit tests'
 depends = ["tests-unit-*"]
 
 [tasks.tests]
+description = 'Run all tests'
 depends = [
     "tests-ui",
     "tests-unit",
 ]
 
 [tools]
+act = "latest"
 actionlint = "latest"
 editorconfig-checker = "latest"
-lychee = "latest"
 prek = "latest"
 prettier = "latest"
 ripsecrets = "latest"

@@ -60,7 +60,7 @@ final class SettingsUITests: XCTestCase {
         XCTAssertTrue(app.navigationBars["Settings"].waitForExistence(timeout: 2))
 
         // "Todoist Projects" section header and both mock project rows must be visible
-        XCTAssertTrue(app.staticTexts["TODOIST PROJECTS"].waitForExistence(timeout: 3))
+        XCTAssertTrue(app.staticTexts["Todoist Projects"].waitForExistence(timeout: 3))
         XCTAssertTrue(app.buttons["todoistProject_proj-1"].waitForExistence(timeout: 3))
         XCTAssertTrue(app.buttons["todoistProject_proj-2"].waitForExistence(timeout: 3))
     }

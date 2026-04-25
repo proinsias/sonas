@@ -7,10 +7,10 @@ struct TaskProject: Identifiable, Hashable {
     let name: String
 }
 
-// MARK: - Task
+// MARK: - TodoTask
 
 /// A single Todoist task from a family project.
-struct Task: Identifiable, Equatable {
+struct TodoTask: Identifiable, Equatable {
     let id: String
     let content: String
     let description: String

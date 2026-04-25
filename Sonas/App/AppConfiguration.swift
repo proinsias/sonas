@@ -11,7 +11,7 @@ import Security
 final class AppConfiguration {
     // MARK: Shared singleton
 
-    static let shared = AppConfiguration()
+    nonisolated(unsafe) static let shared = AppConfiguration()
 
     // MARK: Weather / Location
 

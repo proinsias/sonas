@@ -4,7 +4,7 @@ import Foundation
 
 @MainActor
 protocol TaskServiceProtocol: AnyObject, Sendable {
-    func fetchTasks() async throws -> [Task]
+    func fetchTasks() async throws -> [TodoTask]
     func fetchProjects() async throws -> [TaskProject]
     func completeTask(id: String) async throws
     func connectTodoist(apiToken: String) async throws
@@ -80,7 +80,7 @@ final class TodoistService: TaskServiceProtocol {
         SonasLogger.tasks.info("TodoistService: disconnected")
     }
 
-    func fetchTasks() async throws -> [Task] {
+    func fetchTasks() async throws -> [TodoTask] {
         guard let token = resolvedToken else {
             throw TaskServiceError.notConnected
         }
@@ -89,13 +89,13 @@ final class TodoistService: TaskServiceProtocol {
         let allProjects = try await fetchProjects()
         let selected = AppConfiguration.shared.selectedTodoistProjectIDs
         let projects = selected.isEmpty ? allProjects : allProjects.filter { selected.contains($0.id) }
-        var allTasks: [Task] = []
+        var allTasks: [TodoTask] = []
 
         for project in projects {
-            try await Swift.Task.sleep(nanoseconds: 300_000_000) // 300ms inter-request delay
+            try await Task.sleep(nanoseconds: 300_000_000) // 300ms inter-request delay
             let tasks = try await fetchTasksForProject(id: project.id, token: token)
             allTasks.append(contentsOf: tasks.map { task in
-                Task(
+                TodoTask(
                     id: task.id, content: task.content, description: task.description,
                     projectID: task.projectID, projectName: project.name,
                     due: task.due, priority: task.priority,
@@ -174,8 +174,8 @@ final class TodoistService: TaskServiceProtocol {
 
     // MARK: - Private
 
-    private func fetchTasksForProject(id: String, token: String) async throws -> [Task] {
-        var tasks: [Task] = []
+    private func fetchTasksForProject(id: String, token: String) async throws -> [TodoTask] {
+        var tasks: [TodoTask] = []
         var cursor: String?
         var orderIndex = 0
 
@@ -204,7 +204,7 @@ final class TodoistService: TaskServiceProtocol {
             }
 
             let decoded = try JSONDecoder().decode(TodoistPagedResponse<TodoistTask>.self, from: data)
-            tasks.append(contentsOf: decoded.results.map { $0.toTask(orderIndex: &orderIndex) })
+            tasks.append(contentsOf: decoded.results.map { $0.toTodoTask(orderIndex: &orderIndex) })
             cursor = decoded.nextCursor
         } while cursor != nil
 
@@ -242,7 +242,7 @@ private struct TodoistTask: Decodable {
         case projectID = "project_id"
     }
 
-    func toTask(orderIndex: inout Int) -> Task {
+    func toTodoTask(orderIndex: inout Int) -> TodoTask {
         defer { orderIndex += 1 }
         let taskDue: TaskDue? = due.map {
             let date = $0.date.flatMap {
@@ -251,7 +251,7 @@ private struct TodoistTask: Decodable {
             }
             return TaskDue(date: date, string: $0.string, isRecurring: $0.isRecurring)
         }
-        return Task(
+        return TodoTask(
             id: id, content: content, description: description,
             projectID: projectID, projectName: "", // Populated by calling context
             due: taskDue,
