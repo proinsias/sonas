@@ -90,8 +90,13 @@ targets:
         # Plist-based launch screen (iOS 14+; no storyboard file required)
         UILaunchScreen: {}
         ITSAppUsesNonExemptEncryption: NO
-    settings:
-      base:
+        UIApplicationSceneManifest:
+          UIApplicationSupportsMultipleScenes: true
+          UISceneConfigurations:
+            UIWindowSceneSessionRoleApplication:
+              - UISceneConfigurationName: Default Configuration
+              UISceneDelegateClassName: $(PRODUCT_MODULE_NAME).IPadSceneDelegate
+              settings:      base:
         PRODUCT_BUNDLE_IDENTIFIER: com.yourteam.sonas
         ENABLE_HARDENED_RUNTIME: YES
         SUPPORTS_MACCATALYST: YES

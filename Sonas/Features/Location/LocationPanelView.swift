@@ -35,6 +35,10 @@ struct LocationPanelView: View {
             LazyVStack(alignment: .leading, spacing: 12) {
                 ForEach(viewModel.members) { member in
                     MemberRow(member: member)
+                        .locationCardContextMenu(
+                            memberName: member.displayName,
+                            coordinate: member.location?.coordinate
+                        )
                 }
             }
         }

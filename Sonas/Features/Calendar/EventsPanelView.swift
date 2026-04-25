@@ -35,6 +35,7 @@ struct EventsPanelView: View {
         VStack(alignment: .leading, spacing: 10) {
             ForEach(viewModel.events.prefix(3)) { event in
                 EventRow(event: event)
+                    .eventRowContextMenu(event: event)
             }
         }
     }

@@ -24,9 +24,9 @@ targets. Therefore, test tasks will be included where appropriate.
 
 **Purpose**: Project initialization and basic structure
 
-- [ ] T001 Create AppSection enum in `Sonas/App/AppSection.swift`
-- [ ] T002 Create View+PointerInteraction extension in `Sonas/Shared/Extensions/View+PointerInteraction.swift`
-- [ ] T003 Create AppSectionTests in `SonasTests/Unit/AppSectionTests.swift`
+- [x] T001 Create AppSection enum in `Sonas/App/AppSection.swift`
+- [x] T002 Create View+PointerInteraction extension in `Sonas/Shared/Extensions/View+PointerInteraction.swift`
+- [x] T003 Create AppSectionTests in `SonasTests/Unit/AppSectionTests.swift`
 
 ---
 
@@ -36,8 +36,8 @@ targets. Therefore, test tasks will be included where appropriate.
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T004 Create SidebarView in `Sonas/Platform/iPad/SidebarView.swift`
-- [ ] T005 Create SonasCommands in `Sonas/Shared/Commands/SonasCommands.swift`
+- [x] T004 Create SidebarView in `Sonas/Platform/iPad/SidebarView.swift`
+- [x] T005 Create SonasCommands in `Sonas/Shared/Commands/SonasCommands.swift`
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 
@@ -55,13 +55,13 @@ panel contains excessive whitespace.
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-- [ ] T006 [P] [US1] Create iPadLayoutUITests for basic dashboard layout in `SonasUITests/iPadLayoutUITests.swift`
+- [x] T006 [P] [US1] Create IPadLayoutUITests for basic dashboard layout in `SonasUITests/IPadLayoutUITests.swift`
 
 ### Implementation for User Story 1
 
-- [ ] T007 [US1] Create iPadShell (NavigationSplitView root) in `Sonas/Platform/iPad/iPadShell.swift`
-- [ ] T008 [US1] Modify SonasApp to inject iPadShell at root for Regular width in `Sonas/App/SonasApp.swift`
-- [ ] T009 [US1] Modify DashboardView to consume iPadShell in `Sonas/Features/Dashboard/DashboardView.swift`
+- [x] T007 [US1] Create IPadShell (NavigationSplitView root) in `Sonas/Platform/iPad/IPadShell.swift`
+- [x] T008 [US1] Modify SonasApp to inject IPadShell at root for Regular width in `Sonas/App/SonasApp.swift`
+- [x] T009 [US1] Modify DashboardView to consume IPadShell in `Sonas/Features/Dashboard/DashboardView.swift`
 
 **Checkpoint**: At this point, User Story 1 should be fully functional and testable independently
 
@@ -79,15 +79,15 @@ trackpad and confirm visual feedback.
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-- [ ] T010 [P] [US2] Update iPadLayoutUITests for keyboard navigation and hover in
-      `SonasUITests/iPadLayoutUITests.swift`
+- [x] T010 [P] [US2] Update IPadLayoutUITests for keyboard navigation and hover in
+      `SonasUITests/IPadLayoutUITests.swift`
 
 ### Implementation for User Story 2
 
-- [ ] T011 [US2] Apply `.commands` modifier to WindowGroup in `Sonas/App/SonasApp.swift`
-- [ ] T012 [US2] Apply `.panelHoverEffect()` via extension to all interactive panel cards
-- [ ] T013 [US2] Apply `.contextMenu { }` to LocationPanelView cards
-- [ ] T014 [US2] Apply `.contextMenu { }` to EventsPanelView rows
+- [x] T011 [US2] Apply `.commands` modifier to WindowGroup in `Sonas/App/SonasApp.swift`
+- [x] T012 [US2] Apply `.panelHoverEffect()` via extension to all interactive panel cards
+- [x] T013 [US2] Apply `.contextMenu { }` to LocationPanelView cards
+- [x] T014 [US2] Apply `.contextMenu { }` to EventsPanelView rows
 
 **Checkpoint**: At this point, User Stories 1 AND 2 should both work independently
 
@@ -104,12 +104,12 @@ elements overflow their containers. Then open a second Sonas window and confirm 
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-- [ ] T015 [P] [US3] Update iPadLayoutUITests for multi-window scene opening in `SonasUITests/iPadLayoutUITests.swift`
+- [x] T015 [P] [US3] Update IPadLayoutUITests for multi-window scene opening in `SonasUITests/IPadLayoutUITests.swift`
 
 ### Implementation for User Story 3
 
-- [ ] T016 [US3] Set `UIApplicationSupportsMultipleScenes = YES` in `Info.plist`
-- [ ] T017 [US3] Ensure `@SceneStorage("selectedSection")` is used in `iPadShell.swift` for per-window state persistence
+- [x] T016 [US3] Set `UIApplicationSupportsMultipleScenes = YES` in `Info.plist`
+- [x] T017 [US3] Ensure `@SceneStorage("selectedSection")` is used in `IPadShell.swift` for per-window state persistence
 
 **Checkpoint**: All user stories should now be independently functional
 
@@ -127,11 +127,11 @@ data loss.
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-- [ ] T018 [P] [US4] Update iPadLayoutUITests for Stage Manager resize in `SonasUITests/iPadLayoutUITests.swift`
+- [x] T018 [P] [US4] Update IPadLayoutUITests for Stage Manager resize in `SonasUITests/IPadLayoutUITests.swift`
 
 ### Implementation for User Story 4
 
-- [ ] T019 [US4] Set `UIWindowScene.SizeRestrictions.minimumSize` in `Sonas/App/SceneDelegates/iPadSceneDelegate.swift`
+- [x] T019 [US4] Set `UIWindowScene.SizeRestrictions.minimumSize` in `Sonas/App/SceneDelegates/IPadSceneDelegate.swift`
       (new file)
 
 **Checkpoint**: All user stories should now be independently functional
@@ -148,9 +148,9 @@ rather than replacing the sidebar.
 
 ### Implementation for User Story 5
 
-- [ ] T020 [US5] Verify sidebar behavior at Regular horizontal size class in `iPadShell.swift`
-- [ ] T021 [US5] Verify tab bar fallback at Compact horizontal size class is unchanged in `Sonas/App/SonasApp.swift`
-- [ ] T022 [US5] Verify iPhone layout is unaffected in `Sonas/App/SonasApp.swift`
+- [x] T020 [US5] Verify sidebar behavior at Regular horizontal size class in `IPadShell.swift`
+- [x] T021 [US5] Verify tab bar fallback at Compact horizontal size class is unchanged in `Sonas/App/SonasApp.swift`
+- [x] T022 [US5] Verify iPhone layout is unaffected in `Sonas/App/SonasApp.swift`
 
 **Checkpoint**: All user stories should now be independently functional
 
@@ -160,12 +160,12 @@ rather than replacing the sidebar.
 
 **Purpose**: Improvements that affect multiple user stories
 
-- [ ] T023 Run quickstart.md validation
-- [ ] T024 Perform a regression check on iPhone simulator as described in `quickstart.md`
-- [ ] T025 Code cleanup and refactoring
-- [ ] T026 Documentation updates in `CLAUDE.md` and related specs
-- [ ] T027 Run all existing tests (`xcodebuild test -scheme Sonas`)
-- [ ] T028 Update `README.md` with new feature details
+- [x] T023 Run quickstart.md validation
+- [x] T024 Perform a regression check on iPhone simulator as described in `quickstart.md`
+- [x] T025 Code cleanup and refactoring
+- [x] T026 Documentation updates in `CLAUDE.md` and related specs
+- [x] T027 Run all existing tests (`xcodebuild test -scheme Sonas`)
+- [x] T028 Update `README.md` with new feature details
 
 ---
 
@@ -212,12 +212,12 @@ rather than replacing the sidebar.
 
 ```bash
 # Launch all tests for User Story 1 together (if tests requested):
-Task: "Create iPadLayoutUITests for basic dashboard layout in SonasUITests/iPadLayoutUITests.swift"
+Task: "Create IPadLayoutUITests for basic dashboard layout in SonasUITests/IPadLayoutUITests.swift"
 
 # Launch all implementations for User Story 1 together (after tests fail):
-Task: "Create iPadShell (NavigationSplitView root) in Sonas/Platform/iPad/iPadShell.swift"
-Task: "Modify SonasApp to inject iPadShell at root for Regular width in Sonas/App/SonasApp.swift"
-Task: "Modify DashboardView to consume iPadShell in Sonas/Features/Dashboard/DashboardView.swift"
+Task: "Create IPadShell (NavigationSplitView root) in Sonas/Platform/iPad/IPadShell.swift"
+Task: "Modify SonasApp to inject IPadShell at root for Regular width in Sonas/App/SonasApp.swift"
+Task: "Modify DashboardView to consume IPadShell in Sonas/Features/Dashboard/DashboardView.swift"
 ```
 
 ---
