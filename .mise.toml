@@ -67,6 +67,10 @@ run = '''
 description = 'Run UI tests on Mac'
 run = '''
     set -euo pipefail
+    # SpotifyiOS.xcframework has no Mac Catalyst slice; mark it iOS-only in the build phase.
+    # xcodegen does not reliably emit platformFilter=ios for SPM package products, so we patch.
+    sed -i '' 's/\(SpotifyiOS in Frameworks.*isa = PBXBuildFile;\)/\1 platformFilter = ios;/' \
+        Sonas.xcodeproj/project.pbxproj
     mkdir -p .build/DerivedData/ui-mac
     xcodebuild build-for-testing \
         -scheme SonasUITests \
@@ -122,6 +126,10 @@ run = '''
 description = 'Run unit tests on Mac'
 run = '''
     set -euo pipefail
+    # SpotifyiOS.xcframework has no Mac Catalyst slice; mark it iOS-only in the build phase.
+    # xcodegen does not reliably emit platformFilter=ios for SPM package products, so we patch.
+    sed -i '' 's/\(SpotifyiOS in Frameworks.*isa = PBXBuildFile;\)/\1 platformFilter = ios;/' \
+        Sonas.xcodeproj/project.pbxproj
     mkdir -p .build/DerivedData/unit-mac
     xcodebuild test \
         -scheme SonasTests \
