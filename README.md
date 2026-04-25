@@ -43,11 +43,13 @@ The layout adapts automatically: a single column on iPhone, three columns on iPa
 
 ## Platform Support
 
-| Platform | Status | Minimum OS | | | - | -- | | iOS | Primary target | iOS 18+ | | iPadOS\* | Adaptive layout, same
-binary | iPadOS 18+ | | macOS\* | Catalyst / native SwiftUI | macOS 15+ | | watchOS\* | Compact glance view | watchOS
-11+ | | tvOS\* | Large-screen layout | tvOS 18+ |
-
-\* planned support
+| Platform | Status                       | Minimum OS  |
+| -------- | ---------------------------- | ----------- |
+| iOS      | Primary target               | iOS 18+     |
+| iPadOS   | Adaptive layout, same binary | iPadOS 18+  |
+| macOS    | Catalyst / native SwiftUI    | macOS 15+   |
+| watchOS  | Compact glance view          | watchOS 11+ |
+| tvOS     | Large-screen layout          | tvOS 18+    |
 
 All platforms share a single Swift codebase. Layout differences are handled via SwiftUI's `horizontalSizeClass` — there
 are no `#if os()` conditionals in view code.

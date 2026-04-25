@@ -4,10 +4,10 @@ description: 'Generate an actionable, dependency-ordered tasks.md for the featur
 argument-hint: 'Optional task generation constraints'
 compatibility: 'Requires spec-kit project structure with .specify/ directory'
 metadata:
- author: 'github-spec-kit'
- source: 'templates/commands/tasks.md'
+  author: 'github-spec-kit'
+  source: 'templates/commands/tasks.md'
 user-invocable: true
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 ## User Input
@@ -28,12 +28,12 @@ You **MUST** consider the user input before proceeding (if not empty).
 - Filter out hooks where `enabled` is explicitly `false`. Treat hooks without an `enabled` field as enabled by default.
 - For each remaining hook, do **not** attempt to interpret or evaluate hook `condition` expressions:
   - If the hook has no `condition` field, or it is null/empty, treat the hook as executable
-  - If the hook defines a non-empty `condition`, skip the hook and leave condition evaluation to the HookExecutor
-    implementation
+  - If the hook defines a non-empty `condition`, skip the hook and leave condition evaluation to the HookExecutor implementation
+- When constructing slash commands from hook command names, replace dots (`.`) with hyphens (`-`). For example, `speckit.git.commit` → `/speckit-git-commit`.
 - For each executable hook, output the following based on its `optional` flag:
   - **Optional hook** (`optional: true`):
 
-    ```text
+    ```
     ## Extension Hooks
 
     **Optional Pre-Hook**: {extension}
@@ -46,7 +46,7 @@ You **MUST** consider the user input before proceeding (if not empty).
 
   - **Mandatory hook** (`optional: false`):
 
-    ```text
+    ```
     ## Extension Hooks
 
     **Automatic Pre-Hook**: {extension}
@@ -60,14 +60,11 @@ You **MUST** consider the user input before proceeding (if not empty).
 
 ## Outline
 
-1. **Setup**: Run `.specify/scripts/bash/check-prerequisites.sh --json` from repo root and parse FEATURE_DIR and
-   AVAILABLE_DOCS list. All paths must be absolute. For single quotes in args like "I'm Groot", use escape syntax: e.g
-   'I'\''m Groot' (or double-quote if possible: "I'm Groot").
+1. **Setup**: Run `.specify/scripts/bash/check-prerequisites.sh --json` from repo root and parse FEATURE_DIR and AVAILABLE_DOCS list. All paths must be absolute. For single quotes in args like "I'm Groot", use escape syntax: e.g 'I'\''m Groot' (or double-quote if possible: "I'm Groot").
 
 2. **Load design documents**: Read from FEATURE_DIR:
    - **Required**: plan.md (tech stack, libraries, structure), spec.md (user stories with priorities)
-   - **Optional**: data-model.md (entities), contracts/ (interface contracts), research.md (decisions), quickstart.md
-     (test scenarios)
+   - **Optional**: data-model.md (entities), contracts/ (interface contracts), research.md (decisions), quickstart.md (test scenarios)
    - Note: Not all projects have all documents. Generate tasks based on what's available.
 
 3. **Execute task generation workflow**:
@@ -102,20 +99,18 @@ You **MUST** consider the user input before proceeding (if not empty).
    - Suggested MVP scope (typically just User Story 1)
    - Format validation: Confirm ALL tasks follow the checklist format (checkbox, ID, labels, file paths)
 
-6. **Check for extension hooks**: After tasks.md is generated, check if `.specify/extensions.yml` exists in the project
-   root.
+6. **Check for extension hooks**: After tasks.md is generated, check if `.specify/extensions.yml` exists in the project root.
    - If it exists, read it and look for entries under the `hooks.after_tasks` key
    - If the YAML cannot be parsed or is invalid, skip hook checking silently and continue normally
-   - Filter out hooks where `enabled` is explicitly `false`. Treat hooks without an `enabled` field as enabled by
-     default.
+   - Filter out hooks where `enabled` is explicitly `false`. Treat hooks without an `enabled` field as enabled by default.
    - For each remaining hook, do **not** attempt to interpret or evaluate hook `condition` expressions:
      - If the hook has no `condition` field, or it is null/empty, treat the hook as executable
-     - If the hook defines a non-empty `condition`, skip the hook and leave condition evaluation to the HookExecutor
-       implementation
+     - If the hook defines a non-empty `condition`, skip the hook and leave condition evaluation to the HookExecutor implementation
+   - When constructing slash commands from hook command names, replace dots (`.`) with hyphens (`-`). For example, `speckit.git.commit` → `/speckit-git-commit`.
    - For each executable hook, output the following based on its `optional` flag:
      - **Optional hook** (`optional: true`):
 
-       ```text
+       ```
        ## Extension Hooks
 
        **Optional Hook**: {extension}
@@ -128,7 +123,7 @@ You **MUST** consider the user input before proceeding (if not empty).
 
      - **Mandatory hook** (`optional: false`):
 
-       ```text
+       ```
        ## Extension Hooks
 
        **Automatic Hook**: {extension}
@@ -140,15 +135,13 @@ You **MUST** consider the user input before proceeding (if not empty).
 
 Context for task generation: $ARGUMENTS
 
-The tasks.md should be immediately executable - each task must be specific enough that an LLM can complete it without
-additional context.
+The tasks.md should be immediately executable - each task must be specific enough that an LLM can complete it without additional context.
 
 ## Task Generation Rules
 
 **CRITICAL**: Tasks MUST be organized by user story to enable independent implementation and testing.
 
-**Tests are OPTIONAL**: Only generate test tasks if explicitly requested in the feature specification or if user
-requests TDD approach.
+**Tests are OPTIONAL**: Only generate test tasks if explicitly requested in the feature specification or if user requests TDD approach.
 
 ### Checklist Format (REQUIRED)
 

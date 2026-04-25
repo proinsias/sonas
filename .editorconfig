@@ -79,6 +79,11 @@ indent_size = 1
 [*.pbxproj]
 max_line_length = off
 
+# Exclude auto-generated or Claude-specific directories from linting
+[{.claude/**,.specify/**}]
+max_line_length = off
+indent_size = -1
+
 # Template files — inherit rules matching the format they represent
 [*.yml.template]
 indent_size = 2
