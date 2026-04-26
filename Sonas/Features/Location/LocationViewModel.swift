@@ -32,13 +32,11 @@ final class LocationViewModel {
             members = initial.sorted { $0.displayName < $1.displayName }
             isLoading = false
         }
-        streamTask = Task { [weak self] in
+        streamTask = Task { @MainActor [weak self] in
             var iter = iterator
             while let updated = await iter.next() {
-                guard !Task<Never, Never>.isCancelled else { break }
-                await MainActor.run {
-                    self?.members = updated.sorted { $0.displayName < $1.displayName }
-                }
+                guard !Task.isCancelled else { break }
+                self?.members = updated.sorted { $0.displayName < $1.displayName }
             }
         }
     }
