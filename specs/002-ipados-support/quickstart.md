@@ -27,25 +27,27 @@ single-column layout without needing to resize.
 | File                                                    | Role                                              |
 | ------------------------------------------------------- | ------------------------------------------------- |
 | `Sonas/App/AppSection.swift`                            | NEW: all other iPad files depend on it            |
-| `Sonas/Platform/iPad/iPadShell.swift`                   | NEW: NavigationSplitView root                     |
+| `Sonas/Platform/iPad/IPadShell.swift`                   | NEW: NavigationSplitView root                     |
 | `Sonas/Platform/iPad/SidebarView.swift`                 | NEW: Sidebar section list                         |
-| `Sonas/App/SonasApp.swift`                              | MODIFY: iPadShell, `.commands`, multi-window      |
+| `Sonas/App/SonasApp.swift`                              | MODIFY: IPadShell, `.commands`, multi-window      |
+| `Sonas/App/SceneDelegates/IPadSceneDelegate.swift`      | NEW: Stage Manager minimum size restriction       |
 | `Sonas/Shared/Commands/SonasCommands.swift`             | NEW: keyboard shortcut declarations               |
 | `Sonas/Shared/Extensions/View+PointerInteraction.swift` | NEW: hover + context menus                        |
-| `Info.plist`                                            | MODIFY: `UIApplicationSupportsMultipleScenes=YES` |
+| `Info.plist.template`                                   | MODIFY: `UIApplicationSupportsMultipleScenes=YES` |
 
 ## Build Order
 
 Implement in this order to avoid compilation errors:
 
-1. `AppSection.swift` u2014 no dependencies
-2. `View+PointerInteraction.swift` u2014 depends on CalendarModels, LocationModels
-3. `SidebarView.swift` u2014 depends on AppSection
-4. `iPadShell.swift` u2014 depends on AppSection, SidebarView, all panel views
-5. `SonasCommands.swift` u2014 depends on AppSection
-6. Modify `SonasApp.swift` u2014 depends on iPadShell, SonasCommands
-7. `Info.plist` u2014 independent
-8. `AppSectionTests.swift`, `iPadLayoutUITests.swift` u2014 after source complete
+1. `AppSection.swift` — no dependencies
+2. `View+PointerInteraction.swift` — depends on CalendarModels, LocationModels
+3. `SidebarView.swift` — depends on AppSection
+4. `IPadShell.swift` — depends on AppSection, SidebarView, all panel views
+5. `SonasCommands.swift` — depends on AppSection
+6. `IPadSceneDelegate.swift` — UIKit scene delegate
+7. Modify `SonasApp.swift` — depends on IPadShell, SonasCommands
+8. `Info.plist.template` — independent
+9. `AppSectionTests.swift`, `IPadLayoutUITests.swift` — after source complete
 
 ## Testing on Physical iPad
 

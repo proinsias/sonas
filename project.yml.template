@@ -95,8 +95,9 @@ targets:
           UISceneConfigurations:
             UIWindowSceneSessionRoleApplication:
               - UISceneConfigurationName: Default Configuration
-              UISceneDelegateClassName: $(PRODUCT_MODULE_NAME).IPadSceneDelegate
-              settings:      base:
+                UISceneDelegateClassName: $(PRODUCT_MODULE_NAME).IPadSceneDelegate
+    settings:
+      base:
         PRODUCT_BUNDLE_IDENTIFIER: com.yourteam.sonas
         ENABLE_HARDENED_RUNTIME: YES
         SUPPORTS_MACCATALYST: YES

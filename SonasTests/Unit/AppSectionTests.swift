@@ -30,4 +30,10 @@ struct AppSectionTests {
         #expect(AppSection.jam.keyboardShortcut?.key == "7")
         #expect(AppSection.settings.keyboardShortcut?.key == ",")
     }
+
+    @Test
+    func `AppSection titles are unique`() {
+        let titles = AppSection.allCases.map(\.title)
+        #expect(Set(titles).count == titles.count)
+    }
 }

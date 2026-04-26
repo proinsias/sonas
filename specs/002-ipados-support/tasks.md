@@ -104,7 +104,8 @@ elements overflow their containers. Then open a second Sonas window and confirm 
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-- [x] T015 [P] [US3] Update IPadLayoutUITests for multi-window scene opening in `SonasUITests/IPadLayoutUITests.swift`
+- [ ] T015 [P] [US3] Update IPadLayoutUITests for multi-window scene opening in `SonasUITests/IPadLayoutUITests.swift` —
+      requires physical iPad (simulators support one window only)
 
 ### Implementation for User Story 3
 
@@ -127,7 +128,8 @@ data loss.
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-- [x] T018 [P] [US4] Update IPadLayoutUITests for Stage Manager resize in `SonasUITests/IPadLayoutUITests.swift`
+- [ ] T018 [P] [US4] Update IPadLayoutUITests for Stage Manager resize in `SonasUITests/IPadLayoutUITests.swift` —
+      requires M1+ iPad with iPadOS 16+ and Stage Manager enabled (not automatable in simulator)
 
 ### Implementation for User Story 4
 
@@ -163,9 +165,9 @@ rather than replacing the sidebar.
 - [x] T023 Run quickstart.md validation
 - [x] T024 Perform a regression check on iPhone simulator as described in `quickstart.md`
 - [x] T025 Code cleanup and refactoring
-- [x] T026 Documentation updates in `CLAUDE.md` and related specs
+- [x] T026 Documentation updates in `CLAUDE.md`, `README.md`, `spec.md`, and `quickstart.md`
 - [x] T027 Run all existing tests (`xcodebuild test -scheme Sonas`)
-- [x] T028 Update `README.md` with new feature details
+- [x] T028 Update `README.md` with new feature details and platform support
 
 ---
 

@@ -1,7 +1,7 @@
 # Feature Specification: Sonas — Full iPadOS Support
 
-**Feature Branch**: `002-ipados-support` **Created**: 2026-04-25 **Status**: Draft **Input**: User description: "Sonas
-should fully support iPadOS capabilities, rather than just being an iOS application viewed on an iPad."
+**Feature Branch**: `002-ipados-support` **Created**: 2026-04-25 **Status**: Implemented **Input**: User description:
+"Sonas should fully support iPadOS capabilities, rather than just being an iOS application viewed on an iPad."
 
 ## Clarifications
 
