@@ -183,8 +183,9 @@ enum JamServiceError: LocalizedError {
 
     extension SpotifyJamService: SPTSessionManagerDelegate {
         nonisolated func sessionManager(manager _: SPTSessionManager, didInitiate session: SPTSession) {
+            let token = session.accessToken
             Task { @MainActor in
-                self.accessToken = session.accessToken
+                self.accessToken = token
                 self.isSpotifyConnected = true
                 self.authContinuation?.resume()
                 self.authContinuation = nil
@@ -200,8 +201,9 @@ enum JamServiceError: LocalizedError {
         }
 
         nonisolated func sessionManager(manager _: SPTSessionManager, didRenew session: SPTSession) {
+            let token = session.accessToken
             Task { @MainActor in
-                self.accessToken = session.accessToken
+                self.accessToken = token
                 SonasLogger.jam.info("SpotifyJamService: session renewed")
             }
         }
