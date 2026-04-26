@@ -92,7 +92,7 @@ struct DashboardView: View {
         ScrollView {
             LazyVGrid(
                 columns: [.init(.flexible()), .init(.flexible()), .init(.flexible())],
-                spacing: 16,
+                spacing: 24,
             ) {
                 ClockPanelView()
                 LocationPanelView(viewModel: viewModel.locationVM).accessibilityIdentifier("LocationPanel")
@@ -112,7 +112,7 @@ struct DashboardView: View {
         ScrollView {
             LazyVGrid(
                 columns: [.init(.flexible()), .init(.flexible())],
-                spacing: 16,
+                spacing: 24,
             ) {
                 ClockPanelView()
                 LocationPanelView(viewModel: viewModel.locationVM)
