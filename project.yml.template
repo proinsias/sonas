@@ -116,8 +116,8 @@ targets:
         platformFilter: ios
     scheme:
       environmentVariables:
-        USE_MOCK_LOCATION: '0'
-        USE_MOCK_WEATHER: '0'
+        USE_MOCK_LOCATION: '1'
+        USE_MOCK_WEATHER: '1'
         USE_MOCK_CALENDAR: '0'
         USE_MOCK_TASKS: '0'
         USE_MOCK_PHOTOS: '0'
