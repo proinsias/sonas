@@ -8,6 +8,8 @@ struct TasksPanelView: View {
     var body: some View {
         PanelView(title: "Tasks", icon: Icon.tasks, lastUpdated: viewModel.lastUpdated) {
             content
+                .frame(maxWidth: .infinity, minHeight: 200, maxHeight: 200)
+                .clipped()
         }
         .task { await viewModel.start() }
         .onDisappear { viewModel.stop() }

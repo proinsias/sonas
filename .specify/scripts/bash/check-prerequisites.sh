@@ -95,9 +95,9 @@ if ${PATHS_ONLY}; then
     if ${JSON_MODE}; then
         # Minimal JSON paths payload (no validation performed)
         if has_jq; then
-            jq_filter='{REPO_ROOT:${REPO_ROOT},BRANCH:$branch,'
-            jq_filter+='FEATURE_DIR:${FEATURE_DIR},FEATURE_SPEC:$feature_spec,'
-            jq_filter+='IMPL_PLAN:${IMPL_PLAN},TASKS:${TASKS}}'
+            jq_filter='{REPO_ROOT: $repo_root, BRANCH: $branch, '
+            jq_filter+='FEATURE_DIR: $feature_dir, FEATURE_SPEC: $feature_spec, '
+            jq_filter+='IMPL_PLAN: $impl_plan, TASKS: $tasks}'
             jq -cn \
                 --arg repo_root "${REPO_ROOT}" \
                 --arg branch "${CURRENT_BRANCH}" \
@@ -179,7 +179,7 @@ if ${JSON_MODE}; then
         jq -cn \
             --arg feature_dir "${FEATURE_DIR}" \
             --argjson docs "$json_docs" \
-            '{FEATURE_DIR:${FEATURE_DIR},AVAILABLE_DOCS:$docs}'
+            '{FEATURE_DIR: $feature_dir, AVAILABLE_DOCS: $docs}'
     else
         if [[ ${#docs[@]} -eq 0 ]]; then
             json_docs="[]"

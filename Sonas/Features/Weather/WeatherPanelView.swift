@@ -15,6 +15,8 @@ struct WeatherPanelView: View {
             lastUpdated: viewModel.lastUpdated,
         ) {
             content
+                .frame(maxWidth: .infinity, minHeight: 200, maxHeight: 200)
+                .clipped()
         }
         .task { await viewModel.start() }
         .onDisappear { viewModel.stop() }

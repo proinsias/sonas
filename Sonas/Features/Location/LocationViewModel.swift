@@ -27,17 +27,14 @@ final class LocationViewModel {
         isLoading = true
         error = nil
         await service.startPublishing()
-        var iterator = service.familyLocations.makeAsyncIterator()
-        if let initial = await iterator.next() {
-            members = initial.sorted { $0.displayName < $1.displayName }
-            isLoading = false
-        }
+        let stream = service.familyLocations
         streamTask = Task { [weak self] in
-            var iter = iterator
-            while let updated = await iter.next() {
-                guard !Task<Never, Never>.isCancelled else { break }
+            for await updated in stream {
+                guard !Task.isCancelled else { break }
+                let sorted = updated.sorted { $0.displayName < $1.displayName }
                 await MainActor.run {
-                    self?.members = updated.sorted { $0.displayName < $1.displayName }
+                    self?.members = sorted
+                    self?.isLoading = false
                 }
             }
         }

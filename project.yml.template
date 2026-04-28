@@ -90,6 +90,12 @@ targets:
         # Plist-based launch screen (iOS 14+; no storyboard file required)
         UILaunchScreen: {}
         ITSAppUsesNonExemptEncryption: NO
+        UIApplicationSceneManifest:
+          UIApplicationSupportsMultipleScenes: true
+          UISceneConfigurations:
+            UIWindowSceneSessionRoleApplication:
+              - UISceneConfigurationName: Default Configuration
+                UISceneDelegateClassName: $(PRODUCT_MODULE_NAME).IPadSceneDelegate
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.yourteam.sonas
@@ -110,8 +116,8 @@ targets:
         platformFilter: ios
     scheme:
       environmentVariables:
-        USE_MOCK_LOCATION: '0'
-        USE_MOCK_WEATHER: '0'
+        USE_MOCK_LOCATION: '1'
+        USE_MOCK_WEATHER: '1'
         USE_MOCK_CALENDAR: '0'
         USE_MOCK_TASKS: '0'
         USE_MOCK_PHOTOS: '0'

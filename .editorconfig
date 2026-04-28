@@ -80,7 +80,7 @@ indent_size = 1
 max_line_length = off
 
 # Exclude auto-generated or Claude-specific directories from linting
-[{.claude/**,.specify/**}]
+[{.claude/**,.gemini/**,.specify/**}]
 max_line_length = off
 indent_size = -1
 

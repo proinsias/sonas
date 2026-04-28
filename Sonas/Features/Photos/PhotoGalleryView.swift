@@ -13,6 +13,8 @@ struct PhotoGalleryView: View {
     var body: some View {
         PanelView(title: "Photos", icon: Icon.photos) {
             content
+                .frame(maxWidth: .infinity, minHeight: 200, maxHeight: 200)
+                .clipped()
         }
         .task { await viewModel.load() }
         .sheet(isPresented: $isFullScreen) {
@@ -28,7 +30,7 @@ struct PhotoGalleryView: View {
     private var content: some View {
         if viewModel.isLoading {
             LoadingStateView(rows: 1, showsLargeBlock: true)
-                .frame(height: 200)
+                .frame(maxWidth: .infinity, minHeight: 200, maxHeight: 200)
         } else if let error = viewModel.error {
             ErrorStateView(error: error) { Task { await viewModel.reload() } }
         } else if viewModel.photos.isEmpty, viewModel.selectedAlbumName == nil {
@@ -55,7 +57,7 @@ struct PhotoGalleryView: View {
     private func carouselPhoto(for index: Int) -> some View {
         let photo = viewModel.photos[index]
         return AsyncPhotoView(photo: photo, viewModel: viewModel)
-            .frame(height: 200)
+            .frame(maxWidth: .infinity, minHeight: 200, maxHeight: 200)
             .clipped()
             .clipShape(RoundedRectangle(cornerRadius: 8))
     }
@@ -114,6 +116,8 @@ private struct AsyncPhotoView: View {
                 Image(uiImage: uiImage)
                     .resizable()
                     .scaledToFill()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .clipped()
             } else {
                 Color.secondaryLabel.opacity(0.2)
                     .overlay {
