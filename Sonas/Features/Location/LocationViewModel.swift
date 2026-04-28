@@ -17,6 +17,10 @@ final class LocationViewModel {
     private let service: any LocationServiceProtocol
     private var streamTask: Task<Void, Never>?
 
+    #if os(macOS)
+        private var lastKnownPlaces: [String: String] = [:]
+    #endif
+
     init(service: any LocationServiceProtocol) {
         self.service = service
     }
@@ -32,6 +36,23 @@ final class LocationViewModel {
             for await updated in stream {
                 guard !Task.isCancelled else { break }
                 let sorted = updated.sorted { $0.displayName < $1.displayName }
+
+                #if os(macOS)
+                    for member in sorted {
+                        if let newPlace = member.location?.placeName,
+                           !newPlace.isEmpty,
+                           newPlace != self?.lastKnownPlaces[member.id] {
+                            self?.lastKnownPlaces[member.id] = newPlace
+                            Task {
+                                await MacNotificationService.shared.scheduleLocationArrival(
+                                    memberName: member.displayName,
+                                    placeName: newPlace
+                                )
+                            }
+                        }
+                    }
+                #endif
+
                 await MainActor.run {
                     self?.members = sorted
                     self?.isLoading = false

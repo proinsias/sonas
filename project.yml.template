@@ -45,6 +45,7 @@ targets:
           - '**/*.md'
           - 'Platform/TV/TVSonasApp.swift'
           - 'Platform/Watch/WatchSonasApp.swift'
+          - 'Platform/macOS/**'
     info:
       path: Sonas/Info.plist
       properties:
@@ -100,7 +101,7 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.yourteam.sonas
         ENABLE_HARDENED_RUNTIME: YES
-        SUPPORTS_MACCATALYST: YES
+        SUPPORTS_MACCATALYST: NO
     entitlements:
       path: Sonas/Sonas.entitlements
     capabilities:
@@ -132,7 +133,6 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.yourteam.sonas.tests
-        SUPPORTS_MACCATALYST: YES
     dependencies:
       - target: Sonas
   # ─── UI Tests ─────────────────────────────────────────────────────────────────
@@ -145,7 +145,6 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.yourteam.sonas.uitests
-        SUPPORTS_MACCATALYST: YES
     dependencies:
       - target: Sonas
   # ─── watchOS Extension ────────────────────────────────────────────────────────
@@ -191,6 +190,53 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.yourteam.sonas.tv
+  # ─── macOS App ────────────────────────────────────────────────────────────────
+  MacSonas:
+    type: application
+    platform: macOS
+    deploymentTarget: '15.0'
+    sources:
+      - path: Sonas/Platform/macOS
+      - path: Sonas/App
+        excludes:
+          - 'SonasApp.swift'
+          - 'SceneDelegates/**'
+      - path: Sonas/Features
+        excludes:
+          - '**/*.md'
+      - path: Sonas/Shared
+        excludes:
+          - '**/*.md'
+      - path: MacSonas/Assets.xcassets
+    info:
+      path: MacSonas/Info.plist
+      properties:
+        CFBundleDisplayName: Sonas
+        CFBundleShortVersionString: '$(MARKETING_VERSION)'
+        CFBundleVersion: '$(CURRENT_PROJECT_VERSION)'
+        NSLocationWhenInUseUsageDescription: 'Sonas shows your family members on a map.'
+        NSPhotoLibraryUsageDescription: 'Sonas reads your iCloud Shared Album to display family photos.'
+        GIDClientID: 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com'
+        LSApplicationCategoryType: 'public.app-category.lifestyle'
+        LSUIElement: false
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.yourteam.sonas.mac
+        ENABLE_HARDENED_RUNTIME: YES
+    dependencies:
+      - package: GoogleSignIn
+  # ─── macOS UI Tests ───────────────────────────────────────────────────────────
+  MacSonasUITests:
+    type: bundle.ui-testing
+    platform: macOS
+    deploymentTarget: '15.0'
+    sources:
+      - path: MacSonasUITests
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.yourteam.sonas.mac.uitests
+    dependencies:
+      - target: MacSonas
 schemes:
   Sonas:
     build:
@@ -243,4 +289,15 @@ schemes:
       config: Debug
       targets:
         - name: SonasUITests
+          parallelizable: false
+  MacSonas:
+    build:
+      targets:
+        MacSonas: all
+    run:
+      config: Debug
+    test:
+      config: Debug
+      targets:
+        - name: MacSonasUITests
           parallelizable: false

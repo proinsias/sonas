@@ -112,12 +112,20 @@ private struct AsyncPhotoView: View {
 
     var body: some View {
         Group {
-            if let data = imageData, let uiImage = UIImage(data: data) {
-                Image(uiImage: uiImage)
-                    .resizable()
-                    .scaledToFill()
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .clipped()
+            if let data = imageData, let image = PlatformImage(data: data) {
+                #if os(macOS)
+                    Image(nsImage: image)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .clipped()
+                #else
+                    Image(uiImage: image)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .clipped()
+                #endif
             } else {
                 Color.secondaryLabel.opacity(0.2)
                     .overlay {
@@ -149,16 +157,26 @@ private struct FullScreenPhotoView: View {
                         .accessibilityLabel("Photo \(index + 1) of \(photos.count)")
                 }
             }
+            #if !os(macOS)
             .tabViewStyle(.page)
+            #endif
             .background(Color.black)
             .navigationTitle("Photo \(selectedIndex + 1) of \(photos.count)")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button("Close") { dismiss() }
-                        .foregroundStyle(.white)
+            #if !os(macOS)
+                .navigationBarTitleDisplayMode(.inline)
+            #endif
+                .toolbar {
+                    #if !os(macOS)
+                        ToolbarItem(placement: .topBarTrailing) {
+                            Button("Close") { dismiss() }
+                                .foregroundStyle(.white)
+                        }
+                    #else
+                        ToolbarItem(placement: .confirmationAction) {
+                            Button("Close") { dismiss() }
+                        }
+                    #endif
                 }
-            }
         }
     }
 }

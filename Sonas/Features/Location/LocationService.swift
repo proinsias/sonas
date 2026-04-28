@@ -93,11 +93,21 @@ final class LocationService: NSObject, LocationServiceProtocol {
 
     func startPublishing() async {
         SonasLogger.location.info("LocationService: startPublishing")
-        switch locationManager.authorizationStatus {
+        let status = locationManager.authorizationStatus
+        switch status {
         case .notDetermined:
-            locationManager.requestWhenInUseAuthorization()
-        case .authorizedWhenInUse, .authorizedAlways:
-            locationManager.startUpdatingLocation()
+            #if os(macOS)
+                locationManager.requestAlwaysAuthorization()
+            #else
+                locationManager.requestWhenInUseAuthorization()
+            #endif
+        #if os(macOS)
+            case .authorizedAlways:
+                locationManager.startUpdatingLocation()
+        #else
+            case .authorizedWhenInUse, .authorizedAlways:
+                locationManager.startUpdatingLocation()
+        #endif
         default:
             break
         }
@@ -193,10 +203,16 @@ final class LocationService: NSObject, LocationServiceProtocol {
 extension LocationService: CLLocationManagerDelegate {
     nonisolated func locationManagerDidChangeAuthorization(_: CLLocationManager) {
         Task { @MainActor [self] in
-            if locationManager.authorizationStatus == .authorizedWhenInUse ||
-                locationManager.authorizationStatus == .authorizedAlways {
-                locationManager.startUpdatingLocation()
-            }
+            let status = locationManager.authorizationStatus
+            #if os(macOS)
+                if status == .authorizedAlways {
+                    locationManager.startUpdatingLocation()
+                }
+            #else
+                if status == .authorizedWhenInUse || status == .authorizedAlways {
+                    locationManager.startUpdatingLocation()
+                }
+            #endif
         }
     }
 

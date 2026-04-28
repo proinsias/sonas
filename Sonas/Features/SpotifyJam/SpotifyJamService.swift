@@ -50,7 +50,7 @@ enum JamServiceError: LocalizedError {
 // SpotifyiOS SDK 1.2.x — iOS only (no Mac Catalyst slice).
 // SPTSessionManagerDelegate + SPTAppRemoteDelegate bridge callbacks to async/await continuations.
 
-#if !targetEnvironment(macCatalyst)
+#if os(iOS) && !targetEnvironment(macCatalyst)
     import SpotifyiOS
     import UIKit
 
@@ -240,6 +240,27 @@ enum JamServiceError: LocalizedError {
                     SonasLogger.error(SonasLogger.jam, "SpotifyJamService: app remote disconnected", error: error)
                 }
             }
+        }
+    }
+#else
+    @MainActor
+    final class SpotifyJamService: JamServiceProtocol {
+        private(set) var currentSession: JamSession?
+        private(set) var isSpotifyConnected: Bool = false
+        var isSpotifyInstalled: Bool {
+            false
+        }
+
+        func connectSpotify() async throws {
+            throw JamServiceError.spotifyNotInstalled
+        }
+
+        func startJam() async throws -> JamSession {
+            throw JamServiceError.spotifyNotInstalled
+        }
+
+        func endJam() async throws {
+            throw JamServiceError.sessionNotActive
         }
     }
 #endif

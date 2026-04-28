@@ -48,12 +48,16 @@ struct AlbumPickerView: View {
                 }
             }
             .navigationTitle("Select Album")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button("Cancel") { isPresented = false }
+            #if !os(macOS)
+                .navigationBarTitleDisplayMode(.inline)
+            #endif
+                .toolbar {
+                    #if !os(macOS)
+                        ToolbarItem(placement: .topBarLeading) {
+                            Button("Cancel") { isPresented = false }
+                        }
+                    #endif
                 }
-            }
         }
         .task { await loadAlbums() }
     }
