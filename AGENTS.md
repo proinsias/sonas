@@ -25,7 +25,7 @@ Swift 5.10 / SwiftUI, iOS 18+ (minimum deployment target: iOS 17 for SwiftData):
 <!-- SPECKIT START -->
 
 For additional context about technologies to be used, project structure, shell commands, and other important
-information, read the current plan at `specs/002-ipados-support/plan.md`.
+information, read the current plan at `specs/003-macos-native-support/plan.md`.
 
 <!-- SPECKIT END -->
 

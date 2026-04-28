@@ -32,6 +32,17 @@ final class EventsViewModel {
             events = try await service.fetchUpcomingEvents(hours: 48)
             isGoogleConnected = service.isGoogleConnected
             needsGoogleReconnect = service.needsGoogleReconnect
+
+            #if os(macOS)
+                for event in events {
+                    Task {
+                        await MacNotificationService.shared.scheduleCalendarReminder(
+                            eventTitle: event.title,
+                            startDate: event.startDate
+                        )
+                    }
+                }
+            #endif
         } catch CalendarServiceError.eventKitPermissionDenied {
             error = .permissionDenied
         } catch {

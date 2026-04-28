@@ -101,13 +101,13 @@ services under the user's own account. No other fork or family can read or write
 This application was developed using Claude and GitHub's [spec-kit](https://github.com/github/spec-kit). Useful commands
 are:
 
-- `/speckit.constitution`: Create or update project governing principles and development guidelines.
-- `/speckit.specify`: Define what you want to build (requirements and user stories).
-- `/speckit.clarify`: Clarify underspecified areas.
-- `/speckit.plan`: Create technical implementation plans with your chosen tech stack.
-- `/speckit.tasks`: Generate actionable task lists for implementation.
-- `/speckit.analyze`: Cross-artifact consistency & coverage analysis.
-- `/speckit.implement`: Execute all tasks to build the feature according to the plan.
+- `/speckit-constitution`: Create or update project governing principles and development guidelines.
+- `/speckit-specify`: Define what you want to build (requirements and user stories).
+- `/speckit-clarify`: Clarify underspecified areas.
+- `/speckit-plan`: Create technical implementation plans with your chosen tech stack.
+- `/speckit-tasks`: Generate actionable task lists for implementation.
+- `/speckit-analyze`: Cross-artifact consistency & coverage analysis.
+- `/speckit-implement`: Execute all tasks to build the feature according to the plan.
 
 ## What to build next
 

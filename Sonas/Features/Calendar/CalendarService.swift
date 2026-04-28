@@ -1,6 +1,11 @@
 @preconcurrency import EventKit
 import Foundation
 @preconcurrency import GoogleSignIn
+#if os(macOS)
+    import AppKit
+#else
+    import UIKit
+#endif
 
 // MARK: - CalendarServiceProtocol (T027)
 
@@ -188,19 +193,31 @@ final class CalendarService: CalendarServiceProtocol {
         }
         GIDSignIn.sharedInstance.configuration = GIDConfiguration(clientID: clientID)
 
-        guard let rootVC = rootViewController() else {
-            throw CalendarServiceError.googleAuthFailed(
-                NSError(
-                    domain: "GoogleSignIn",
-                    code: -1,
-                    userInfo: [NSLocalizedDescriptionKey: "No presenting view controller available"]
+        #if os(macOS)
+            guard let presenting = rootWindow() else {
+                throw CalendarServiceError.googleAuthFailed(
+                    NSError(
+                        domain: "GoogleSignIn",
+                        code: -1,
+                        userInfo: [NSLocalizedDescriptionKey: "No presenting window available"]
+                    )
                 )
-            )
-        }
+            }
+        #else
+            guard let presenting = rootViewController() else {
+                throw CalendarServiceError.googleAuthFailed(
+                    NSError(
+                        domain: "GoogleSignIn",
+                        code: -1,
+                        userInfo: [NSLocalizedDescriptionKey: "No presenting view controller available"]
+                    )
+                )
+            }
+        #endif
 
         do {
             _ = try await GIDSignIn.sharedInstance.signIn(
-                withPresenting: rootVC,
+                withPresenting: presenting,
                 hint: nil,
                 additionalScopes: ["https://www.googleapis.com/auth/calendar.readonly"]
             )
@@ -294,14 +311,21 @@ final class CalendarService: CalendarServiceProtocol {
         }
     }
 
-    private func rootViewController() -> UIViewController? {
-        UIApplication.shared.connectedScenes
-            .compactMap { $0 as? UIWindowScene }
-            .first { $0.activationState == .foregroundActive }?
-            .windows
-            .first(where: \.isKeyWindow)?
-            .rootViewController
-    }
+    #if os(macOS)
+        private func rootWindow() -> NSWindow? {
+            NSApplication.shared.windows
+                .first { $0.isKeyWindow }
+        }
+    #else
+        private func rootViewController() -> UIViewController? {
+            UIApplication.shared.connectedScenes
+                .compactMap { $0 as? UIWindowScene }
+                .first { $0.activationState == .foregroundActive }?
+                .windows
+                .first(where: \.isKeyWindow)?
+                .rootViewController
+        }
+    #endif
 
     private func deduplicated(_ events: [CalendarEvent]) -> [CalendarEvent] {
         var seen = Set<String>()

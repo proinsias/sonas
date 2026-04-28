@@ -44,16 +44,20 @@ struct DashboardView: View {
             NavigationStack {
                 dashboardContent
                     .navigationTitle("Sonas")
+                #if !os(macOS)
                     .navigationBarTitleDisplayMode(.inline)
+                #endif
                     .toolbar {
-                        ToolbarItem(placement: .topBarTrailing) {
-                            Button {
-                                viewModel.showSettings()
-                            } label: {
-                                Image(systemName: Icon.settings)
+                        #if !os(macOS)
+                            ToolbarItem(placement: .topBarTrailing) {
+                                Button {
+                                    viewModel.showSettings()
+                                } label: {
+                                    Image(systemName: Icon.settings)
+                                }
+                                .accessibilityInfo("Settings", hint: "Open app settings")
                             }
-                            .accessibilityInfo("Settings", hint: "Open app settings")
-                        }
+                        #endif
                     }
                     .sheet(isPresented: Binding(
                         get: { viewModel.isShowingSettings },

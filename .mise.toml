@@ -64,30 +64,13 @@ run = '''
 '''
 
 [tasks.tests-ui-mac]
-description = 'Run UI tests on Mac'
+description = 'Run UI tests on Mac (Native)'
 run = '''
     set -euo pipefail
-    # SpotifyiOS.xcframework has no Mac Catalyst slice; mark it iOS-only in the build phase.
-    # xcodegen does not reliably emit platformFilter=ios for SPM package products, so we patch.
-    sed -i '' 's/\(SpotifyiOS in Frameworks.*isa = PBXBuildFile;\)/\1 platformFilter = ios;/' \
-        Sonas.xcodeproj/project.pbxproj
     mkdir -p .build/DerivedData/ui-mac
-    xcodebuild build-for-testing \
-        -scheme SonasUITests \
-        -destination 'platform=macOS,variant=Mac Catalyst' \
-        -derivedDataPath "$(pwd)/.build/DerivedData/ui-mac" \
-        -enableCodeCoverage YES \
-        -configuration Debug \
-        CODE_SIGN_IDENTITY="" \
-        CODE_SIGNING_REQUIRED=NO \
-        CODE_SIGNING_ALLOWED=NO
-
-    RUNNER=$(find .build/DerivedData/ui-mac -name "SonasUITests-Runner.app" -type d | head -1)
-    codesign --force --sign - "$RUNNER"
-
-    xcodebuild test-without-building \
-        -scheme SonasUITests \
-        -destination 'platform=macOS,variant=Mac Catalyst' \
+    xcodebuild test \
+        -scheme MacSonas \
+        -destination 'platform=macOS' \
         -derivedDataPath "$(pwd)/.build/DerivedData/ui-mac" \
         -enableCodeCoverage YES \
         -configuration Debug \
@@ -123,24 +106,19 @@ run = '''
 '''
 
 [tasks.tests-unit-mac]
-description = 'Run unit tests on Mac'
+description = 'Run unit tests on Mac (Native build check)'
 run = '''
     set -euo pipefail
-    # SpotifyiOS.xcframework has no Mac Catalyst slice; mark it iOS-only in the build phase.
-    # xcodegen does not reliably emit platformFilter=ios for SPM package products, so we patch.
-    sed -i '' 's/\(SpotifyiOS in Frameworks.*isa = PBXBuildFile;\)/\1 platformFilter = ios;/' \
-        Sonas.xcodeproj/project.pbxproj
-    mkdir -p .build/DerivedData/unit-mac
-    xcodebuild test \
-        -scheme SonasTests \
-        -destination 'platform=macOS,variant=Mac Catalyst' \
+    # We build the MacSonas target to verify compilation in CI.
+    # Unit tests for shared logic are covered by tests-unit-ios.
+    xcodebuild build \
+        -scheme MacSonas \
+        -destination 'platform=macOS' \
         -derivedDataPath "$(pwd)/.build/DerivedData/unit-mac" \
         -configuration Debug \
-        -enableCodeCoverage YES \
         CODE_SIGN_IDENTITY="" \
         CODE_SIGNING_REQUIRED=NO \
-        CODE_SIGNING_ALLOWED=NO \
-        SWIFT_TESTING_ENABLED=YES
+        CODE_SIGNING_ALLOWED=NO
 '''
 
 [tasks.tests-unit]

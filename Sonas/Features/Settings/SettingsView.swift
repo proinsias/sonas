@@ -30,23 +30,27 @@ struct SettingsView: View {
                 temperatureSection
             }
             .navigationTitle("Settings")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button("Done") { dismiss() }
-                        .accessibilityInfo("Done", hint: "Close settings")
+            #if !os(macOS)
+                .navigationBarTitleDisplayMode(.inline)
+            #endif
+                .toolbar {
+                    #if !os(macOS)
+                        ToolbarItem(placement: .topBarTrailing) {
+                            Button("Done") { dismiss() }
+                                .accessibilityInfo("Done", hint: "Close settings")
+                        }
+                    #endif
                 }
-            }
-            .task {
-                selectedProjectIDs = Set(config.selectedTodoistProjectIDs)
-                if tasksVM.isConnected, tasksVM.availableProjects.isEmpty,
-                   !tasksVM.isLoadingProjects, !tasksVM.projectsLoadFailed {
-                    await tasksVM.reloadProjects()
+                .task {
+                    selectedProjectIDs = Set(config.selectedTodoistProjectIDs)
+                    if tasksVM.isConnected, tasksVM.availableProjects.isEmpty,
+                       !tasksVM.isLoadingProjects, !tasksVM.projectsLoadFailed {
+                        await tasksVM.reloadProjects()
+                    }
                 }
-            }
-            .onChange(of: tasksVM.availableProjects) { _, _ in
-                selectedProjectIDs = Set(config.selectedTodoistProjectIDs)
-            }
+                .onChange(of: tasksVM.availableProjects) { _, _ in
+                    selectedProjectIDs = Set(config.selectedTodoistProjectIDs)
+                }
         }
         // Sheets attached to the NavigationStack root rather than to sections inside the Form,
         // so SwiftUI routes presentation from the correct hosting controller and avoids the
@@ -345,12 +349,16 @@ private struct LocationSearchView: View {
             .searchable(text: $searchText, prompt: "Search for a city or address")
             .accessibilityLabel("Location Search")
             .navigationTitle("Set Home Location")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button("Cancel") { dismiss() }
+            #if !os(macOS)
+                .navigationBarTitleDisplayMode(.inline)
+            #endif
+                .toolbar {
+                    #if !os(macOS)
+                        ToolbarItem(placement: .topBarLeading) {
+                            Button("Cancel") { dismiss() }
+                        }
+                    #endif
                 }
-            }
         }
     }
 }
