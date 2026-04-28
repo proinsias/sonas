@@ -51,7 +51,13 @@ enum CalendarServiceError: LocalizedError {
 
 // Handles Google Calendar REST v3 fetch with OAuth token management.
 
-final class GoogleCalendarClient: Sendable {
+// MARK: - TVCalendarClientProtocol
+
+protocol TVCalendarClientProtocol: AnyObject, Sendable {
+    func fetchEvents(from start: Date, to end: Date) async throws -> [CalendarEvent]
+}
+
+final class GoogleCalendarClient: Sendable, TVCalendarClientProtocol {
     private enum Endpoint {
         static let events = "https://www.googleapis.com/calendar/v3/calendars/primary/events"
     }

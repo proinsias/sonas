@@ -176,9 +176,11 @@ targets:
     deploymentTarget: '18.0'
     sources:
       - path: Sonas/Platform/TV
+      - path: Sonas/Features
+        excludes:
+          - '**/*.md'
       - path: Sonas/Shared
         excludes:
-          - 'Mocks/**'
           - '**/*.md'
       - path: TVSonas/Assets.xcassets
     info:
@@ -192,6 +194,8 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.yourteam.sonas.tv
     entitlements:
       path: TVSonas/TVSonas.entitlements
+    dependencies:
+      - package: GoogleSignIn
     capabilities:
       - WeatherKit
     scheme:
