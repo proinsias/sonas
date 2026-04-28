@@ -133,8 +133,8 @@ Shelf area shows a recent family photo and the next upcoming event name and time
 
 ### Functional Requirements
 
-- **FR-001**: The TVSonas dashboard MUST display live data from real family services (WeatherKit, EventKit, PhotoKit,
-  CoreLocation, Spotify) rather than hardcoded fixture values.
+- **FR-001**: The TVSonas dashboard MUST display live data from real family services (WeatherKit, Google Calendar REST
+  [tvOS] / EventKit [iOS/macOS], PhotoKit, CoreLocation, Spotify) rather than hardcoded fixture values.
 - **FR-002**: All panels available on the iOS dashboard (Location, Weather, Calendar, Tasks, Photos, Spotify Jam) MUST
   be present on the tvOS dashboard.
 - **FR-003**: The tvOS dashboard MUST be fully navigable using only the Apple TV remote (directional pad, Select, Back)
@@ -194,8 +194,10 @@ Shelf area shows a recent family photo and the next upcoming event name and time
 
 - The tvOS app shares the same Sonas/Shared and Sonas/Features source tree as the iOS and macOS targets; platform guards
   (`#if os(tvOS)`) will be used where tvOS requires different behaviour.
-- WeatherKit, EventKit, and PhotoKit are available on tvOS and will work with the same permission model as iOS;
-  entitlements added for tvOS will follow the same pattern as iOS.
+- WeatherKit and PhotoKit are available on tvOS and work with the same permission model as iOS; entitlements added for
+  tvOS follow the same pattern as iOS. EventKit is NOT available on tvOS — calendar data is sourced from Google Calendar
+  REST via `TVCalendarService` instead. PhotoKit's album picker UI (`selectSharedAlbum()`) is unavailable on tvOS; the
+  shared album name is read from `AppConfiguration.shared` (set via iOS/macOS).
 - Google Calendar authentication (GoogleSignIn) on tvOS uses the **device activation flow**: the user is shown a short
   code and a URL on the TV screen; they visit that URL on any other device (phone, laptop) and enter the code to
   authorise the TV. This is the standard approach for TV platforms where browser-based OAuth is unavailable.

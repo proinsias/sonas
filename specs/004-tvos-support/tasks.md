@@ -74,18 +74,29 @@ panels show non-fixture data (live weather, real events, real photos, real famil
       `contracts/TVCalendarService.md`: `given_googleConnected_when_fetchUpcomingEvents_then_returnsSortedEvents`,
       `given_notAuthenticated_when_fetchUpcomingEvents_then_throwsAuthError`,
       `given_networkError_when_fetchUpcomingEvents_then_throwsFetchFailed`,
-      `given_tokenExpired_when_fetchUpcomingEvents_then_needsReauthIsTrue`; run and confirm all FAIL
+      `given_tokenExpired_when_fetchUpcomingEvents_then_needsReauthIsTrue`; before writing the tests, extend
+      `CalendarServiceMock` in `Sonas/Shared/Mocks/CalendarServiceMock.swift` to add stub properties
+      `isGoogleConnected: Bool = true` and `needsReauth: Bool = false` (settable per test via init) so the test file
+      compiles; run and confirm all FAIL
 - [ ] T011 [P] [US1] Write `TVSpotifyReadServiceTests` in `SonasTests/TVSpotifyReadServiceTests.swift` — 3 scenarios
       from `contracts/TVSpotifyReadService.md`:
       `given_authenticated_trackPlaying_when_fetchCurrentlyPlaying_then_returnsTrack`,
       `given_authenticated_nothingPlaying_when_fetchCurrentlyPlaying_then_returnsNil`,
       `given_notAuthenticated_when_fetchCurrentlyPlaying_then_returnsNilAndNoRequest`; run and confirm all FAIL
+- [ ] T011a [P] [US1] Create `TVSpotifyReadServiceMock` in `Sonas/Shared/Mocks/TVSpotifyReadServiceMock.swift` — a
+      struct conforming to `TVSpotifyReadServiceProtocol` that returns a fixture `TVCurrentTrack` when `isAuthenticated`
+      is true and `nil` when false; used by `USE_MOCK_JAM` env var wiring in `TVShell` (T016) and verified by T035
 
 ### Implementation
 
 - [ ] T012 [P] [US1] Implement `TVDeviceAuthState` enum (cases: `idle`, `pendingUserAction`, `polling`, `authorized`,
       `expired`, `failed`) and `TVDeviceAuthFlow` actor (methods: `startFlow()`, `poll()`, `cancel()`; polls
       `oauth2.googleapis.com/token` until authorized or expired) in `Sonas/Platform/TV/TVDeviceAuthFlow.swift`
+- [ ] T012a [P] [US1] Write `TVDeviceAuthFlowTests` in `SonasTests/TVDeviceAuthFlowTests.swift` — 6 scenarios covering
+      all state transitions: `given_idle_when_startFlowSucceeds_then_pendingUserAction`,
+      `given_pendingUserAction_when_pollCalled_then_stateIsPolling`, `given_polling_when_tokenReceived_then_authorized`,
+      `given_polling_when_expiresAtElapsed_then_expired`, `given_polling_when_networkError_then_failed`,
+      `given_anyState_when_cancelCalled_then_idle`; run and confirm all FAIL before T012 implementation
 - [ ] T013 [P] [US1] Implement `TVDeviceAuthView` — displays `user_code` and `accounts.google.com/device` URL as large
       TV-legible text with a spinner while `TVDeviceAuthFlow` polls in `Sonas/Platform/TV/TVDeviceAuthView.swift`; shown
       by `TVCalendarService` when `needsReauth` is true
@@ -265,12 +276,14 @@ the Top Shelf shows a photo image and event title/time.
 ## Parallel Example: User Story 1
 
 ```bash
-# Write contract tests in parallel (RED phase):
+# Write contract tests + mock in parallel (RED phase):
 Task T010: "Write TVCalendarServiceTests in SonasTests/TVCalendarServiceTests.swift"
 Task T011: "Write TVSpotifyReadServiceTests in SonasTests/TVSpotifyReadServiceTests.swift"
+Task T011a: "Create TVSpotifyReadServiceMock in Sonas/Shared/Mocks/TVSpotifyReadServiceMock.swift"
 
 # Implement device-auth building blocks in parallel:
 Task T012: "Implement TVDeviceAuthFlow in Sonas/Platform/TV/TVDeviceAuthFlow.swift"
+Task T012a: "Write TVDeviceAuthFlowTests in SonasTests/TVDeviceAuthFlowTests.swift"
 Task T013: "Implement TVDeviceAuthView in Sonas/Platform/TV/TVDeviceAuthView.swift"
 Task T015: "Implement TVSpotifyReadService in Sonas/Platform/TV/TVSpotifyReadService.swift"
 ```
