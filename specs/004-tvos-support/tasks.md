@@ -20,20 +20,20 @@ external integrations and UI tests for all user stories are required.
 
 **Purpose**: Add new build targets and entitlements so the project compiles cleanly before any implementation begins.
 
-- [ ] T001 Add `TVSonasUITests` bundle.ui-testing target (platform macOS → tvOS 18, sources: `TVSonasUITests/`, bundle
+- [x] T001 Add `TVSonasUITests` bundle.ui-testing target (platform macOS → tvOS 18, sources: `TVSonasUITests/`, bundle
       ID `com.yourteam.sonas.tv.uitests`, depends on `TVSonas`) to `project.yml.template` and mirror to `project.yml`;
       add scheme entry under `TVSonas.test.targets`
-- [ ] T002 Add `TVTopShelfExtension` app-extension target (platform tvOS 18, sources: `TVTopShelfExtension/`, bundle ID
+- [x] T002 Add `TVTopShelfExtension` app-extension target (platform tvOS 18, sources: `TVTopShelfExtension/`, bundle ID
       `com.yourteam.sonas.tv.topshelf`) to `project.yml.template` and mirror to `project.yml`; add as dependency of
       `TVSonas` target
-- [ ] T003 Add WeatherKit entitlement (`com.apple.developer.weatherkit: true`) and AppGroup entitlement
+- [x] T003 Add WeatherKit entitlement (`com.apple.developer.weatherkit: true`) and AppGroup entitlement
       (`com.apple.security.application-groups: [group.com.sonas.topshelf]`) to `TVSonas` and `TVTopShelfExtension`
       targets in `project.yml.template` and `project.yml`; create `TVSonas/TVSonas.entitlements` and
       `TVTopShelfExtension/TVTopShelfExtension.entitlements`
-- [ ] T004 Create empty source directories: `TVSonasUITests/` and `TVTopShelfExtension/`; run `xcodegen generate` to
+- [x] T004 Create empty source directories: `TVSonasUITests/` and `TVTopShelfExtension/`; run `xcodegen generate` to
       update `Sonas.xcodeproj` with all three new targets and verify the project builds cleanly for tvOS Simulator
       (`xcodebuild build -scheme TVSonas`)
-- [ ] T005 Add `tests-ui-tv` task to `.mise.toml` mirroring the existing `tests-ui-mac` pattern but using
+- [x] T005 Add `tests-ui-tv` task to `.mise.toml` mirroring the existing `tests-ui-mac` pattern but using
       `-scheme TVSonas -destination 'platform=tvOS Simulator,name=Apple TV 4K (3rd generation)'`
 
 ---
@@ -45,16 +45,16 @@ complete.
 
 **⚠️ CRITICAL**: These tasks block all user story phases.
 
-- [ ] T006 Add `#if !os(tvOS)` guards around the `@preconcurrency import EventKit` line and all EventKit-dependent code
+- [x] T006 Add `#if !os(tvOS)` guards around the `@preconcurrency import EventKit` line and all EventKit-dependent code
       paths in `Sonas/Features/Calendar/CalendarService.swift` so the file compiles on tvOS (the tvOS app will use
       `TVCalendarService` instead); verify `xcodebuild build -scheme TVSonas` passes
-- [ ] T007 [P] Add `#if !os(tvOS)` guard around the `startPublishing()` method body in
+- [x] T007 [P] Add `#if !os(tvOS)` guard around the `startPublishing()` method body in
       `Sonas/Features/Location/LocationService.swift` so it becomes a no-op on tvOS (the TV reads but never publishes
       its own location)
-- [ ] T008 [P] Extend the existing `#if os(iOS) && !targetEnvironment(macCatalyst)` guard in
+- [x] T008 [P] Extend the existing `#if os(iOS) && !targetEnvironment(macCatalyst)` guard in
       `Sonas/Features/SpotifyJam/JamViewModel.swift`'s `makeDefault()` to also exclude tvOS; return
       `JamViewModel(service: JamServiceMock())` on tvOS (Spotify SDK unavailable)
-- [ ] T009 [P] Add `TVCurrentTrack` struct (`id`, `title`, `artistName`, `albumArtURL: URL?`, `isPlaying`, `fetchedAt`;
+- [x] T009 [P] Add `TVCurrentTrack` struct (`id`, `title`, `artistName`, `albumArtURL: URL?`, `isPlaying`, `fetchedAt`;
       conforming to `Identifiable`, `Equatable`, `Sendable`) to `Sonas/Shared/Models/MediaModels.swift`
 
 **Checkpoint**: Run `xcodebuild build -scheme TVSonas` — must pass with zero errors before continuing.

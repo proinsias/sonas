@@ -54,7 +54,7 @@ extension View {
                     #if os(macOS)
                         NSPasteboard.general.clearContents()
                         NSPasteboard.general.setString("\(lat), \(lon)", forType: .string)
-                    #else
+                    #elseif !os(tvOS)
                         UIPasteboard.general.string = "\(lat), \(lon)"
                     #endif
                 } label: {
@@ -72,7 +72,7 @@ extension View {
                     let pasteboard = NSPasteboard.general
                     pasteboard.clearContents()
                     pasteboard.setString(event.title, forType: .string)
-                #else
+                #elseif !os(tvOS)
                     UIPasteboard.general.string = event.title
                 #endif
             } label: {
