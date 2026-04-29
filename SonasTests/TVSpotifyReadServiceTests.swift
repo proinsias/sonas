@@ -1,5 +1,5 @@
 import Foundation
-import Sonas
+@testable import Sonas
 import XCTest
 
 @MainActor
@@ -49,7 +49,7 @@ final class TVSpotifyReadServiceTests: XCTestCase {
             fetchedAt: Date()
         )
         let client = MockSpotifyWebClient.authenticated(track: fixture)
-        let sut = TVSpotifyReadService(client: client)
+        let sut = TVSpotifyReadService(client: client, tokenOverride: "test-token")
 
         let result = try await sut.fetchCurrentlyPlaying()
 
@@ -61,7 +61,7 @@ final class TVSpotifyReadServiceTests: XCTestCase {
     /// Scenario 2: given_authenticated_nothingPlaying_when_fetchCurrentlyPlaying_then_returnsNil
     func test_given_authenticated_nothingPlaying_when_fetchCurrentlyPlaying_then_returnsNil() async throws {
         let client = MockSpotifyWebClient.authenticated(nothingPlaying: true)
-        let sut = TVSpotifyReadService(client: client)
+        let sut = TVSpotifyReadService(client: client, tokenOverride: "test-token")
 
         let result = try await sut.fetchCurrentlyPlaying()
 

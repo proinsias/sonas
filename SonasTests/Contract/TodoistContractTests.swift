@@ -13,7 +13,7 @@ final class TodoistURLProtocolStub: URLProtocol {
         var headers: [String: String]
     }
 
-    static var responses: [String: StubResponse] = [:]
+    nonisolated(unsafe) static var responses: [String: StubResponse] = [:]
 
     override static func canInit(with request: URLRequest) -> Bool {
         request.url?.host?.contains("todoist.com") == true

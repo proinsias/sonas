@@ -1,5 +1,5 @@
 import Foundation
-import Sonas
+@testable import Sonas
 import XCTest
 
 @MainActor
@@ -74,7 +74,7 @@ final class TVCalendarServiceTests: XCTestCase {
             )
         ]
         let client = MockGoogleCalendarClient.stub(events: mockEvents)
-        let sut = TVCalendarService(client: client)
+        let sut = TVCalendarService(client: client, isConnected: true)
 
         let result = try await sut.fetchUpcomingEvents(hours: 48)
 
@@ -104,7 +104,7 @@ final class TVCalendarServiceTests: XCTestCase {
     /// Scenario 3: given_networkError_when_fetchUpcomingEvents_then_throwsFetchFailed
     func test_given_networkError_when_fetchUpcomingEvents_then_throwsFetchFailed() async {
         let client = MockGoogleCalendarClient.networkError()
-        let sut = TVCalendarService(client: client)
+        let sut = TVCalendarService(client: client, isConnected: true)
 
         do {
             _ = try await sut.fetchUpcomingEvents(hours: 48)
@@ -119,7 +119,7 @@ final class TVCalendarServiceTests: XCTestCase {
     /// Scenario 4: given_tokenExpired_when_fetchUpcomingEvents_then_needsReauthIsTrue
     func test_given_tokenExpired_when_fetchUpcomingEvents_then_needsReauthIsTrue() async {
         let client = MockGoogleCalendarClient.expiredToken()
-        let sut = TVCalendarService(client: client)
+        let sut = TVCalendarService(client: client, isConnected: true)
 
         do {
             _ = try await sut.fetchUpcomingEvents(hours: 48)

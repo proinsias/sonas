@@ -7,8 +7,8 @@ import Testing
 // 🔴 TEST-FIRST GATE — run before WeatherService (T046)
 
 final class AQIURLProtocolStub: URLProtocol {
-    static var responseJSON: String = ""
-    static var statusCode: Int = 200
+    nonisolated(unsafe) static var responseJSON: String = ""
+    nonisolated(unsafe) static var statusCode: Int = 200
 
     override static func canInit(with request: URLRequest) -> Bool {
         request.url?.host == "air-quality-api.open-meteo.com"

@@ -15,12 +15,12 @@ struct AppSectionTests {
     }
 
     @Test
-    func `AppSection default is dashboard`() {
+    func `appSection default is dashboard`() {
         #expect(AppSection.dashboard.id == "dashboard")
     }
 
     @Test
-    func `AppSection shortcut mapping is correct`() {
+    func `appSection shortcut mapping is correct`() {
         #expect(AppSection.dashboard.keyboardShortcut?.key == "1")
         #expect(AppSection.location.keyboardShortcut?.key == "2")
         #expect(AppSection.calendar.keyboardShortcut?.key == "3")
@@ -32,7 +32,7 @@ struct AppSectionTests {
     }
 
     @Test
-    func `AppSection titles are unique`() {
+    func `appSection titles are unique`() {
         let titles = AppSection.allCases.map(\.title)
         #expect(Set(titles).count == titles.count)
     }

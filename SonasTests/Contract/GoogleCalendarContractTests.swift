@@ -10,8 +10,8 @@ import Testing
 // MARK: - URLProtocol stub
 
 final class GoogleCalendarURLProtocolStub: URLProtocol {
-    static var responseData: Data = .init()
-    static var statusCode: Int = 200
+    nonisolated(unsafe) static var responseData: Data = .init()
+    nonisolated(unsafe) static var statusCode: Int = 200
 
     override static func canInit(with _: URLRequest) -> Bool {
         true

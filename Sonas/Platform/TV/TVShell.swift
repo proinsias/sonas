@@ -56,25 +56,3 @@ struct TVShellView: View {
         }
     }
 }
-
-// MARK: - AppSection
-
-enum AppSection: String, CaseIterable, Identifiable {
-    case weather, calendar, tasks, location, jam, photos, settings
-
-    var id: String {
-        rawValue
-    }
-
-    var title: String {
-        switch self {
-        case .weather: "Weather"
-        case .calendar: "Calendar"
-        case .tasks: "Tasks"
-        case .location: "Location"
-        case .jam: "Jam"
-        case .photos: "Photos"
-        case .settings: "Settings"
-        }
-    }
-}

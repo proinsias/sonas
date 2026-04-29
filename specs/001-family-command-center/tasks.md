@@ -387,9 +387,9 @@ UI tests.
       display label) in `SonasTests/Unit/CacheServiceTests.swift`
 - [ ] T086 Run the quickstart.md §6 first-launch checklist on iPhone 16 Pro simulator with all `USE_MOCK_*=1` flags set;
       resolve any rendering failures or missing permission prompts across `Sonas/`
-- [ ] T087 Run SwiftLint across `Sonas/` and resolve all violations; confirm zero-warning CI build with the
+- [x] T087 Run SwiftLint across `Sonas/` and resolve all violations; confirm zero-warning CI build with the
       `.swiftlint.yml` gate
-- [ ] T088 Run `xcodebuild test -enableCodeCoverage YES` on `SonasTests`; identify files below 80% coverage and add
+- [x] T088 Run `xcodebuild test -enableCodeCoverage YES` on `SonasTests`; identify files below 80% coverage and add
       targeted unit tests in `SonasTests/Unit/` to meet the gate
 - [x] T089 Implement `BGAppRefreshTask` full handler in `SonasApp.swift` (replacing the no-op from T025): on task
       execution fetch weather snapshot, AQI, and Todoist tasks; write results to `CacheService`; schedule next task via

@@ -41,9 +41,9 @@ final class TVSpotifyReadService: TVSpotifyReadServiceProtocol {
         cachedToken != nil
     }
 
-    init(client: TVSpotifyWebClientProtocol? = nil) {
+    init(client: TVSpotifyWebClientProtocol? = nil, tokenOverride: String? = nil) {
         self.client = client ?? SpotifyWebClient()
-        cachedToken = UserDefaults.standard.string(forKey: "spotify_access_token")
+        cachedToken = tokenOverride ?? UserDefaults.standard.string(forKey: "spotify_access_token")
     }
 
     func fetchCurrentlyPlaying() async throws -> TVCurrentTrack? {

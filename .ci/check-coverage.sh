@@ -14,7 +14,7 @@ set -euo pipefail
 
 THRESHOLD=80
 COVERAGE_JSON="${1:-}"
-TARGET="Sonas"
+TARGET="Sonas.app"
 
 if [[ -z "${COVERAGE_JSON}" ]]; then
     echo "Usage: $0 <coverage.json>" >&2

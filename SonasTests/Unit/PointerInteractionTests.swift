@@ -4,6 +4,7 @@ import SwiftUI
 import Testing
 
 @Suite("View+PointerInteraction Unit Tests")
+@MainActor
 struct PointerInteractionTests {
     @Test
     func `location card context menu nil coordinate does not crash`() {

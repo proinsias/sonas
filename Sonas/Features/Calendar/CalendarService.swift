@@ -105,6 +105,14 @@ final class GoogleCalendarClient: Sendable, TVCalendarClientProtocol {
         let decoded = try JSONDecoder().decode(GoogleCalendarResponse.self, from: data)
         return decoded.items.map { $0.toCalendarEvent() }
     }
+
+    func fetchEvents(from start: Date, to end: Date) async throws -> [CalendarEvent] {
+        let token = UserDefaults.standard.string(forKey: "google_access_token") ?? ""
+        guard !token.isEmpty else {
+            throw CalendarServiceError.googleAuthFailed(NSError(domain: "GoogleCalendar", code: 401))
+        }
+        return try await fetchEvents(accessToken: token, timeMin: start, timeMax: end)
+    }
 }
 
 // MARK: - Google Calendar REST response types

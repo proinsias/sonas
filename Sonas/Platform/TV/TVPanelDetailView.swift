@@ -31,6 +31,9 @@ struct TVPanelDetailView: View {
             case .settings:
                 Text("Settings")
                     .font(.largeTitle)
+            case .dashboard:
+                Text("Dashboard")
+                    .font(.largeTitle)
             }
         }
     }
