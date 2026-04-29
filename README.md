@@ -124,17 +124,9 @@ See `specs/001-family-command-center/tasks.md` for full details.
 
 See `specs/004-tvos-support/tasks.md` for full details.
 
-**Phase 4: US2 Remote-Controlled Navigation**
-
-- T019–T025 — Add focusable navigation, implement full-screen detail views for all panels
-
 **Phase 5: US3 Full Panel Coverage**
 
-- T026–T030 — Slideshow, Spotify Jam panel, full layout verification
-
-**Phase 6: US4 Top Shelf Integration**
-
-- T031–T034 — Top Shelf extension, snapshot writing, AppGroup container
+- T029 — 10-foot UI legibility verification (pending — requires tvOS Simulator visual inspection)
 
 **Phase 7: Polish**
 

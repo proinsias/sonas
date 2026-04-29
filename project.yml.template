@@ -200,6 +200,7 @@ targets:
         excludes:
           - 'PhotoGalleryView.swift'
           - '**/*.md'
+      - path: TVTopShelfExtension/TVTopShelfSnapshot.swift
       - path: TVSonas/Assets.xcassets
     info:
       path: TVSonas/Info.plist
@@ -213,7 +214,7 @@ targets:
     entitlements:
       path: TVSonas/TVSonas.entitlements
     dependencies:
-      - package: GoogleSignIn
+      - target: TVTopShelfExtension
     capabilities:
       - WeatherKit
     scheme:
@@ -224,13 +225,6 @@ targets:
         USE_MOCK_TASKS: '0'
         USE_MOCK_PHOTOS: '0'
         USE_MOCK_JAM: '0'
-    dependencies:
-      - target: TVTopShelfExtension # Added for Top Shelf Extension
-    # WeatherKit and CloudKit/iCloud capabilities require a paid Apple Developer account.
-    # Re-enable once a paid account is available:
-    #   entitlements properties: com.apple.developer.weatherkit, com.apple.developer.icloud-services,
-    #       com.apple.developer.icloud-container-identifiers
-    #   capabilities: WeatherKit, CloudKit
 
   # ─── tvOS UI Tests ────────────────────────────────────────────────────────────
   TVSonasUITests:
@@ -269,8 +263,6 @@ targets:
       path: TVTopShelfExtension/TVTopShelfExtension.entitlements
     capabilities:
       - AppGroup
-    dependencies:
-      - target: TVSonas
   # ─── macOS App ────────────────────────────────────────────────────────────────
   MacSonas:
     type: application

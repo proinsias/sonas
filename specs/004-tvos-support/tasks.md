@@ -178,7 +178,7 @@ has advanced to a different photo.
 - [ ] T029 [US3] Verify 10-foot UI legibility: build and run on tvOS Simulator at 1080p, screenshot `TVShell` at full
       resolution, confirm all panel titles and primary data values (temperature, next event) are readable; adjust font
       sizes if needed (tvOS `.title`, `.title2`, `.headline` scale up at TV safe area)
-- [ ] T030 [US3] Write `TVSlideshowUITests` in `TVSonasUITests/TVSlideshowUITests.swift` — launch with
+- [x] T030 [US3] Write `TVSlideshowUITests` in `TVSonasUITests/TVSlideshowUITests.swift` — launch with
       `USE_MOCK_PHOTOS=1`, assert Photos panel accessibility identifier is present; wait 25 s and assert `selectedIndex`
       has advanced (verify via accessibility value change or a visible photo-index label)
 
@@ -196,18 +196,18 @@ the Top Shelf shows a photo image and event title/time.
 
 ### Implementation
 
-- [ ] T031 [US4] Create `TVTopShelfSnapshot` struct (`photoFileURL: URL?`, `nextEventTitle: String?`,
+- [x] T031 [US4] Create `TVTopShelfSnapshot` struct (`photoFileURL: URL?`, `nextEventTitle: String?`,
       `nextEventStart: Date?`, `updatedAt: Date`; conforming to `Codable`, `Sendable`) in a new file
       `TVTopShelfExtension/TVTopShelfSnapshot.swift`; make the file a member of both `TVSonas` and `TVTopShelfExtension`
       targets in `project.yml`
-- [ ] T032 [US4] Implement `TopShelfContentProvider: TVTopShelfContentProvider` in
+- [x] T032 [US4] Implement `TopShelfContentProvider: TVTopShelfContentProvider` in
       `TVTopShelfExtension/TopShelfContentProvider.swift` — reads `TVTopShelfSnapshot` from
       `UserDefaults(suiteName: "group.com.sonas.topshelf")`; returns `TVTopShelfInsetContent` with a wide image from
       `snapshot.photoFileURL` and a `TVContentItem` with `nextEventTitle` and `nextEventStart`; returns an empty shelf
       if the snapshot is nil or stale (older than 6 h)
-- [ ] T033 [US4] Create the `TVTopShelfExtension` entry point in `TVTopShelfExtension/TVSonasTopShelfExtension.swift`
+- [x] T033 [US4] Create the `TVTopShelfExtension` entry point in `TVTopShelfExtension/TVSonasTopShelfExtension.swift`
       conforming to `TVTopShelfExtensionContext` and declaring `TopShelfContentProvider` as the provider
-- [ ] T034 [US4] Add `writeTopShelfSnapshot()` method to `TVShell` in `Sonas/Platform/TV/TVShell.swift` — copies the
+- [x] T034 [US4] Add `writeTopShelfSnapshot()` method to `TVShell` in `Sonas/Platform/TV/TVShell.swift` — copies the
       most recent photo asset to the AppGroup container directory and writes a JSON-encoded `TVTopShelfSnapshot` to
       `UserDefaults(suiteName: "group.com.sonas.topshelf")`; call this method after each successful data refresh cycle
       (after WeatherViewModel + EventsViewModel both complete their initial load)

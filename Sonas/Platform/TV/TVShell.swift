@@ -58,9 +58,11 @@ final class TVShell {
     }
 
     func loadAll() async {
-        Task { await weatherVM.start() }
-        Task { await locationVM.start() }
-        Task { await photoVM.load() }
+        await withTaskGroup(of: Void.self) { group in
+            group.addTask { await self.weatherVM.start() }
+            group.addTask { await self.locationVM.start() }
+            group.addTask { await self.photoVM.load() }
+        }
 
         isCalendarLoading = true
         do {
@@ -71,6 +73,45 @@ final class TVShell {
         isCalendarLoading = false
 
         currentTrack = try? await spotifyService.fetchCurrentlyPlaying()
+
+        // Write snapshot for Top Shelf after data refresh
+        writeTopShelfSnapshot()
+    }
+
+    func writeTopShelfSnapshot() {
+        let photo = photoVM.photos.first
+        let nextEvent = calendarEvents.first { $0.startDate > .now }
+
+        Task {
+            do {
+                var photoURL: URL?
+                if let photo {
+                    let data = try await self.photoVM.loadFullImage(for: photo)
+                    if let containerURL = FileManager.default.containerURL(
+                        forSecurityApplicationGroupIdentifier: "group.com.sonas.topshelf"
+                    ) {
+                        let targetURL = containerURL.appendingPathComponent("topshelf_photo.jpg")
+                        try data.write(to: targetURL)
+                        photoURL = targetURL
+                    }
+                }
+
+                let snapshot = TVTopShelfSnapshot(
+                    photoFileURL: photoURL,
+                    nextEventTitle: nextEvent?.title,
+                    nextEventStart: nextEvent?.startDate,
+                    updatedAt: .now
+                )
+
+                let encoder = JSONEncoder()
+                let snapshotData = try encoder.encode(snapshot)
+                let userDefaults = UserDefaults(suiteName: "group.com.sonas.topshelf")
+                userDefaults?.set(snapshotData, forKey: "TopShelfSnapshot")
+            } catch {
+                // Fail silently for Top Shelf updates to avoid disrupting main dashboard
+                print("Failed to write Top Shelf snapshot: \(error.localizedDescription)")
+            }
+        }
     }
 }
 
