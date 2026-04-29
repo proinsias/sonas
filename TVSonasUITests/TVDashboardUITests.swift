@@ -44,5 +44,9 @@ final class TVDashboardUITests: XCTestCase {
             app.buttons["JamPanel"].waitForExistence(timeout: 5),
             "JamPanel should be visible on the dashboard"
         )
+        XCTAssertTrue(
+            app.buttons["PhotosPanel"].waitForExistence(timeout: 5),
+            "PhotosPanel should be visible on the dashboard"
+        )
     }
 }

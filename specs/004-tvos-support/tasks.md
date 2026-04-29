@@ -166,13 +166,13 @@ has advanced to a different photo.
 
 ### Implementation
 
-- [ ] T026 [US3] Implement `TVSlideshowPanelView` in `Sonas/Platform/TV/TVSlideshowPanelView.swift` using
+- [x] T026 [US3] Implement `TVSlideshowPanelView` in `Sonas/Platform/TV/TVSlideshowPanelView.swift` using
       `TimelineView(.periodic(from: .now, by: 20))` to auto-advance `selectedIndex` over `PhotoViewModel.photos`;
       displays current photo full-bleed within the panel tile; uses `PhotoViewModel` injected from `TVShell`
-- [ ] T027 [US3] Implement `TVSpotifyJamPanel` as a private sub-view in `Sonas/Platform/TV/TVShell.swift` — shows track
+- [x] T027 [US3] Implement `TVSpotifyJamPanel` as a private sub-view in `Sonas/Platform/TV/TVShell.swift` — shows track
       name, artist, and async-loaded album art from `TVSpotifyReadService`; shows a tasteful idle state ("Nothing
       playing") when `TVCurrentTrack` is nil; displayed as the 7th panel (Spotify Jam position)
-- [ ] T028 [US3] Update `TVShell`'s `LazyVGrid` in `Sonas/Platform/TV/TVShell.swift` to use the final 7-panel layout:
+- [x] T028 [US3] Update `TVShell`'s `LazyVGrid` in `Sonas/Platform/TV/TVShell.swift` to use the final 7-panel layout:
       Clock + Weather + Calendar (row 1), Tasks + Location + Jam (row 2), Photos spanning all 3 columns (row 3); replace
       the placeholder `PhotoGalleryView` tile with `TVSlideshowPanelView`
 - [ ] T029 [US3] Verify 10-foot UI legibility: build and run on tvOS Simulator at 1080p, screenshot `TVShell` at full

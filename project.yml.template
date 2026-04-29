@@ -186,6 +186,7 @@ targets:
       - path: Sonas/Shared/Mocks/PhotoServiceMock.swift
       - path: Sonas/App/AppSection.swift
       - path: Sonas/App/AppConfiguration.swift
+      - path: Sonas/Platform/TV/TVSlideshowPanelView.swift
       - path: Sonas/Features/Calendar/CalendarService.swift
       - path: Sonas/Features/Weather
         excludes:
@@ -238,6 +239,7 @@ targets:
     deploymentTarget: '18.0'
     sources:
       - path: TVSonasUITests
+      - path: TVSonasUITests/TVSlideshowUITests.swift
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.yourteam.sonas.tv.uitests

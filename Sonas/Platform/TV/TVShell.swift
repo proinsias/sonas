@@ -82,47 +82,58 @@ struct TVShellView: View {
 
     var body: some View {
         NavigationStack {
-            LazyVGrid(
-                columns: Array(repeating: .init(.flexible(), spacing: 20), count: 3),
-                spacing: 20
-            ) {
-                // Row 1: Clock, Weather, Calendar
-                TVClockPanel()
+            Grid(horizontalSpacing: 20, verticalSpacing: 20) {
+                GridRow {
+                    // Row 1: Clock, Weather, Calendar
+                    TVClockPanel()
 
-                Button { selectedPanel = .weather } label: {
-                    TVWeatherPanel(vm: shell.weatherVM)
-                }
-                .tvCardStyle()
-                .accessibilityIdentifier("WeatherPanel")
+                    Button { selectedPanel = .weather } label: {
+                        TVWeatherPanel(vm: shell.weatherVM)
+                    }
+                    .tvCardStyle()
+                    .accessibilityIdentifier("WeatherPanel")
 
-                Button { selectedPanel = .calendar } label: {
-                    TVEventsPanel(
-                        events: shell.calendarEvents,
-                        isLoading: shell.isCalendarLoading,
-                        needsAuth: shell.calendarNeedsAuth
-                    )
+                    Button { selectedPanel = .calendar } label: {
+                        TVEventsPanel(
+                            events: shell.calendarEvents,
+                            isLoading: shell.isCalendarLoading,
+                            needsAuth: shell.calendarNeedsAuth
+                        )
+                    }
+                    .tvCardStyle()
+                    .accessibilityIdentifier("EventsPanel")
                 }
-                .tvCardStyle()
-                .accessibilityIdentifier("EventsPanel")
 
-                // Row 2: Tasks, Location, Jam
-                Button { selectedPanel = .tasks } label: {
-                    TVTasksPanel()
-                }
-                .tvCardStyle()
-                .accessibilityIdentifier("TasksPanel")
+                GridRow {
+                    // Row 2: Tasks, Location, Jam
+                    Button { selectedPanel = .tasks } label: {
+                        TVTasksPanel()
+                    }
+                    .tvCardStyle()
+                    .accessibilityIdentifier("TasksPanel")
 
-                Button { selectedPanel = .location } label: {
-                    TVLocationPanel(vm: shell.locationVM)
-                }
-                .tvCardStyle()
-                .accessibilityIdentifier("LocationPanel")
+                    Button { selectedPanel = .location } label: {
+                        TVLocationPanel(vm: shell.locationVM)
+                    }
+                    .tvCardStyle()
+                    .accessibilityIdentifier("LocationPanel")
 
-                Button { selectedPanel = .jam } label: {
-                    TVJamPanel(track: shell.currentTrack)
+                    Button { selectedPanel = .jam } label: {
+                        TVSpotifyJamPanel(track: shell.currentTrack)
+                    }
+                    .tvCardStyle()
+                    .accessibilityIdentifier("JamPanel")
                 }
-                .tvCardStyle()
-                .accessibilityIdentifier("JamPanel")
+
+                GridRow {
+                    // Row 3: Photos — spanning all 3 columns
+                    Button { selectedPanel = .photos } label: {
+                        TVSlideshowPanelView(vm: shell.photoVM)
+                    }
+                    .tvCardStyle()
+                    .accessibilityIdentifier("PhotosPanel")
+                    .gridCellColumns(3)
+                }
             }
             .padding(40)
             .background(Color.dashboardBackground.ignoresSafeArea())
@@ -263,19 +274,41 @@ private extension View {
     }
 }
 
-private struct TVJamPanel: View {
+private struct TVSpotifyJamPanel: View {
     let track: TVCurrentTrack?
 
     var body: some View {
         PanelView(title: "Now Playing", icon: "music.note") {
             if let track {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(track.title)
-                        .font(.headline)
-                        .lineLimit(2)
-                    Text(track.artistName)
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
+                HStack(spacing: 12) {
+                    AsyncImage(url: track.albumArtURL) { phase in
+                        switch phase {
+                        case .empty:
+                            Image(systemName: "music.note")
+                                .font(.title)
+                                .foregroundStyle(Color.accent)
+                        case let .success(image):
+                            image
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 56, height: 56)
+                                .clipShape(RoundedRectangle(cornerRadius: 8))
+                        case .failure:
+                            Image(systemName: "music.note")
+                                .font(.title)
+                                .foregroundStyle(Color.accent)
+                        @unknown default:
+                            EmptyView()
+                        }
+                    }
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(track.title)
+                            .font(.headline)
+                            .lineLimit(2)
+                        Text(track.artistName)
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
             } else {
