@@ -79,9 +79,25 @@ run = '''
         CODE_SIGNING_ALLOWED=NO
 '''
 
+[tasks.tests-ui-tv]
+description = 'Run UI tests on tvOS (Apple TV 4K)'
+run = '''
+    set -euo pipefail
+    mkdir -p .build/DerivedData/ui-tv
+    xcodebuild test \
+        -scheme TVSonas \
+        -destination 'platform=tvOS Simulator,name=Apple TV 4K (3rd generation)' \
+        -derivedDataPath "$(pwd)/.build/DerivedData/ui-tv" \
+        -enableCodeCoverage YES \
+        -configuration Debug \
+        CODE_SIGN_IDENTITY="" \
+        CODE_SIGNING_REQUIRED=NO \
+        CODE_SIGNING_ALLOWED=NO
+'''
+
 [tasks.tests-ui]
 description = 'Run all UI tests'
-depends = ["tests-ui-*"]
+depends = ["tests-ui-ios", "tests-ui-mac", "tests-ui-tv"]
 
 [tasks.tests-unit-ios]
 description = 'Run unit tests on iOS Simulator'

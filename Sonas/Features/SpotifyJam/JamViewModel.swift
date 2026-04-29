@@ -31,7 +31,7 @@ final class JamViewModel {
 
     static func makeDefault() -> JamViewModel {
         let useMock = ProcessInfo.processInfo.environment["USE_MOCK_JAM"] == "1"
-        #if !targetEnvironment(macCatalyst)
+        #if !targetEnvironment(macCatalyst) && !os(tvOS)
             return JamViewModel(service: useMock ? JamServiceMock() : SpotifyJamService())
         #else
             return JamViewModel(service: JamServiceMock())

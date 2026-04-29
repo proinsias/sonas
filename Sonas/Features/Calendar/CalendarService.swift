@@ -1,4 +1,6 @@
-@preconcurrency import EventKit
+#if !os(tvOS)
+    @preconcurrency import EventKit
+#endif
 import Foundation
 @preconcurrency import GoogleSignIn
 #if os(macOS)
@@ -49,7 +51,13 @@ enum CalendarServiceError: LocalizedError {
 
 // Handles Google Calendar REST v3 fetch with OAuth token management.
 
-final class GoogleCalendarClient: Sendable {
+// MARK: - TVCalendarClientProtocol
+
+protocol TVCalendarClientProtocol: AnyObject, Sendable {
+    func fetchEvents(from start: Date, to end: Date) async throws -> [CalendarEvent]
+}
+
+final class GoogleCalendarClient: Sendable, TVCalendarClientProtocol {
     private enum Endpoint {
         static let events = "https://www.googleapis.com/calendar/v3/calendars/primary/events"
     }
@@ -160,7 +168,9 @@ private struct GoogleCalendarItem: Decodable {
 
 @MainActor
 final class CalendarService: CalendarServiceProtocol {
-    private let eventStore = EKEventStore()
+    #if !os(tvOS)
+        private let eventStore = EKEventStore()
+    #endif
     private let googleClient: GoogleCalendarClient
     private(set) var isGoogleConnected: Bool
     private(set) var needsGoogleReconnect: Bool = false
@@ -174,10 +184,17 @@ final class CalendarService: CalendarServiceProtocol {
         SonasLogger.calendar.info("CalendarService: fetchUpcomingEvents hours=\(hours)")
         let now = Date.now
         let end = now.addingTimeInterval(TimeInterval(hours) * 3600)
-        async let iCloudEvents = fetchEventKitEvents(from: now, to: end)
+        #if !os(tvOS)
+            async let iCloudEvents = fetchEventKitEvents(from: now, to: end)
+        #endif
         async let googleEvents = fetchGoogleEvents(from: now, to: end)
-        let (ical, gcal) = try await (iCloudEvents, googleEvents)
-        let merged = deduplicated(ical + gcal)
+        #if !os(tvOS)
+            let (ical, gcal) = try await (iCloudEvents, googleEvents)
+            let merged = deduplicated(ical + gcal)
+        #else
+            let gcal = try await googleEvents
+            let merged = gcal
+        #endif
         let sorted = merged
             .filter { $0.endDate > now }
             .sorted { $0.startDate < $1.startDate }

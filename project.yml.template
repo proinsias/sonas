@@ -176,9 +176,11 @@ targets:
     deploymentTarget: '18.0'
     sources:
       - path: Sonas/Platform/TV
+      - path: Sonas/Features
+        excludes:
+          - '**/*.md'
       - path: Sonas/Shared
         excludes:
-          - 'Mocks/**'
           - '**/*.md'
       - path: TVSonas/Assets.xcassets
     info:
@@ -190,6 +192,66 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.yourteam.sonas.tv
+    entitlements:
+      path: TVSonas/TVSonas.entitlements
+    dependencies:
+      - package: GoogleSignIn
+    capabilities:
+      - WeatherKit
+    scheme:
+      environmentVariables:
+        USE_MOCK_LOCATION: '1'
+        USE_MOCK_WEATHER: '1'
+        USE_MOCK_CALENDAR: '0'
+        USE_MOCK_TASKS: '0'
+        USE_MOCK_PHOTOS: '0'
+        USE_MOCK_JAM: '0'
+    dependencies:
+      - target: TVTopShelfExtension # Added for Top Shelf Extension
+    # WeatherKit and CloudKit/iCloud capabilities require a paid Apple Developer account.
+    # Re-enable once a paid account is available:
+    #   entitlements properties: com.apple.developer.weatherkit, com.apple.developer.icloud-services,
+    #       com.apple.developer.icloud-container-identifiers
+    #   capabilities: WeatherKit, CloudKit
+
+  # ─── tvOS UI Tests ────────────────────────────────────────────────────────────
+  TVSonasUITests:
+    type: bundle.ui-testing
+    platform: tvOS
+    deploymentTarget: '18.0'
+    sources:
+      - path: TVSonasUITests
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.yourteam.sonas.tv.uitests
+    dependencies:
+      - target: TVSonas
+  # ─── tvOS Top Shelf Extension ─────────────────────────────────────────────────
+  TVTopShelfExtension:
+    type: app-extension
+    platform: tvOS
+    deploymentTarget: '18.0'
+    sources:
+      - path: TVTopShelfExtension
+      - path: TVTopShelfExtension/TVTopShelfSnapshot.swift # Shared source file
+    info:
+      path: TVTopShelfExtension/Info.plist
+      properties:
+        CFBundleDisplayName: TVTopShelfExtension
+        CFBundleShortVersionString: '$(MARKETING_VERSION)'
+        CFBundleVersion: '$(CURRENT_PROJECT_VERSION)'
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.tvos.app-extension.topshelf
+          NSExtensionPrincipalClass: $(PRODUCT_MODULE_NAME).TopShelfContentProvider
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.yourteam.sonas.tv.topshelf
+    entitlements:
+      path: TVTopShelfExtension/TVTopShelfExtension.entitlements
+    capabilities:
+      - AppGroup
+    dependencies:
+      - target: TVSonas
   # ─── macOS App ────────────────────────────────────────────────────────────────
   MacSonas:
     type: application
@@ -301,3 +363,18 @@ schemes:
       targets:
         - name: MacSonasUITests
           parallelizable: false
+  TVSonas:
+    build:
+      targets:
+        TVSonas: all
+    run:
+      config: Debug
+    test:
+      config: Debug
+      gatherCoverageData: true
+      coverageTargets:
+        - TVSonas
+      targets:
+        - name: TVSonasUITests
+          parallelizable: true
+          randomExecutionOrder: true

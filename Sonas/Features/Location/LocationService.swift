@@ -92,27 +92,29 @@ final class LocationService: NSObject, LocationServiceProtocol {
     // MARK: - LocationServiceProtocol
 
     func startPublishing() async {
-        SonasLogger.location.info("LocationService: startPublishing")
-        let status = locationManager.authorizationStatus
-        switch status {
-        case .notDetermined:
+        #if !os(tvOS)
+            SonasLogger.location.info("LocationService: startPublishing")
+            let status = locationManager.authorizationStatus
+            switch status {
+            case .notDetermined:
+                #if os(macOS)
+                    locationManager.requestAlwaysAuthorization()
+                #else
+                    locationManager.requestWhenInUseAuthorization()
+                #endif
             #if os(macOS)
-                locationManager.requestAlwaysAuthorization()
+                case .authorizedAlways:
+                    locationManager.startUpdatingLocation()
             #else
-                locationManager.requestWhenInUseAuthorization()
+                case .authorizedWhenInUse, .authorizedAlways:
+                    locationManager.startUpdatingLocation()
             #endif
-        #if os(macOS)
-            case .authorizedAlways:
-                locationManager.startUpdatingLocation()
-        #else
-            case .authorizedWhenInUse, .authorizedAlways:
-                locationManager.startUpdatingLocation()
+            default:
+                break
+            }
+            await setupCloudKitSubscription()
+            _ = try? await refresh()
         #endif
-        default:
-            break
-        }
-        await setupCloudKitSubscription()
-        _ = try? await refresh()
     }
 
     func stopPublishing() async {

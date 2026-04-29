@@ -44,16 +44,13 @@ navigation, keyboard shortcuts, pointer interaction, and multi-window multitaski
 
 ## Platform Support
 
-| Platform | Status                               | Minimum OS  |
-| -------- | ------------------------------------ | ----------- |
-| iOS      | Primary target                       | iOS 17+     |
-| iPadOS   | Full support (sidebar, multi-window) | iPadOS 17+  |
-| macOS    | Catalyst / native SwiftUI            | macOS 15+   |
-| watchOS  | Compact glance view                  | watchOS 11+ |
-| tvOS     | Large-screen layout                  | tvOS 18+    |
-
-All platforms share a single Swift codebase. Layout differences are handled via SwiftUI's `horizontalSizeClass` — there
-are no `#if os()` conditionals in view code.
+| Platform | Minimum OS  |
+| -------- | ----------- |
+| iOS      | iOS 17+     |
+| iPadOS   | iPadOS 17+  |
+| macOS    | macOS 15+   |
+| watchOS  | watchOS 11+ |
+| tvOS     | tvOS 18+    |
 
 ## Service integrations
 
@@ -63,15 +60,15 @@ fresh data loads in the background.
 
 <!-- editorconfig-checker disable -->
 
-| Service | Technology | Notes | | | -- | - | | Family location | CloudKit private container | Each device publishes its
-own GPS; all devices subscribe via `CKQuerySubscription`. Apple's Find My API is not publicly available. | | Weather |
-Apple WeatherKit + Open-Meteo | WeatherKit for all conditions; Open-Meteo Air Quality API fills the AQI gap (free, no
-API key) | | Calendar | EventKit (iCloud) + Google Calendar REST API v3 | iCloud via system EventKit; Google via
-GoogleSignIn-iOS OAuth 2.0 | | Tasks | Todoist REST API v2 | Personal API token entered by user at runtime; optimistic
-completion with rollback | | Photos | PhotoKit — iCloud Shared Album | `PHAssetCollectionSubtype.albumCloudShared`;
-family selects album once in Settings | | Spotify Jam | Spotify iOS SDK (`SPTAppRemote`) | QR code generated via
-CoreImage; requires Spotify app installed | | Cache | SwiftData (on-device only) | TTL per data type: weather 1 hr,
-location 5 min, tasks 24 hr |
+| Service         | Technology                                      | Notes                                                                                                                              |
+| --------------- | ----------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| Family location | CloudKit private container                      | Each device publishes its own GPS; all devices subscribe via `CKQuerySubscription`. Apple's Find My API is not publicly available. |
+| Weather         | Apple WeatherKit + Open-Meteo                   | WeatherKit for all conditions; Open-Meteo Air Quality API fills the AQI gap (free, no API key)                                     |
+| Calendar        | EventKit (iCloud) + Google Calendar REST API v3 | iCloud via system EventKit; Google via GoogleSignIn-iOS OAuth 2.0                                                                  |
+| Tasks           | Todoist REST API v2                             | Personal API token entered by user at runtime; optimistic completion with rollback                                                 |
+| Photos          | PhotoKit — iCloud Shared Album                  | `PHAssetCollectionSubtype.albumCloudShared`; family selects album once in Settings                                                 |
+| Spotify Jam     | Spotify iOS SDK (`SPTAppRemote`)                | QR code generated via CoreImage; requires Spotify app installed                                                                    |
+| Cache           | SwiftData (on-device only)                      | TTL per data type: weather 1 hr, location 5 min, tasks 24 hr                                                                       |
 
 <!-- editorconfig-checker-enable -->
 
@@ -85,11 +82,13 @@ See the [Quickstart](specs/001-family-command-center/quickstart.md) guide for ho
 
 <!-- editorconfig-checker-disable -->
 
-| Layer | Isolation mechanism | | - | | | CloudKit location data | Each family uses its own container
-(`iCloud.<bundle-id>`), tied to their Apple Developer account | | Google Calendar tokens | OAuth tokens are stored
-per-user in Keychain; each device holds only its own token | | Todoist API tokens | Stored in device Keychain; entered
-at runtime per user | | Photos | User selects their own iCloud Shared Album from within Settings | | Spotify tokens |
-Managed by Spotify SDK per user |
+| Layer                  | Isolation mechanism                                                                              |
+| ---------------------- | ------------------------------------------------------------------------------------------------ |
+| CloudKit location data | Each family uses its own container (`iCloud.<bundle-id>`), tied to their Apple Developer account |
+| Google Calendar tokens | OAuth tokens are stored per-user in Keychain; each device holds only its own token               |
+| Todoist API tokens     | Stored in device Keychain; entered at runtime per user                                           |
+| Photos                 | User selects their own iCloud Shared Album from within Settings                                  |
+| Spotify tokens         | Managed by Spotify SDK per user                                                                  |
 
 <!-- editorconfig-checker-enable -->
 
@@ -111,10 +110,55 @@ are:
 
 ## What to build next
 
-The following tasks are still open (not yet implemented):
+The following tasks are still open (not yet implemented).
 
+### iOS Support
+
+See `specs/001-family-command-center/tasks.md` for full details.
+
+- **T086–T088** — Run the quickstart checklist, SwiftLint, and code coverage gate.
 - **T091** — Memory profiling with Instruments. Once you have a real device, profile the app with Leaks + Allocations
   while all six panels are active. Target: ≤150 MB peak RSS.
 
-- **T086–T088** — Run the quickstart checklist, SwiftLint, and code coverage gate. These are manual validation steps
-  described in `specs/001-family-command-center/quickstart.md`.
+### iPadOS Support
+
+See `specs/002-ipados-support/tasks.md` for full details.
+
+- **T015** [P] [US3] Update IPadLayoutUITests for multi-window scene opening in `SonasUITests/IPadLayoutUITests.swift`
+- **T018** [P] [US4] Update IPadLayoutUITests for Stage Manager resize in `SonasUITests/IPadLayoutUITests.swift`
+
+### tvOS Support
+
+See `specs/004-tvos-support/tasks.md` for full details.
+
+**Phase 3: US1 Live Dashboard**
+
+- T010 — TVCalendarServiceTests (4 contract test scenarios)
+- T011 — TVSpotifyReadServiceTests (3 contract test scenarios)
+- T011a — TVSpotifyReadServiceMock
+- T012 — TVDeviceAuthFlow (OAuth 2.0 Device Authorization Grant)
+- T012a — TVDeviceAuthFlowTests
+- T013 — TVDeviceAuthView (on-screen code display)
+- T016 — Complete TVShell with all ViewModels (simplified shell implemented)
+- T017 — TVDashboardView simplification ✓ (complete)
+- T018 — TVDashboardUITests
+
+**Phase 4: US2 Remote-Controlled Navigation**
+
+- T019–T025 — Add focusable navigation, implement full-screen detail views for all panels
+
+**Phase 5: US3 Full Panel Coverage**
+
+- T026–T030 — Slideshow, Spotify Jam panel, full layout verification
+
+**Phase 6: US4 Top Shelf Integration**
+
+- T031–T034 — Top Shelf extension, snapshot writing, AppGroup container
+
+**Phase 7: Polish**
+
+- T035–T039 — Verify USE*MOCK*\* variables, offline stale-data, Instruments profiling, unit/UI tests
+
+### watchOS Support
+
+- Add via speckit.
