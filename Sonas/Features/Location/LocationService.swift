@@ -210,7 +210,7 @@ extension LocationService: CLLocationManagerDelegate {
                 if status == .authorizedAlways {
                     locationManager.startUpdatingLocation()
                 }
-            #else
+            #elseif !os(tvOS)
                 if status == .authorizedWhenInUse || status == .authorizedAlways {
                     locationManager.startUpdatingLocation()
                 }

@@ -42,16 +42,18 @@ enum AppSection: String, CaseIterable, Hashable, Identifiable {
         }
     }
 
-    var keyboardShortcut: KeyboardShortcut? {
-        switch self {
-        case .dashboard: KeyboardShortcut("1", modifiers: .command)
-        case .location: KeyboardShortcut("2", modifiers: .command)
-        case .calendar: KeyboardShortcut("3", modifiers: .command)
-        case .weather: KeyboardShortcut("4", modifiers: .command)
-        case .tasks: KeyboardShortcut("5", modifiers: .command)
-        case .photos: KeyboardShortcut("6", modifiers: .command)
-        case .jam: KeyboardShortcut("7", modifiers: .command)
-        case .settings: KeyboardShortcut(",", modifiers: .command)
+    #if !os(tvOS)
+        var keyboardShortcut: KeyboardShortcut? {
+            switch self {
+            case .dashboard: KeyboardShortcut("1", modifiers: .command)
+            case .location: KeyboardShortcut("2", modifiers: .command)
+            case .calendar: KeyboardShortcut("3", modifiers: .command)
+            case .weather: KeyboardShortcut("4", modifiers: .command)
+            case .tasks: KeyboardShortcut("5", modifiers: .command)
+            case .photos: KeyboardShortcut("6", modifiers: .command)
+            case .jam: KeyboardShortcut("7", modifiers: .command)
+            case .settings: KeyboardShortcut(",", modifiers: .command)
+            }
         }
-    }
+    #endif
 }

@@ -120,28 +120,9 @@ See `specs/001-family-command-center/tasks.md` for full details.
 - **T091** — Memory profiling with Instruments. Once you have a real device, profile the app with Leaks + Allocations
   while all six panels are active. Target: ≤150 MB peak RSS.
 
-### iPadOS Support
-
-See `specs/002-ipados-support/tasks.md` for full details.
-
-- **T015** [P] [US3] Update IPadLayoutUITests for multi-window scene opening in `SonasUITests/IPadLayoutUITests.swift`
-- **T018** [P] [US4] Update IPadLayoutUITests for Stage Manager resize in `SonasUITests/IPadLayoutUITests.swift`
-
 ### tvOS Support
 
 See `specs/004-tvos-support/tasks.md` for full details.
-
-**Phase 3: US1 Live Dashboard**
-
-- T010 — TVCalendarServiceTests (4 contract test scenarios)
-- T011 — TVSpotifyReadServiceTests (3 contract test scenarios)
-- T011a — TVSpotifyReadServiceMock
-- T012 — TVDeviceAuthFlow (OAuth 2.0 Device Authorization Grant)
-- T012a — TVDeviceAuthFlowTests
-- T013 — TVDeviceAuthView (on-screen code display)
-- T016 — Complete TVShell with all ViewModels (simplified shell implemented)
-- T017 — TVDashboardView simplification ✓ (complete)
-- T018 — TVDashboardUITests
 
 **Phase 4: US2 Remote-Controlled Navigation**
 

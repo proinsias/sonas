@@ -70,7 +70,7 @@ panels show non-fixture data (live weather, real events, real photos, real famil
 
 ### Contract Tests — Write FIRST, Confirm FAIL (Constitution §II)
 
-- [ ] T010 [P] [US1] Write `TVCalendarServiceTests` in `SonasTests/TVCalendarServiceTests.swift` — 4 scenarios from
+- [x] T010 [P] [US1] Write `TVCalendarServiceTests` in `SonasTests/TVCalendarServiceTests.swift` — 4 scenarios from
       `contracts/TVCalendarService.md`: `given_googleConnected_when_fetchUpcomingEvents_then_returnsSortedEvents`,
       `given_notAuthenticated_when_fetchUpcomingEvents_then_throwsAuthError`,
       `given_networkError_when_fetchUpcomingEvents_then_throwsFetchFailed`,
@@ -78,45 +78,45 @@ panels show non-fixture data (live weather, real events, real photos, real famil
       `CalendarServiceMock` in `Sonas/Shared/Mocks/CalendarServiceMock.swift` to add stub properties
       `isGoogleConnected: Bool = true` and `needsReauth: Bool = false` (settable per test via init) so the test file
       compiles; run and confirm all FAIL
-- [ ] T011 [P] [US1] Write `TVSpotifyReadServiceTests` in `SonasTests/TVSpotifyReadServiceTests.swift` — 3 scenarios
+- [x] T011 [P] [US1] Write `TVSpotifyReadServiceTests` in `SonasTests/TVSpotifyReadServiceTests.swift` — 3 scenarios
       from `contracts/TVSpotifyReadService.md`:
       `given_authenticated_trackPlaying_when_fetchCurrentlyPlaying_then_returnsTrack`,
       `given_authenticated_nothingPlaying_when_fetchCurrentlyPlaying_then_returnsNil`,
       `given_notAuthenticated_when_fetchCurrentlyPlaying_then_returnsNilAndNoRequest`; run and confirm all FAIL
-- [ ] T011a [P] [US1] Create `TVSpotifyReadServiceMock` in `Sonas/Shared/Mocks/TVSpotifyReadServiceMock.swift` — a
+- [x] T011a [P] [US1] Create `TVSpotifyReadServiceMock` in `Sonas/Shared/Mocks/TVSpotifyReadServiceMock.swift` — a
       struct conforming to `TVSpotifyReadServiceProtocol` that returns a fixture `TVCurrentTrack` when `isAuthenticated`
       is true and `nil` when false; used by `USE_MOCK_JAM` env var wiring in `TVShell` (T016) and verified by T035
 
 ### Implementation
 
-- [ ] T012 [P] [US1] Implement `TVDeviceAuthState` enum (cases: `idle`, `pendingUserAction`, `polling`, `authorized`,
+- [x] T012 [P] [US1] Implement `TVDeviceAuthState` enum (cases: `idle`, `pendingUserAction`, `polling`, `authorized`,
       `expired`, `failed`) and `TVDeviceAuthFlow` actor (methods: `startFlow()`, `poll()`, `cancel()`; polls
       `oauth2.googleapis.com/token` until authorized or expired) in `Sonas/Platform/TV/TVDeviceAuthFlow.swift`
-- [ ] T012a [P] [US1] Write `TVDeviceAuthFlowTests` in `SonasTests/TVDeviceAuthFlowTests.swift` — 6 scenarios covering
+- [x] T012a [P] [US1] Write `TVDeviceAuthFlowTests` in `SonasTests/TVDeviceAuthFlowTests.swift` — 6 scenarios covering
       all state transitions: `given_idle_when_startFlowSucceeds_then_pendingUserAction`,
       `given_pendingUserAction_when_pollCalled_then_stateIsPolling`, `given_polling_when_tokenReceived_then_authorized`,
       `given_polling_when_expiresAtElapsed_then_expired`, `given_polling_when_networkError_then_failed`,
       `given_anyState_when_cancelCalled_then_idle`; run and confirm all FAIL before T012 implementation
-- [ ] T013 [P] [US1] Implement `TVDeviceAuthView` — displays `user_code` and `accounts.google.com/device` URL as large
+- [x] T013 [P] [US1] Implement `TVDeviceAuthView` — displays `user_code` and `accounts.google.com/device` URL as large
       TV-legible text with a spinner while `TVDeviceAuthFlow` polls in `Sonas/Platform/TV/TVDeviceAuthView.swift`; shown
       by `TVCalendarService` when `needsReauth` is true
-- [ ] T014 [US1] Implement `TVCalendarServiceProtocol` and `TVCalendarService` (wraps the existing
+- [x] T014 [US1] Implement `TVCalendarServiceProtocol` and `TVCalendarService` (wraps the existing
       `GoogleCalendarClient`; stores/reads OAuth token via `AppStorage`; exposes `isGoogleConnected` and `needsReauth`;
       triggers `TVDeviceAuthFlow` when token is absent) in `Sonas/Platform/TV/TVCalendarService.swift`; run
       `TVCalendarServiceTests` and confirm all PASS
-- [ ] T015 [P] [US1] Implement `TVSpotifyReadServiceProtocol` and `TVSpotifyReadService` (polls
+- [x] T015 [P] [US1] Implement `TVSpotifyReadServiceProtocol` and `TVSpotifyReadService` (polls
       `api.spotify.com/v1/me/player/currently-playing` every 30 s; reads cached Spotify token from `AppStorage`; returns
       `TVCurrentTrack?`; returns `nil` without throwing when unauthenticated) in
       `Sonas/Platform/TV/TVSpotifyReadService.swift`; run `TVSpotifyReadServiceTests` and confirm all PASS
-- [ ] T016 [US1] Implement `TVShell` in `Sonas/Platform/TV/TVShell.swift` — initialises and holds all ViewModels
+- [x] T016 [US1] Implement `TVShell` in `Sonas/Platform/TV/TVShell.swift` — initialises and holds all ViewModels
       (`WeatherViewModel`, `EventsViewModel` backed by `TVCalendarService`, `LocationViewModel`, `PhotoViewModel`,
       `TasksViewModel`, `JamViewModel`/`TVSpotifyReadService`); wires USE*MOCK*\* env var checks to match the existing
       `WeatherViewModel.makeDefault()` factory pattern on all VMs; displays a `LazyVGrid(columns: 3)` with
       `ClockPanelView`, `WeatherPanelView`, `EventsPanelView`, `LocationPanelView`, `PhotoGalleryView`, `TasksPanelView`
       panels
-- [ ] T017 [US1] Simplify `Sonas/Platform/TV/TVDashboardView.swift` to a one-liner that embeds `TVShell`; remove all
+- [x] T017 [US1] Simplify `Sonas/Platform/TV/TVDashboardView.swift` to a one-liner that embeds `TVShell`; remove all
       fixture data structs (`TVWeatherFixture`, `TVEventFixture`) from the file
-- [ ] T018 [US1] Write `TVDashboardUITests` scenario 1 in `TVSonasUITests/TVDashboardUITests.swift` — launch app with
+- [x] T018 [US1] Write `TVDashboardUITests` scenario 1 in `TVSonasUITests/TVDashboardUITests.swift` — launch app with
       mock env vars, verify `WeatherPanel`, `EventsPanel`, and `LocationPanel` accessibility identifiers are present and
       not showing loading state after 30 s
 
@@ -135,21 +135,21 @@ press Select to expand a panel, press Menu/Back to return with the same panel fo
 
 ### Implementation
 
-- [ ] T019 [US2] Add `.focusable()` and `.buttonStyle(.card)` to each panel tile in `TVShell` and wrap the grid in a
+- [x] T019 [US2] Add `.focusable()` and `.buttonStyle(.card)` to each panel tile in `TVShell` and wrap the grid in a
       `NavigationStack` in `Sonas/Platform/TV/TVShell.swift`; bind a `@State selectedPanel: AppSection?` that triggers
       navigation to `TVPanelDetailView`
-- [ ] T020 [US2] Implement `TVPanelDetailView` in `Sonas/Platform/TV/TVPanelDetailView.swift` — switches on `AppSection`
+- [x] T020 [US2] Implement `TVPanelDetailView` in `Sonas/Platform/TV/TVPanelDetailView.swift` — switches on `AppSection`
       enum and routes to the appropriate full-screen detail view; handles `.weather`, `.calendar`, `.location`,
       `.photos`, `.tasks`, `.jam` cases
-- [ ] T021 [P] [US2] Implement full-screen weather detail (current conditions + 7-day forecast at TV scale) as a
+- [x] T021 [P] [US2] Implement full-screen weather detail (current conditions + 7-day forecast at TV scale) as a
       sub-view inside `TVPanelDetailView.swift` using the shared `WeatherViewModel`
-- [ ] T022 [P] [US2] Implement full-screen calendar detail (scrollable events list at TV scale) as a sub-view inside
+- [x] T022 [P] [US2] Implement full-screen calendar detail (scrollable events list at TV scale) as a sub-view inside
       `TVPanelDetailView.swift` using the shared `EventsViewModel`
-- [ ] T023 [P] [US2] Implement full-screen location detail (`Map` with family member pins) as a sub-view inside
+- [x] T023 [P] [US2] Implement full-screen location detail (`Map` with family member pins) as a sub-view inside
       `TVPanelDetailView.swift` using `LocationViewModel.members`
-- [ ] T024 [P] [US2] Implement full-screen photo detail (single photo with `onMoveCommand` left/right to browse; index
+- [x] T024 [P] [US2] Implement full-screen photo detail (single photo with `onMoveCommand` left/right to browse; index
       tracked via `@State`) as a sub-view inside `TVPanelDetailView.swift` using `PhotoViewModel`
-- [ ] T025 [US2] Write `TVNavigationUITests` in `TVSonasUITests/TVNavigationUITests.swift` — directional pad moves
+- [x] T025 [US2] Write `TVNavigationUITests` in `TVSonasUITests/TVNavigationUITests.swift` — directional pad moves
       focus, Select on `WeatherPanel` pushes detail view, Back pops and restores focus to `WeatherPanel`
 
 **Checkpoint**: Full remote-navigation cycle (grid → detail → back) works for all 4 tested panel types.

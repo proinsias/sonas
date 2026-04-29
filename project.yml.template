@@ -176,11 +176,28 @@ targets:
     deploymentTarget: '18.0'
     sources:
       - path: Sonas/Platform/TV
-      - path: Sonas/Features
-        excludes:
-          - '**/*.md'
       - path: Sonas/Shared
         excludes:
+          - 'Mocks/**'
+          - '**/*.md'
+      - path: Sonas/Shared/Mocks/TVSpotifyReadServiceMock.swift
+      - path: Sonas/Shared/Mocks/WeatherServiceMock.swift
+      - path: Sonas/Shared/Mocks/LocationServiceMock.swift
+      - path: Sonas/Shared/Mocks/PhotoServiceMock.swift
+      - path: Sonas/App/AppSection.swift
+      - path: Sonas/App/AppConfiguration.swift
+      - path: Sonas/Features/Calendar/CalendarService.swift
+      - path: Sonas/Features/Weather
+        excludes:
+          - 'WeatherPanelView.swift'
+          - '**/*.md'
+      - path: Sonas/Features/Location
+        excludes:
+          - 'LocationPanelView.swift'
+          - '**/*.md'
+      - path: Sonas/Features/Photos
+        excludes:
+          - 'PhotoGalleryView.swift'
           - '**/*.md'
       - path: TVSonas/Assets.xcassets
     info:
