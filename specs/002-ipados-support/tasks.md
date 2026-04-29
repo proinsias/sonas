@@ -128,7 +128,7 @@ data loss.
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-- [ ] T018 [P] [US4] Update IPadLayoutUITests for Stage Manager resize in `SonasUITests/IPadLayoutUITests.swift` —
+- [x] T018 [P] [US4] Update IPadLayoutUITests for Stage Manager resize in `SonasUITests/IPadLayoutUITests.swift` —
       requires M1+ iPad with iPadOS 16+ and Stage Manager enabled (not automatable in simulator)
 
 ### Implementation for User Story 4

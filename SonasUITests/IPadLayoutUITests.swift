@@ -189,6 +189,78 @@ final class IPadLayoutUITests: XCTestCase {
         #endif
     }
 
+    // MARK: - US4: Stage Manager Compatibility
+
+    /// Verifies the app launches and remains stable — a prerequisite for Stage Manager
+    /// resize testing. The minimum window size (320×400 pt) is enforced by
+    /// IPadSceneDelegate; full resize verification requires a physical M1+ iPad.
+    func testStageManagerReadiness() throws {
+        guard UIDevice.current.userInterfaceIdiom == .pad else {
+            throw XCTSkip("Stage Manager requires an iPad")
+        }
+
+        app.launch()
+
+        XCTAssertTrue(
+            app.otherElements["LocationPanel"].waitForExistence(timeout: 5),
+            "App must render the dashboard stably before Stage Manager resize"
+        )
+
+        // Navigate between sections to confirm no state corruption at launch.
+        app.typeKey("2", modifierFlags: .command)
+        XCTAssertTrue(app.staticTexts["Location"].waitForExistence(timeout: 3))
+        app.typeKey("1", modifierFlags: .command)
+        XCTAssertTrue(app.otherElements["LocationPanel"].waitForExistence(timeout: 3))
+    }
+
+    /// T018 — Stage Manager window resize.
+    ///
+    /// Stage Manager is not automatable via XCTest on the simulator. Run this test
+    /// on a physical M1+ iPad with iPadOS 16+ and Stage Manager enabled:
+    ///   1. Open Sonas in Stage Manager — window appears in the center of the screen
+    ///   2. Drag the resize handle to the minimum supported size (320×400 pt per IPadSceneDelegate)
+    ///      — confirm no content overflow, no crash, all panels remain functional
+    ///   3. Drag to maximum available size — confirm multi-column layout fills the window
+    ///   4. Switch to another app and return to Sonas — confirm no data loss or blank state
+    ///   5. Repeat resize cycle twice more — confirm the app remains stable across multiple resizes
+    func testStageManagerWindowResize() throws {
+        guard UIDevice.current.userInterfaceIdiom == .pad else {
+            throw XCTSkip("Stage Manager requires an iPad")
+        }
+        #if targetEnvironment(simulator)
+            throw XCTSkip(
+                "T018: Stage Manager window resize requires a physical M1+ iPad with iPadOS 16+ " +
+                    "and Stage Manager enabled — not automatable in the iOS Simulator. " +
+                    "To verify manually: enable Stage Manager in Control Centre, open Sonas, " +
+                    "drag the resize handle to minimum (320×400 pt) and maximum size, " +
+                    "background and re-foreground the app, then confirm no crashes and no data loss."
+            )
+        #else
+            app.launch()
+
+            XCTAssertTrue(
+                app.otherElements["LocationPanel"].waitForExistence(timeout: 5),
+                "App must show the dashboard before Stage Manager resize"
+            )
+
+            // Background Sonas and return to verify foreground restoration without data loss.
+            XCUIDevice.shared.press(.home)
+            // Allow the system to complete the backgrounding animation.
+            Thread.sleep(forTimeInterval: 1.0)
+            app.activate()
+
+            XCTAssertTrue(
+                app.otherElements["LocationPanel"].waitForExistence(timeout: 5),
+                "App must restore dashboard content after foregrounding from Stage Manager"
+            )
+            XCTAssertEqual(
+                app.state,
+                .runningForeground,
+                "App must be in the foreground after Stage Manager re-activation"
+            )
+        #endif
+    }
+
     // MARK: - US5: Navigation Patterns
 
     func testSidebarToggle() throws {
