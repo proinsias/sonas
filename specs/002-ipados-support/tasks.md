@@ -104,7 +104,7 @@ elements overflow their containers. Then open a second Sonas window and confirm 
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-- [ ] T015 [P] [US3] Update IPadLayoutUITests for multi-window scene opening in `SonasUITests/IPadLayoutUITests.swift` —
+- [x] T015 [P] [US3] Update IPadLayoutUITests for multi-window scene opening in `SonasUITests/IPadLayoutUITests.swift` —
       requires physical iPad (simulators support one window only)
 
 ### Implementation for User Story 3

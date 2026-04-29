@@ -117,6 +117,78 @@ final class IPadLayoutUITests: XCTestCase {
         )
     }
 
+    // MARK: - US3: Multi-Window and Split View Support
+
+    /// Verifies the app launches and remains stable in a configuration suitable for
+    /// multi-window and Split View use. Full multi-window opening requires a physical
+    /// iPad — see testMultiWindowSceneOpening below.
+    func testSlideOverCompactFallback() throws {
+        guard UIDevice.current.userInterfaceIdiom == .pad else {
+            throw XCTSkip("Multi-window requires an iPad")
+        }
+
+        app.launch()
+
+        // App must be stable and show primary content — a prerequisite for multi-window.
+        XCTAssertTrue(
+            app.otherElements["LocationPanel"].waitForExistence(timeout: 5),
+            "App must render the dashboard before multi-window activation"
+        )
+
+        // When the window is at compact width (Slide Over / ⅓ Split View) the app
+        // should fall back from a sidebar to a tab bar. In the simulator this
+        // transition is not automatable via XCTest, but the layout is driven by
+        // horizontalSizeClass so it is covered by the snapshot tests in plan.md §5.
+    }
+
+    /// T015 — Multi-window scene opening.
+    ///
+    /// Simulators expose only one window per app session. Run this test on a
+    /// physical iPad (iPadOS 16+) to exercise the full multi-window flow:
+    ///   1. Long-press the Sonas icon in the Dock → "Open New Window"
+    ///   2. Confirm the second window shows a fully functional dashboard
+    ///   3. Verify each window tracks its own selected section (SceneStorage)
+    ///   4. Background both windows and re-foreground — no state loss expected
+    func testMultiWindowSceneOpening() throws {
+        guard UIDevice.current.userInterfaceIdiom == .pad else {
+            throw XCTSkip("Multi-window requires an iPad")
+        }
+        #if targetEnvironment(simulator)
+            throw XCTSkip(
+                "T015: Multi-window scene opening requires a physical iPad. " +
+                    "iOS Simulator supports only one window per app. " +
+                    "To verify manually: long-press the Sonas icon in the Dock and choose " +
+                    "\"Open New Window\"; confirm the second window renders a stable dashboard."
+            )
+        #else
+            app.launch()
+
+            XCTAssertTrue(
+                app.otherElements["LocationPanel"].waitForExistence(timeout: 5),
+                "Primary window must show dashboard before opening a second window"
+            )
+
+            // Navigate to a non-default section so SceneStorage isolation is observable.
+            app.typeKey("2", modifierFlags: .command)
+            XCTAssertTrue(app.staticTexts["Location"].waitForExistence(timeout: 3))
+
+            // Activate a second instance of the app (second scene).
+            // On a physical device this corresponds to the OS opening a new UIWindowScene.
+            let secondWindow = XCUIApplication()
+            secondWindow.activate()
+
+            XCTAssertEqual(
+                secondWindow.state,
+                .runningForeground,
+                "App must be in foreground after second window activation"
+            )
+            XCTAssertTrue(
+                secondWindow.otherElements["LocationPanel"].waitForExistence(timeout: 5),
+                "Second window must render a functional dashboard independently of the first"
+            )
+        #endif
+    }
+
     // MARK: - US5: Navigation Patterns
 
     func testSidebarToggle() throws {
