@@ -120,18 +120,6 @@ See `specs/001-family-command-center/tasks.md` for full details.
 - **T091** — Memory profiling with Instruments. Once you have a real device, profile the app with Leaks + Allocations
   while all six panels are active. Target: ≤150 MB peak RSS.
 
-### tvOS Support
-
-See `specs/004-tvos-support/tasks.md` for full details.
-
-**Phase 5: US3 Full Panel Coverage**
-
-- T029 — 10-foot UI legibility verification (pending — requires tvOS Simulator visual inspection)
-
-**Phase 7: Polish**
-
-- T035–T039 — Verify USE*MOCK*\* variables, offline stale-data, Instruments profiling, unit/UI tests
-
 ### watchOS Support
 
 - Add via speckit.

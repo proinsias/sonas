@@ -13,14 +13,14 @@ struct TVSlideshowPanelView: View {
     private var currentIndex: Int {
         guard !vm.photos.isEmpty else { return 0 }
         let elapsed = Date().timeIntervalSince(startDate)
-        return Int((elapsed / 20).truncatingRemainder(dividingBy: Double(vm.photos.count)))
+        return Int((elapsed / 10).truncatingRemainder(dividingBy: Double(vm.photos.count)))
     }
 
     var body: some View {
         PanelView(title: "Photos", icon: "photo.fill") {
             photoContent
         }
-        .onReceive(Timer.publish(every: 20, on: .main, in: .common).autoconnect()) { _ in
+        .onReceive(Timer.publish(every: 10, on: .main, in: .common).autoconnect()) { _ in
             selectedIndex = currentIndex
         }
         .task(id: selectedIndex) {
@@ -29,6 +29,8 @@ struct TVSlideshowPanelView: View {
         .onAppear {
             startDate = Date()
         }
+        .accessibilityLabel("Family Photos")
+        .accessibilityValue("Photo \(selectedIndex + 1) of \(vm.photos.count)")
     }
 
     @ViewBuilder

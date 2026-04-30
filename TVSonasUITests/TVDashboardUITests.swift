@@ -2,6 +2,7 @@ import XCTest
 
 // MARK: - TVDashboardUITests (T018)
 
+@MainActor
 final class TVDashboardUITests: XCTestCase {
     var app: XCUIApplication!
 

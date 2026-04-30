@@ -10,6 +10,8 @@ final class TVShell {
     private(set) var currentTrack: TVCurrentTrack?
     private(set) var isCalendarLoading = true
     private(set) var calendarNeedsAuth = false
+    private(set) var calendarLastUpdated: Date?
+    private(set) var calendarFetchFailed = false
 
     private let calendarService: TVCalendarServiceProtocol
     let spotifyService: any TVSpotifyReadServiceProtocol
@@ -67,8 +69,13 @@ final class TVShell {
         isCalendarLoading = true
         do {
             calendarEvents = try await calendarService.fetchUpcomingEvents(hours: 48)
+            calendarLastUpdated = .now
+            calendarFetchFailed = false
         } catch {
             calendarNeedsAuth = calendarService.needsReauth
+            if !calendarService.needsReauth {
+                calendarFetchFailed = true
+            }
         }
         isCalendarLoading = false
 
@@ -79,39 +86,41 @@ final class TVShell {
     }
 
     func writeTopShelfSnapshot() {
-        let photo = photoVM.photos.first
-        let nextEvent = calendarEvents.first { $0.startDate > .now }
+        #if os(tvOS)
+            let photo = photoVM.photos.first
+            let nextEvent = calendarEvents.first { $0.startDate > .now }
 
-        Task {
-            do {
-                var photoURL: URL?
-                if let photo {
-                    let data = try await self.photoVM.loadFullImage(for: photo)
-                    if let containerURL = FileManager.default.containerURL(
-                        forSecurityApplicationGroupIdentifier: "group.com.sonas.topshelf"
-                    ) {
-                        let targetURL = containerURL.appendingPathComponent("topshelf_photo.jpg")
-                        try data.write(to: targetURL)
-                        photoURL = targetURL
+            Task {
+                do {
+                    var photoURL: URL?
+                    if let photo {
+                        let data = try await self.photoVM.loadFullImage(for: photo)
+                        if let containerURL = FileManager.default.containerURL(
+                            forSecurityApplicationGroupIdentifier: "group.com.sonas.topshelf"
+                        ) {
+                            let targetURL = containerURL.appendingPathComponent("topshelf_photo.jpg")
+                            try data.write(to: targetURL)
+                            photoURL = targetURL
+                        }
                     }
+
+                    let snapshot = TVTopShelfSnapshot(
+                        photoFileURL: photoURL,
+                        nextEventTitle: nextEvent?.title,
+                        nextEventStart: nextEvent?.startDate,
+                        updatedAt: .now
+                    )
+
+                    let encoder = JSONEncoder()
+                    let snapshotData = try encoder.encode(snapshot)
+                    let userDefaults = UserDefaults(suiteName: "group.com.sonas.topshelf")
+                    userDefaults?.set(snapshotData, forKey: "TopShelfSnapshot")
+                } catch {
+                    // Fail silently for Top Shelf updates to avoid disrupting main dashboard
+                    print("Failed to write Top Shelf snapshot: \(error.localizedDescription)")
                 }
-
-                let snapshot = TVTopShelfSnapshot(
-                    photoFileURL: photoURL,
-                    nextEventTitle: nextEvent?.title,
-                    nextEventStart: nextEvent?.startDate,
-                    updatedAt: .now
-                )
-
-                let encoder = JSONEncoder()
-                let snapshotData = try encoder.encode(snapshot)
-                let userDefaults = UserDefaults(suiteName: "group.com.sonas.topshelf")
-                userDefaults?.set(snapshotData, forKey: "TopShelfSnapshot")
-            } catch {
-                // Fail silently for Top Shelf updates to avoid disrupting main dashboard
-                print("Failed to write Top Shelf snapshot: \(error.localizedDescription)")
             }
-        }
+        #endif
     }
 }
 
@@ -138,8 +147,10 @@ struct TVShellView: View {
                         TVEventsPanel(
                             events: shell.calendarEvents,
                             isLoading: shell.isCalendarLoading,
-                            needsAuth: shell.calendarNeedsAuth
-                        )
+                            needsAuth: shell.calendarNeedsAuth,
+                            isFetchFailed: shell.calendarFetchFailed,
+                            lastUpdated: shell.calendarLastUpdated
+                        ) { Task { await shell.loadAll() } }
                     }
                     .tvCardStyle()
                     .accessibilityIdentifier("EventsPanel")
@@ -209,7 +220,7 @@ private struct TVWeatherPanel: View {
     let vm: WeatherViewModel
 
     var body: some View {
-        PanelView(title: "Weather", icon: "cloud.sun.fill") {
+        PanelView(title: "Weather", icon: "cloud.sun.fill", lastUpdated: vm.liveDataFailed ? vm.lastUpdated : nil) {
             if let snapshot = vm.snapshot {
                 VStack(spacing: 4) {
                     Text("\(Int(snapshot.temperature.rounded()))°")
@@ -228,6 +239,9 @@ private struct TVWeatherPanel: View {
                     .foregroundStyle(.secondary)
             }
         }
+        .staleIfNeeded(lastUpdated: vm.liveDataFailed ? vm.lastUpdated : nil) {
+            Task { await vm.refresh() }
+        }
     }
 }
 
@@ -235,9 +249,12 @@ private struct TVEventsPanel: View {
     let events: [CalendarEvent]
     let isLoading: Bool
     let needsAuth: Bool
+    let isFetchFailed: Bool
+    let lastUpdated: Date?
+    let onRetry: () -> Void
 
     var body: some View {
-        PanelView(title: "Coming Up", icon: "calendar") {
+        PanelView(title: "Coming Up", icon: "calendar", lastUpdated: isFetchFailed ? lastUpdated : nil) {
             if isLoading {
                 ProgressView()
             } else if needsAuth {
@@ -259,6 +276,7 @@ private struct TVEventsPanel: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
+        .staleIfNeeded(lastUpdated: isFetchFailed ? lastUpdated : nil, onRetry: onRetry)
     }
 }
 
@@ -312,6 +330,15 @@ private extension View {
         #else
             self
         #endif
+    }
+
+    @ViewBuilder
+    func staleIfNeeded(lastUpdated: Date?, onRetry: @escaping () -> Void) -> some View {
+        if let lastUpdated {
+            staleDataBadge(lastUpdated: lastUpdated, onRetry: onRetry)
+        } else {
+            self
+        }
     }
 }
 

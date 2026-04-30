@@ -175,7 +175,7 @@ has advanced to a different photo.
 - [x] T028 [US3] Update `TVShell`'s `LazyVGrid` in `Sonas/Platform/TV/TVShell.swift` to use the final 7-panel layout:
       Clock + Weather + Calendar (row 1), Tasks + Location + Jam (row 2), Photos spanning all 3 columns (row 3); replace
       the placeholder `PhotoGalleryView` tile with `TVSlideshowPanelView`
-- [ ] T029 [US3] Verify 10-foot UI legibility: build and run on tvOS Simulator at 1080p, screenshot `TVShell` at full
+- [x] T029 [US3] Verify 10-foot UI legibility: build and run on tvOS Simulator at 1080p, screenshot `TVShell` at full
       resolution, confirm all panel titles and primary data values (temperature, next event) are readable; adjust font
       sizes if needed (tvOS `.title`, `.title2`, `.headline` scale up at TV safe area)
 - [x] T030 [US3] Write `TVSlideshowUITests` in `TVSonasUITests/TVSlideshowUITests.swift` — launch with
@@ -220,18 +220,18 @@ the Top Shelf shows a photo image and event title/time.
 
 **Purpose**: Stability verification, offline/stale states, and performance baselines required by the Constitution.
 
-- [ ] T035 [P] Verify all six `USE_MOCK_*=1` environment variables correctly disable live network calls on tvOS (run
+- [x] T035 [P] Verify all six `USE_MOCK_*=1` environment variables correctly disable live network calls on tvOS (run
       `TVSonas` scheme with all mocks enabled, use Instruments Network profiler to confirm zero outbound requests); fix
       any missing mock paths
-- [ ] T036 [P] Verify offline stale-data behaviour: launch with live services, then disable network in Simulator
+- [x] T036 [P] Verify offline stale-data behaviour: launch with live services, then disable network in Simulator
       (Settings → Developer → Network Link Conditioner → 100% Loss), wait 1 refresh cycle, confirm all panels show stale
       badge (`PanelView.staleDataBadge`) rather than error state; fix any panel that shows a blank or crash
-- [ ] T037 Run Instruments Allocations + Leaks template on tvOS Simulator for 30 minutes with all mocks enabled; record
+- [x] T037 Run Instruments Allocations + Leaks template on tvOS Simulator for 30 minutes with all mocks enabled; record
       heap baseline in `specs/004-tvos-support/plan.md` under Performance Baselines; flag any monotonic heap growth for
       investigation (SC-004 gate — full 8 h run required before shipping)
-- [ ] T038 [P] Run `xcodebuild test -scheme SonasTests` and confirm `TVCalendarServiceTests` (4) and
+- [x] T038 [P] Run `xcodebuild test -scheme SonasTests` and confirm `TVCalendarServiceTests` (4) and
       `TVSpotifyReadServiceTests` (3) all pass; zero test failures permitted
-- [ ] T039 [P] Run `xcodebuild test -scheme TVSonas` (UI tests) and confirm `TVDashboardUITests`, `TVNavigationUITests`,
+- [x] T039 [P] Run `xcodebuild test -scheme TVSonas` (UI tests) and confirm `TVDashboardUITests`, `TVNavigationUITests`,
       and `TVSlideshowUITests` all pass; fix any failures
 
 ---

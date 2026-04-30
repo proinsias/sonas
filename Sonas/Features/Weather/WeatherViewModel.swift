@@ -14,6 +14,7 @@ final class WeatherViewModel {
     private(set) var isLoading: Bool = true
     private(set) var error: PanelError?
     private(set) var lastUpdated: Date?
+    private(set) var liveDataFailed: Bool = false
 
     // MARK: Dependencies
 
@@ -80,19 +81,24 @@ final class WeatherViewModel {
             forecast = days
             lastUpdated = current.fetchedAt
             error = nil
+            liveDataFailed = false
             isLoading = false
             try? await cache.saveWeather(current, forecast: days)
             SonasLogger.weather.info("WeatherViewModel: live data loaded")
         } catch WeatherServiceError.locationNotConfigured {
             error = .notConfigured
+            liveDataFailed = false
             isLoading = false
         } catch {
             if snapshot == nil {
                 self.error = PanelError(
                     title: "Weather Unavailable",
                     message: error.localizedDescription,
-                    isRetryable: true,
+                    isRetryable: true
                 )
+                liveDataFailed = false
+            } else {
+                liveDataFailed = true
             }
             isLoading = false
         }

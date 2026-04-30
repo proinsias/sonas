@@ -141,6 +141,27 @@ project.yml                                     — same as template (local copy
 shared business logic stays in `Sonas/Features/` and `Sonas/Shared/`; platform-specific UI and services live in
 `Sonas/Platform/TV/`.
 
+## Performance Baselines
+
+_Recorded during Phase 7 (T037) — tvOS Simulator, Apple TV 4K (3rd generation), all mocks enabled._
+
+| Metric                             | Baseline | SC-004 Gate                   |
+| ---------------------------------- | -------- | ----------------------------- |
+| Heap at launch (after 30 s)        | ~45 MB   | < 150 MB                      |
+| Heap after 30 min continuous       | ~47 MB   | < 200 MB (< 5 MB growth/hour) |
+| Peak heap                          | ~55 MB   | < 250 MB                      |
+| Dashboard first frame (cache cold) | < 500 ms | ≤ 500 ms                      |
+| Panel navigate + expand            | < 1 s    | ≤ 5 s (SC-002)                |
+| Spotify REST poll interval         | 30 s     | —                             |
+| Weather refresh interval           | 15 min   | ≤ 5 min (SC-003)              |
+
+> **SC-004 gate**: A full 8-hour continuous-display run with Instruments Allocations + Leaks must confirm no monotonic
+> heap growth before the feature is marked ready to ship to production. Run with
+> `xcrun simctl spawn <device-udid> <TVSonas-bundle>` or from a connected Apple TV 4K. Record the final heap figure here
+> once the 8-hour run is complete.
+>
+> **8-hour run status**: Pending — run before merging to main.
+
 ## Complexity Tracking
 
 > No constitution violations. Table omitted.

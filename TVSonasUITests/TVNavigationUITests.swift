@@ -2,6 +2,7 @@ import XCTest
 
 // MARK: - TVNavigationUITests (T025)
 
+@MainActor
 final class TVNavigationUITests: XCTestCase {
     var app: XCUIApplication!
 
@@ -39,17 +40,19 @@ final class TVNavigationUITests: XCTestCase {
     func testSelectOnWeatherPanelPushesDetailView() {
         app.launch()
 
+        let weatherPanel = app.buttons["WeatherPanel"]
         XCTAssertTrue(
-            app.buttons["WeatherPanel"].waitForExistence(timeout: 30),
+            weatherPanel.waitForExistence(timeout: 30),
             "WeatherPanel should appear before interacting"
         )
 
-        // WeatherPanel is the first focusable element in the grid; activate with Select
+        // On tvOS, we typically focus first, then press Select.
+        // For simplicity in this mock-heavy test, we assume focus starts on first element.
         XCUIRemote.shared.press(.select)
 
         XCTAssertTrue(
             app.otherElements["WeatherDetailView"].waitForExistence(timeout: 10),
-            "WeatherDetailView should appear after pressing Select on WeatherPanel"
+            "WeatherDetailView should appear after pressing Select on focused WeatherPanel"
         )
     }
 
@@ -58,7 +61,8 @@ final class TVNavigationUITests: XCTestCase {
     func testBackFromDetailPopsToGrid() {
         app.launch()
 
-        XCTAssertTrue(app.buttons["WeatherPanel"].waitForExistence(timeout: 30))
+        let weatherPanel = app.buttons["WeatherPanel"]
+        XCTAssertTrue(weatherPanel.waitForExistence(timeout: 30))
 
         XCUIRemote.shared.press(.select)
         XCTAssertTrue(
@@ -69,7 +73,7 @@ final class TVNavigationUITests: XCTestCase {
         XCUIRemote.shared.press(.menu)
 
         XCTAssertTrue(
-            app.buttons["WeatherPanel"].waitForExistence(timeout: 10),
+            weatherPanel.waitForExistence(timeout: 10),
             "WeatherPanel should be visible again after pressing Menu"
         )
     }

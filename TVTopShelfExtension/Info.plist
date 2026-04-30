@@ -23,7 +23,7 @@
     <key>NSExtension</key>
     <dict>
         <key>NSExtensionPointIdentifier</key>
-        <string>com.apple.tvos.app-extension.topshelf</string>
+        <string>com.apple.tvos.topshelf</string>
         <key>NSExtensionPrincipalClass</key>
         <string>$(PRODUCT_MODULE_NAME).TopShelfContentProvider</string>
     </dict>

@@ -133,6 +133,7 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.yourteam.sonas.tests
+        GENERATE_INFOPLIST_FILE: YES
     dependencies:
       - target: Sonas
   # ─── UI Tests ─────────────────────────────────────────────────────────────────
@@ -145,6 +146,7 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.yourteam.sonas.uitests
+        GENERATE_INFOPLIST_FILE: YES
     dependencies:
       - target: Sonas
   # ─── watchOS Extension ────────────────────────────────────────────────────────
@@ -214,7 +216,7 @@ targets:
     entitlements:
       path: TVSonas/TVSonas.entitlements
     dependencies:
-      - target: TVTopShelfExtension
+      []
     capabilities:
       - WeatherKit
     scheme:
@@ -237,6 +239,7 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.yourteam.sonas.tv.uitests
+        GENERATE_INFOPLIST_FILE: YES
     dependencies:
       - target: TVSonas
   # ─── tvOS Top Shelf Extension ─────────────────────────────────────────────────
@@ -254,7 +257,7 @@ targets:
         CFBundleShortVersionString: '$(MARKETING_VERSION)'
         CFBundleVersion: '$(CURRENT_PROJECT_VERSION)'
         NSExtension:
-          NSExtensionPointIdentifier: com.apple.tvos.app-extension.topshelf
+          NSExtensionPointIdentifier: com.apple.tvos.topshelf
           NSExtensionPrincipalClass: $(PRODUCT_MODULE_NAME).TopShelfContentProvider
     settings:
       base:
@@ -374,6 +377,18 @@ schemes:
       targets:
         - name: MacSonasUITests
           parallelizable: false
+  TVSonasUITests:
+    build:
+      targets:
+        TVSonasUITests: all
+    run:
+      config: Debug
+    test:
+      config: Debug
+      targets:
+        - name: TVSonasUITests
+          parallelizable: true
+          randomExecutionOrder: true
   TVSonas:
     build:
       targets:
