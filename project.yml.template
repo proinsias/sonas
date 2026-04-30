@@ -405,3 +405,11 @@ schemes:
         - name: TVSonasUITests
           parallelizable: true
           randomExecutionOrder: true
+  WatchSonas:
+    build:
+      targets:
+        WatchSonas: all
+    run:
+      config: Debug
+    archive:
+      config: Release

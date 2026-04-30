@@ -137,6 +137,20 @@ run = '''
         CODE_SIGNING_ALLOWED=NO
 '''
 
+[tasks.tests-unit-watch]
+description = 'Build WatchSonas to verify watchOS compilation (no XCTest runner on watchOS)'
+run = '''
+    set -euo pipefail
+    xcodebuild build \
+        -scheme WatchSonas \
+        -destination 'platform=watchOS Simulator,name=Apple Watch Series 10 (46mm)' \
+        -derivedDataPath "$(pwd)/.build/DerivedData/unit-watch" \
+        -configuration Debug \
+        CODE_SIGN_IDENTITY="" \
+        CODE_SIGNING_REQUIRED=NO \
+        CODE_SIGNING_ALLOWED=NO
+'''
+
 [tasks.tests-unit]
 description = 'Run all unit tests'
 depends = ["tests-unit-*"]
