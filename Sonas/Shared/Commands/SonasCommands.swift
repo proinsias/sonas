@@ -1,6 +1,6 @@
 import SwiftUI
 
-#if !os(tvOS)
+#if !os(tvOS) && !os(watchOS)
     /// Registers all Sonas keyboard shortcuts with the SwiftUI command system.
     /// This provides the Command-key overlay on iPadOS (FR-004).
     struct SonasCommands: Commands {
