@@ -87,6 +87,15 @@ run = '''
         ALLOW_PROVISIONING_DEVICE_REGISTRATION=NO \
         ALLOW_PROVISIONING_UPDATES=NO
 
+    # Pre-authorize Xcode for Accessibility so macOS doesn't show the
+    # "XCTest is trying to Enable UI Automation" popup during test runs.
+    # This writes to the user TCC store — no SIP change required.
+    TCC_DB="$HOME/Library/Application Support/com.apple.TCC/TCC.db"
+    TCC_SQL="INSERT OR REPLACE INTO access"
+    TCC_SQL="$TCC_SQL (service,client,client_type,auth_value,auth_reason,auth_version)"
+    TCC_SQL="$TCC_SQL VALUES ('kTCCServiceAccessibility','com.apple.dt.Xcode',0,2,4,1);"
+    sqlite3 "$TCC_DB" "$TCC_SQL" 2>/dev/null || true
+
     # Remove all extended attributes and re-sign ad-hoc everything in Products
     # This is critical for running native macOS UI tests on Apple Silicon without a dev cert
     find "$(pwd)/.build/DerivedData/ui-mac/Build/Products" -depth -name "*.*" -exec xattr -cr {} + || true
