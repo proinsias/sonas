@@ -20,83 +20,8 @@ jobs:
             echo "DEVELOPER_DIR=/Applications/Xcode_16.3.app/Contents/Developer" >> "$GITHUB_ENV"
           fi
 
-      - name: Install iOS 18.4 Simulator runtime
-        run: |
-          # Use DEVELOPMENT_DIR if set, otherwise default to Xcode.app
-          XCODE_PATH=$(xcode-select -p)
-
-          # Force download and install of the iOS 18.4 platform
-          # This should be more robust than just -downloadPlatform
-          "$XCODE_PATH"/usr/bin/xcodebuild -downloadPlatform iOS
-
-          # Find and boot an iPhone 17 Pro simulator
-          SIM_NAME="iPhone 17 Pro"
-          SIM_ID=$(xcrun simctl list devices available \
-              | grep "$SIM_NAME" \
-              | sed 's/.*(\([A-Z0-9-]*\)).*/\1/' \
-              | head -1)
-
-          if [ -z "$SIM_ID" ]; then
-              echo "Error: $SIM_NAME Simulator not found." >&2
-              exit 1
-          fi
-
-          echo "Found $SIM_NAME Simulator with ID: $SIM_ID"
-
-          # Shutdown and erase to ensure a clean state
-          xcrun simctl shutdown "$SIM_ID" 2>/dev/null || true
-          xcrun simctl erase "$SIM_ID" 2>/dev/null || true
-
-          # Boot the simulator
-          xcrun simctl boot "$SIM_ID" || true
-          # Give it a moment to fully boot
-          sleep 10
-
-          # Find and boot an iPhone 17 Pro simulator
-          SIM_NAME="iPhone 17 Pro"
-          SIM_ID=$(xcrun simctl list devices available \
-              | grep "$SIM_NAME" \
-              | sed 's/.*(\([A-Z0-9-]*\)).*/\1/' \
-              | head -1)
-
-          if [ -z "$SIM_ID" ]; then
-              echo "Error: $SIM_NAME Simulator not found." >&2
-              exit 1
-          fi
-
-          echo "Found $SIM_NAME Simulator with ID: $SIM_ID"
-
-          # Shutdown and erase to ensure a clean state
-          xcrun simctl shutdown "$SIM_ID" 2>/dev/null || true
-          xcrun simctl erase "$SIM_ID" 2>/dev/null || true
-
-          # Boot the simulator
-          xcrun simctl boot "$SIM_ID" || true
-          # Give it a moment to fully boot
-          sleep 10
-
-          # Find and boot an iPhone 17 Pro simulator
-          SIM_NAME="iPhone 17 Pro"
-          SIM_ID=$(xcrun simctl list devices available \
-              | grep "$SIM_NAME" \
-              | sed 's/.*(\([A-Z0-9-]*\)).*/\1/' \
-              | head -1)
-
-          if [ -z "$SIM_ID" ]; then
-              echo "Error: $SIM_NAME Simulator not found." >&2
-              exit 1
-          fi
-
-          echo "Found $SIM_NAME Simulator with ID: $SIM_ID"
-
-          # Shutdown and erase to ensure a clean state
-          xcrun simctl shutdown "$SIM_ID" 2>/dev/null || true
-          xcrun simctl erase "$SIM_ID" 2>/dev/null || true
-
-          # Boot the simulator
-          xcrun simctl boot "$SIM_ID" || true
-          # Give it a moment to fully boot
-          sleep 10
+      - name: Install iOS Simulator runtime
+        run: xcodebuild -downloadPlatform iOS
 
       - name: Generate project.yml from template
         run: |
@@ -182,38 +107,8 @@ jobs:
             echo "DEVELOPER_DIR=/Applications/Xcode_16.3.app/Contents/Developer" >> "$GITHUB_ENV"
           fi
 
-      - name: Install tvOS 18.4 Simulator runtime
-        run: |
-          # Use DEVELOPMENT_DIR if set, otherwise default to Xcode.app
-          XCODE_PATH=$(xcode-select -p)
-
-          # Force download and install of the tvOS 18.4 platform
-          # This should be more robust than just -downloadPlatform
-          "$XCODE_PATH"/usr/bin/xcodebuild -downloadPlatform tvOS
-
-          # Find and boot the Apple TV 4K (3rd generation) simulator
-          SIM_NAME="Apple TV 4K (3rd generation)"
-          SIM_ID=$(xcrun simctl list devices available \
-              | grep "$SIM_NAME" \
-              | grep -v "1080p" \
-              | sed 's/.*(\([A-Z0-9-]*\)).*/\1/' \
-              | head -1)
-
-          if [ -z "$SIM_ID" ]; then
-              echo "Error: $SIM_NAME Simulator not found." >&2
-              exit 1
-          fi
-
-          echo "Found $SIM_NAME Simulator with ID: $SIM_ID"
-
-          # Shutdown and erase to ensure a clean state
-          xcrun simctl shutdown "$SIM_ID" 2>/dev/null || true
-          xcrun simctl erase "$SIM_ID" 2>/dev/null || true
-
-          # Boot the simulator
-          xcrun simctl boot "$SIM_ID" || true
-          # Give it a moment to fully boot
-          sleep 10
+      - name: Install tvOS Simulator runtime
+        run: xcodebuild -downloadPlatform tvOS
 
       - name: Generate project.yml from template
         run: |
@@ -257,83 +152,8 @@ jobs:
             echo "DEVELOPER_DIR=/Applications/Xcode_16.3.app/Contents/Developer" >> "$GITHUB_ENV"
           fi
 
-      - name: Install iOS 18.4 Simulator runtime
-        run: |
-          # Use DEVELOPMENT_DIR if set, otherwise default to Xcode.app
-          XCODE_PATH=$(xcode-select -p)
-
-          # Force download and install of the iOS 18.4 platform
-          # This should be more robust than just -downloadPlatform
-          "$XCODE_PATH"/usr/bin/xcodebuild -downloadPlatform iOS
-
-          # Find and boot an iPhone 17 Pro simulator
-          SIM_NAME="iPhone 17 Pro"
-          SIM_ID=$(xcrun simctl list devices available \
-              | grep "$SIM_NAME" \
-              | sed 's/.*(\([A-Z0-9-]*\)).*/\1/' \
-              | head -1)
-
-          if [ -z "$SIM_ID" ]; then
-              echo "Error: $SIM_NAME Simulator not found." >&2
-              exit 1
-          fi
-
-          echo "Found $SIM_NAME Simulator with ID: $SIM_ID"
-
-          # Shutdown and erase to ensure a clean state
-          xcrun simctl shutdown "$SIM_ID" 2>/dev/null || true
-          xcrun simctl erase "$SIM_ID" 2>/dev/null || true
-
-          # Boot the simulator
-          xcrun simctl boot "$SIM_ID" || true
-          # Give it a moment to fully boot
-          sleep 10
-
-          # Find and boot an iPhone 17 Pro simulator
-          SIM_NAME="iPhone 17 Pro"
-          SIM_ID=$(xcrun simctl list devices available \
-              | grep "$SIM_NAME" \
-              | sed 's/.*(\([A-Z0-9-]*\)).*/\1/' \
-              | head -1)
-
-          if [ -z "$SIM_ID" ]; then
-              echo "Error: $SIM_NAME Simulator not found." >&2
-              exit 1
-          fi
-
-          echo "Found $SIM_NAME Simulator with ID: $SIM_ID"
-
-          # Shutdown and erase to ensure a clean state
-          xcrun simctl shutdown "$SIM_ID" 2>/dev/null || true
-          xcrun simctl erase "$SIM_ID" 2>/dev/null || true
-
-          # Boot the simulator
-          xcrun simctl boot "$SIM_ID" || true
-          # Give it a moment to fully boot
-          sleep 10
-
-          # Find and boot an iPhone 17 Pro simulator
-          SIM_NAME="iPhone 17 Pro"
-          SIM_ID=$(xcrun simctl list devices available \
-              | grep "$SIM_NAME" \
-              | sed 's/.*(\([A-Z0-9-]*\)).*/\1/' \
-              | head -1)
-
-          if [ -z "$SIM_ID" ]; then
-              echo "Error: $SIM_NAME Simulator not found." >&2
-              exit 1
-          fi
-
-          echo "Found $SIM_NAME Simulator with ID: $SIM_ID"
-
-          # Shutdown and erase to ensure a clean state
-          xcrun simctl shutdown "$SIM_ID" 2>/dev/null || true
-          xcrun simctl erase "$SIM_ID" 2>/dev/null || true
-
-          # Boot the simulator
-          xcrun simctl boot "$SIM_ID" || true
-          # Give it a moment to fully boot
-          sleep 10
+      - name: Install iOS Simulator runtime
+        run: xcodebuild -downloadPlatform iOS
 
       - name: Generate project.yml from template
         run: |

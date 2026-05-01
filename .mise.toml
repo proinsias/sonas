@@ -53,6 +53,7 @@ run = '''
     fi
     xcrun simctl shutdown "$SIM" 2>/dev/null || true
     xcrun simctl boot "$SIM"
+    xcrun simctl bootstatus "$SIM" -b
     mkdir -p .build/DerivedData/ui-ios
     xcodebuild test \
         -scheme SonasUITests \
@@ -117,7 +118,6 @@ run = '''
     rm -rf .build/DerivedData/ui-tv
     mkdir -p .build/DerivedData/ui-tv
 
-    # Boot the simulator explicitly so the test runner installs cleanly
     SIM=$(xcrun simctl list devices available \
         | grep 'Apple TV 4K (3rd generation)' \
         | grep -v '1080p' \
@@ -127,7 +127,9 @@ run = '''
         echo "No Apple TV 4K (3rd generation) Simulator found. Install one via Xcode > Settings > Components." >&2
         exit 1
     fi
-    xcrun simctl boot "$SIM" 2>/dev/null || true
+    xcrun simctl shutdown "$SIM" 2>/dev/null || true
+    xcrun simctl boot "$SIM"
+    xcrun simctl bootstatus "$SIM" -b
 
     xcodebuild test \
         -scheme TVSonasUITests \
@@ -158,6 +160,9 @@ run = '''
         echo "No iOS Simulator runtime found. Install one via Xcode > Settings > Components." >&2
         exit 1
     fi
+    xcrun simctl shutdown "$SIM" 2>/dev/null || true
+    xcrun simctl boot "$SIM"
+    xcrun simctl bootstatus "$SIM" -b
     mkdir -p .build/DerivedData/unit-ios
     xcodebuild test \
         -scheme SonasTests \
