@@ -313,6 +313,7 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.yourteam.sonas.mac.uitests
+        GENERATE_INFOPLIST_FILE: YES
     dependencies:
       - target: MacSonas
 schemes:
