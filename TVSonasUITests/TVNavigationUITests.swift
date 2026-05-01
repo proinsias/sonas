@@ -31,7 +31,7 @@ final class TVNavigationUITests: XCTestCase {
 
         // Wait for focus to settle (SC-004)
         let hasFocus = NSPredicate(format: "hasFocus == true")
-        let focusExpectation = expectation(for: hasFocus, reflectedObject: weatherPanel)
+        let focusExpectation = expectation(for: hasFocus, evaluatedWith: weatherPanel)
         await fulfillment(of: [focusExpectation], timeout: 10)
 
         XCUIRemote.shared.press(.right)
@@ -55,7 +55,7 @@ final class TVNavigationUITests: XCTestCase {
 
         // Wait for focus to settle (SC-004)
         let hasFocus = NSPredicate(format: "hasFocus == true")
-        let focusExpectation = expectation(for: hasFocus, reflectedObject: weatherPanel)
+        let focusExpectation = expectation(for: hasFocus, evaluatedWith: weatherPanel)
         await fulfillment(of: [focusExpectation], timeout: 10)
 
         XCUIRemote.shared.press(.select)
@@ -77,7 +77,7 @@ final class TVNavigationUITests: XCTestCase {
 
         // Wait for focus to settle (SC-004)
         let hasFocus = NSPredicate(format: "hasFocus == true")
-        let focusExpectation = expectation(for: hasFocus, reflectedObject: weatherPanel)
+        let focusExpectation = expectation(for: hasFocus, evaluatedWith: weatherPanel)
         await fulfillment(of: [focusExpectation], timeout: 10)
 
         XCUIRemote.shared.press(.select)
