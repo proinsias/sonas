@@ -76,9 +76,9 @@ run = '''
         -derivedDataPath "$(pwd)/.build/DerivedData/ui-mac" \
         -enableCodeCoverage YES \
         -configuration Debug \
-        CODE_SIGN_IDENTITY="" \
+        CODE_SIGN_IDENTITY="-" \
         CODE_SIGNING_REQUIRED=NO \
-        CODE_SIGNING_ALLOWED=NO
+        AD_HOC_CODE_SIGNING_ALLOWED=YES
 '''
 
 [tasks.tests-ui-tv]
