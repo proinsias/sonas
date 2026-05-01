@@ -2,11 +2,11 @@ import XCTest
 
 // MARK: - TVSlideshowUITests (T030)
 
+@MainActor
 final class TVSlideshowUITests: XCTestCase {
     var app: XCUIApplication!
 
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws {
         continueAfterFailure = false
         app = XCUIApplication()
         app.launchEnvironment = [
