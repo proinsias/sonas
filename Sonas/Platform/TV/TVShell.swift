@@ -1,3 +1,4 @@
+import CoreLocation
 import Foundation
 import SwiftUI
 
@@ -34,9 +35,15 @@ final class TVShell {
     }
 
     static func makeDefault() -> TVShell {
+        let useMockWeather = ProcessInfo.processInfo.environment["USE_MOCK_WEATHER"] == "1"
         let useMockCalendar = ProcessInfo.processInfo.environment["USE_MOCK_CALENDAR"] == "1"
         let useMockJam = ProcessInfo.processInfo.environment["USE_MOCK_JAM"] == "1"
         let useMockLocation = ProcessInfo.processInfo.environment["USE_MOCK_LOCATION"] == "1"
+
+        if useMockWeather || useMockLocation, AppConfiguration.shared.homeLocation == nil {
+            AppConfiguration.shared.homeLocation = CLLocationCoordinate2D(latitude: 37.3346, longitude: -122.0090)
+            AppConfiguration.shared.homeLocationName = "Cupertino, CA"
+        }
 
         let calService: TVCalendarServiceProtocol = useMockCalendar
             ? TVCalendarServiceMock()
@@ -78,10 +85,7 @@ final class TVShell {
             }
         }
         isCalendarLoading = false
-
         currentTrack = try? await spotifyService.fetchCurrentlyPlaying()
-
-        // Write snapshot for Top Shelf after data refresh
         writeTopShelfSnapshot()
     }
 
@@ -116,7 +120,6 @@ final class TVShell {
                     let userDefaults = UserDefaults(suiteName: "group.com.sonas.topshelf")
                     userDefaults?.set(snapshotData, forKey: "TopShelfSnapshot")
                 } catch {
-                    // Fail silently for Top Shelf updates to avoid disrupting main dashboard
                     print("Failed to write Top Shelf snapshot: \(error.localizedDescription)")
                 }
             }
@@ -129,12 +132,12 @@ final class TVShell {
 struct TVShellView: View {
     @State private var shell = TVShell.makeDefault()
     @State private var selectedPanel: AppSection?
+    @FocusState private var focusedPanel: AppSection?
 
     var body: some View {
         NavigationStack {
             Grid(horizontalSpacing: 20, verticalSpacing: 20) {
                 GridRow {
-                    // Row 1: Clock, Weather, Calendar
                     TVClockPanel()
 
                     Button { selectedPanel = .weather } label: {
@@ -142,6 +145,7 @@ struct TVShellView: View {
                     }
                     .tvCardStyle()
                     .accessibilityIdentifier("WeatherPanel")
+                    .focused($focusedPanel, equals: .weather)
 
                     Button { selectedPanel = .calendar } label: {
                         TVEventsPanel(
@@ -154,37 +158,40 @@ struct TVShellView: View {
                     }
                     .tvCardStyle()
                     .accessibilityIdentifier("EventsPanel")
+                    .focused($focusedPanel, equals: .calendar)
                 }
 
                 GridRow {
-                    // Row 2: Tasks, Location, Jam
                     Button { selectedPanel = .tasks } label: {
                         TVTasksPanel()
                     }
                     .tvCardStyle()
                     .accessibilityIdentifier("TasksPanel")
+                    .focused($focusedPanel, equals: .tasks)
 
                     Button { selectedPanel = .location } label: {
                         TVLocationPanel(vm: shell.locationVM)
                     }
                     .tvCardStyle()
                     .accessibilityIdentifier("LocationPanel")
+                    .focused($focusedPanel, equals: .location)
 
                     Button { selectedPanel = .jam } label: {
                         TVSpotifyJamPanel(track: shell.currentTrack)
                     }
                     .tvCardStyle()
                     .accessibilityIdentifier("JamPanel")
+                    .focused($focusedPanel, equals: .jam)
                 }
 
                 GridRow {
-                    // Row 3: Photos — spanning all 3 columns
                     Button { selectedPanel = .photos } label: {
                         TVSlideshowPanelView(vm: shell.photoVM)
                     }
                     .tvCardStyle()
                     .accessibilityIdentifier("PhotosPanel")
                     .gridCellColumns(3)
+                    .focused($focusedPanel, equals: .photos)
                 }
             }
             .padding(40)
@@ -193,7 +200,10 @@ struct TVShellView: View {
                 TVPanelDetailView(section: section, shell: shell)
             }
         }
-        .task { await shell.loadAll() }
+        .task {
+            focusedPanel = focusedPanel ?? .weather
+            await shell.loadAll()
+        }
     }
 }
 

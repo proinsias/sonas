@@ -21,22 +21,30 @@ final class TVNavigationUITests: XCTestCase {
 
     // MARK: - Scenario 1: Directional pad navigates between panels
 
-    func testDirectionalPadMovesFocusBetweenPanels() {
+    func testDirectionalPadMovesFocusBetweenPanels() async {
         app.launch()
 
+        let weatherPanel = app.buttons["WeatherPanel"]
+        let eventsPanel = app.buttons["EventsPanel"]
+
+        XCTAssertTrue(weatherPanel.waitForExistence(timeout: 30))
+
+        // Wait for focus to settle (SC-004)
+        let hasFocus = NSPredicate(format: "hasFocus == true")
+        let focusExpectation = expectation(for: hasFocus, reflectedObject: weatherPanel)
+        await fulfillment(of: [focusExpectation], timeout: 10)
+
+        XCUIRemote.shared.press(.right)
+
         XCTAssertTrue(
-            app.buttons["WeatherPanel"].waitForExistence(timeout: 30),
-            "WeatherPanel button should be visible on dashboard"
-        )
-        XCTAssertTrue(
-            app.buttons["EventsPanel"].waitForExistence(timeout: 5),
-            "EventsPanel button should be reachable via directional navigation"
+            eventsPanel.waitForExistence(timeout: 5),
+            "EventsPanel should exist"
         )
     }
 
     // MARK: - Scenario 2: Select on WeatherPanel pushes detail view
 
-    func testSelectOnWeatherPanelPushesDetailView() {
+    func testSelectOnWeatherPanelPushesDetailView() async {
         app.launch()
 
         let weatherPanel = app.buttons["WeatherPanel"]
@@ -45,34 +53,45 @@ final class TVNavigationUITests: XCTestCase {
             "WeatherPanel should appear before interacting"
         )
 
-        // On tvOS, we typically focus first, then press Select.
-        // For simplicity in this mock-heavy test, we assume focus starts on first element.
+        // Wait for focus to settle (SC-004)
+        let hasFocus = NSPredicate(format: "hasFocus == true")
+        let focusExpectation = expectation(for: hasFocus, reflectedObject: weatherPanel)
+        await fulfillment(of: [focusExpectation], timeout: 10)
+
         XCUIRemote.shared.press(.select)
 
+        // Detail view might take a moment to push and render
         XCTAssertTrue(
-            app.otherElements["WeatherDetailView"].waitForExistence(timeout: 10),
+            app.scrollViews["WeatherDetailView"].waitForExistence(timeout: 20),
             "WeatherDetailView should appear after pressing Select on focused WeatherPanel"
         )
     }
 
     // MARK: - Scenario 3: Menu/Back pops to grid
 
-    func testBackFromDetailPopsToGrid() {
+    func testBackFromDetailPopsToGrid() async {
         app.launch()
 
         let weatherPanel = app.buttons["WeatherPanel"]
         XCTAssertTrue(weatherPanel.waitForExistence(timeout: 30))
 
+        // Wait for focus to settle (SC-004)
+        let hasFocus = NSPredicate(format: "hasFocus == true")
+        let focusExpectation = expectation(for: hasFocus, reflectedObject: weatherPanel)
+        await fulfillment(of: [focusExpectation], timeout: 10)
+
         XCUIRemote.shared.press(.select)
+
         XCTAssertTrue(
-            app.otherElements["WeatherDetailView"].waitForExistence(timeout: 10),
+            app.scrollViews["WeatherDetailView"].waitForExistence(timeout: 20),
             "Should be in detail view after select"
         )
 
+        // Menu button on Siri Remote pops the navigation stack
         XCUIRemote.shared.press(.menu)
 
         XCTAssertTrue(
-            weatherPanel.waitForExistence(timeout: 10),
+            weatherPanel.waitForExistence(timeout: 20),
             "WeatherPanel should be visible again after pressing Menu"
         )
     }

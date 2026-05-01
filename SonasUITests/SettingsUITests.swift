@@ -4,11 +4,12 @@ import XCTest
 
 // Constitution §II: every user-facing feature MUST have at least one acceptance/integration test.
 
+@MainActor
 final class SettingsUITests: XCTestCase {
     var app: XCUIApplication!
 
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws {
+        try await super.setUp()
         continueAfterFailure = false
         app = XCUIApplication()
         app.launchEnvironment = [

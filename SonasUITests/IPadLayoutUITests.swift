@@ -1,11 +1,12 @@
 import XCTest
 
 /// UI Tests for iPadOS-specific layout and interaction.
+@MainActor
 final class IPadLayoutUITests: XCTestCase {
     var app: XCUIApplication!
 
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws {
+        try await super.setUp()
         continueAfterFailure = false
         app = XCUIApplication()
         app.launchEnvironment = [
@@ -134,11 +135,6 @@ final class IPadLayoutUITests: XCTestCase {
             app.otherElements["LocationPanel"].waitForExistence(timeout: 5),
             "App must render the dashboard before multi-window activation"
         )
-
-        // When the window is at compact width (Slide Over / ⅓ Split View) the app
-        // should fall back from a sidebar to a tab bar. In the simulator this
-        // transition is not automatable via XCTest, but the layout is driven by
-        // horizontalSizeClass so it is covered by the snapshot tests in plan.md §5.
     }
 
     /// T015 — Multi-window scene opening.

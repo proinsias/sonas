@@ -12,7 +12,6 @@ struct TVPanelDetailView: View {
             case .weather:
                 TVWeatherDetailView(vm: shell.weatherVM)
                     .navigationTitle("Weather")
-                    .accessibilityIdentifier("WeatherDetailView")
             case .calendar:
                 TVCalendarDetailView(
                     events: shell.calendarEvents,
@@ -65,6 +64,7 @@ private struct TVWeatherDetailView: View {
             }
             .padding(60)
         }
+        .accessibilityIdentifier("WeatherDetailView")
     }
 
     private func currentConditions(_ snapshot: WeatherSnapshot) -> some View {

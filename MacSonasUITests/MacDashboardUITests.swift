@@ -2,10 +2,30 @@ import XCTest
 
 @MainActor
 final class MacDashboardUITests: XCTestCase {
-    let app = XCUIApplication()
+    var app: XCUIApplication!
 
-    override func setUpWithError() throws {
+    override func setUpWithError() async throws {
         continueAfterFailure = false
+        app = XCUIApplication()
+        app.launchEnvironment = [
+            "USE_MOCK_LOCATION": "1",
+            "USE_MOCK_WEATHER": "1",
+            "USE_MOCK_CALENDAR": "1",
+            "USE_MOCK_TASKS": "1",
+            "USE_MOCK_PHOTOS": "1",
+            "USE_MOCK_JAM": "1"
+        ]
+
+        // Handle location permission if it still appears despite mocks
+        addUIInterruptionMonitor(withDescription: "Location Permission") { alert -> Bool in
+            let allowButton = alert.buttons["Allow"]
+            if allowButton.exists {
+                allowButton.click()
+                return true
+            }
+            return false
+        }
+
         app.launch()
     }
 

@@ -5,11 +5,12 @@ import XCTest
 // Constitution §II: every user-facing feature MUST have at least one acceptance/integration test.
 // Run with all USE_MOCK_*=1 environment variables set in the SonasUITests scheme.
 
+@MainActor
 final class DashboardUITests: XCTestCase {
     var app: XCUIApplication!
 
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws {
+        try await super.setUp()
         continueAfterFailure = false
         app = XCUIApplication()
         // Enable all mocks for deterministic UI tests

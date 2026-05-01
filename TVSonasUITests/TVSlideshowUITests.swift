@@ -24,8 +24,14 @@ final class TVSlideshowUITests: XCTestCase {
     func testPhotosPanelPresentWithMockData() {
         app.launch()
 
+        // Wait for dashboard to settle by checking first focusable element
         XCTAssertTrue(
-            app.buttons["PhotosPanel"].waitForExistence(timeout: 30),
+            app.buttons["WeatherPanel"].waitForExistence(timeout: 30),
+            "WeatherPanel should be visible"
+        )
+
+        XCTAssertTrue(
+            app.buttons["PhotosPanel"].waitForExistence(timeout: 10),
             "PhotosPanel should be visible on the dashboard"
         )
     }
@@ -35,9 +41,15 @@ final class TVSlideshowUITests: XCTestCase {
     func testSlideshowAutoAdvances() {
         app.launch()
 
+        // Wait for dashboard to settle
+        XCTAssertTrue(
+            app.buttons["WeatherPanel"].waitForExistence(timeout: 30),
+            "WeatherPanel should be visible"
+        )
+
         // Wait for initial photo to load
         XCTAssertTrue(
-            app.buttons["PhotosPanel"].waitForExistence(timeout: 30),
+            app.buttons["PhotosPanel"].waitForExistence(timeout: 10),
             "PhotosPanel should be visible on the dashboard"
         )
 

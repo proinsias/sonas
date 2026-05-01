@@ -69,23 +69,44 @@ run = '''
 description = 'Run UI tests on Mac (Native)'
 run = '''
     set -euo pipefail
+    # Clean previous builds to avoid stale "damaged" bundles
+    rm -rf .build/DerivedData/ui-mac
     mkdir -p .build/DerivedData/ui-mac
+
     xcodebuild build-for-testing \
         -scheme MacSonas \
         -destination 'platform=macOS' \
         -derivedDataPath "$(pwd)/.build/DerivedData/ui-mac" \
         -configuration Debug \
         CODE_SIGN_IDENTITY="-" \
-        CODE_SIGNING_REQUIRED=NO \
+        CODE_SIGNING_REQUIRED=YES \
+        CODE_SIGNING_ALLOWED=YES \
         AD_HOC_CODE_SIGNING_ALLOWED=YES \
-        ENABLE_HARDENED_RUNTIME=NO
-    xattr -dr com.apple.quarantine .build/DerivedData/ui-mac
+        ENABLE_HARDENED_RUNTIME=NO \
+        PROVISIONING_PROFILE_SPECIFIER="" \
+        ALLOW_PROVISIONING_DEVICE_REGISTRATION=NO \
+        ALLOW_PROVISIONING_UPDATES=NO
+
+    # Remove all extended attributes and re-sign ad-hoc everything in Products
+    # This is critical for running native macOS UI tests on Apple Silicon without a dev cert
+    find "$(pwd)/.build/DerivedData/ui-mac/Build/Products" -depth -name "*.*" -exec xattr -cr {} + || true
+    find "$(pwd)/.build/DerivedData/ui-mac/Build/Products" \
+        -depth -name "*.*" -exec codesign --force --deep --sign - {} + || true
+
     xcodebuild test-without-building \
         -scheme MacSonas \
         -destination 'platform=macOS' \
         -derivedDataPath "$(pwd)/.build/DerivedData/ui-mac" \
         -enableCodeCoverage YES \
-        -configuration Debug
+        -configuration Debug \
+        CODE_SIGN_IDENTITY="-" \
+        CODE_SIGNING_REQUIRED=YES \
+        CODE_SIGNING_ALLOWED=YES \
+        AD_HOC_CODE_SIGNING_ALLOWED=YES \
+        ENABLE_HARDENED_RUNTIME=NO \
+        PROVISIONING_PROFILE_SPECIFIER="" \
+        ALLOW_PROVISIONING_DEVICE_REGISTRATION=NO \
+        ALLOW_PROVISIONING_UPDATES=NO
 '''
 
 [tasks.tests-ui-tv]
