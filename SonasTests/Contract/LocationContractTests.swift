@@ -17,7 +17,7 @@ struct LocationContractTests {
         name: String,
         lat: Double,
         lon: Double,
-        placeName: String,
+        placeName: String
     ) -> CKRecord {
         let record = CKRecord(recordType: "FamilyLocation")
         record["displayName"] = name as CKRecordValue

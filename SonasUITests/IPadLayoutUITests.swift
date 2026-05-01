@@ -1,3 +1,4 @@
+import UIKit
 import XCTest
 
 /// UI Tests for iPadOS-specific layout and interaction.

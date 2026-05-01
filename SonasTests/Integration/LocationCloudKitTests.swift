@@ -50,9 +50,7 @@ struct LocationCloudKitTests {
 
     // MARK: - T042b: Second device writes → AsyncStream emits within 60s (subscription latency)
 
-    @Test(
-        .timeLimit(.minutes(2)),
-    )
+    @Test(.timeLimit(.minutes(2)))
     func `given CKQuerySubscription active when second record written then stream emits update within 60s`(
     ) async throws {
         let service = LocationService()
