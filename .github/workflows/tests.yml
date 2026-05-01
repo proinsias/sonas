@@ -21,7 +21,82 @@ jobs:
           fi
 
       - name: Install iOS 18.4 Simulator runtime
-        run: xcodebuild -downloadPlatform iOS
+        run: |
+          # Use DEVELOPMENT_DIR if set, otherwise default to Xcode.app
+          XCODE_PATH=$(xcode-select -p)
+
+          # Force download and install of the iOS 18.4 platform
+          # This should be more robust than just -downloadPlatform
+          "$XCODE_PATH"/usr/bin/xcodebuild -downloadPlatform iOS
+
+          # Find and boot an iPhone 17 Pro simulator
+          SIM_NAME="iPhone 17 Pro"
+          SIM_ID=$(xcrun simctl list devices available \
+              | grep "$SIM_NAME" \
+              | sed 's/.*(\([A-Z0-9-]*\)).*/\1/' \
+              | head -1)
+
+          if [ -z "$SIM_ID" ]; then
+              echo "Error: $SIM_NAME Simulator not found." >&2
+              exit 1
+          fi
+
+          echo "Found $SIM_NAME Simulator with ID: $SIM_ID"
+
+          # Shutdown and erase to ensure a clean state
+          xcrun simctl shutdown "$SIM_ID" 2>/dev/null || true
+          xcrun simctl erase "$SIM_ID" 2>/dev/null || true
+
+          # Boot the simulator
+          xcrun simctl boot "$SIM_ID" || true
+          # Give it a moment to fully boot
+          sleep 10
+
+          # Find and boot an iPhone 17 Pro simulator
+          SIM_NAME="iPhone 17 Pro"
+          SIM_ID=$(xcrun simctl list devices available \
+              | grep "$SIM_NAME" \
+              | sed 's/.*(\([A-Z0-9-]*\)).*/\1/' \
+              | head -1)
+
+          if [ -z "$SIM_ID" ]; then
+              echo "Error: $SIM_NAME Simulator not found." >&2
+              exit 1
+          fi
+
+          echo "Found $SIM_NAME Simulator with ID: $SIM_ID"
+
+          # Shutdown and erase to ensure a clean state
+          xcrun simctl shutdown "$SIM_ID" 2>/dev/null || true
+          xcrun simctl erase "$SIM_ID" 2>/dev/null || true
+
+          # Boot the simulator
+          xcrun simctl boot "$SIM_ID" || true
+          # Give it a moment to fully boot
+          sleep 10
+
+          # Find and boot an iPhone 17 Pro simulator
+          SIM_NAME="iPhone 17 Pro"
+          SIM_ID=$(xcrun simctl list devices available \
+              | grep "$SIM_NAME" \
+              | sed 's/.*(\([A-Z0-9-]*\)).*/\1/' \
+              | head -1)
+
+          if [ -z "$SIM_ID" ]; then
+              echo "Error: $SIM_NAME Simulator not found." >&2
+              exit 1
+          fi
+
+          echo "Found $SIM_NAME Simulator with ID: $SIM_ID"
+
+          # Shutdown and erase to ensure a clean state
+          xcrun simctl shutdown "$SIM_ID" 2>/dev/null || true
+          xcrun simctl erase "$SIM_ID" 2>/dev/null || true
+
+          # Boot the simulator
+          xcrun simctl boot "$SIM_ID" || true
+          # Give it a moment to fully boot
+          sleep 10
 
       - name: Generate project.yml from template
         run: |
@@ -190,6 +265,52 @@ jobs:
           # Force download and install of the iOS 18.4 platform
           # This should be more robust than just -downloadPlatform
           "$XCODE_PATH"/usr/bin/xcodebuild -downloadPlatform iOS
+
+          # Find and boot an iPhone 17 Pro simulator
+          SIM_NAME="iPhone 17 Pro"
+          SIM_ID=$(xcrun simctl list devices available \
+              | grep "$SIM_NAME" \
+              | sed 's/.*(\([A-Z0-9-]*\)).*/\1/' \
+              | head -1)
+
+          if [ -z "$SIM_ID" ]; then
+              echo "Error: $SIM_NAME Simulator not found." >&2
+              exit 1
+          fi
+
+          echo "Found $SIM_NAME Simulator with ID: $SIM_ID"
+
+          # Shutdown and erase to ensure a clean state
+          xcrun simctl shutdown "$SIM_ID" 2>/dev/null || true
+          xcrun simctl erase "$SIM_ID" 2>/dev/null || true
+
+          # Boot the simulator
+          xcrun simctl boot "$SIM_ID" || true
+          # Give it a moment to fully boot
+          sleep 10
+
+          # Find and boot an iPhone 17 Pro simulator
+          SIM_NAME="iPhone 17 Pro"
+          SIM_ID=$(xcrun simctl list devices available \
+              | grep "$SIM_NAME" \
+              | sed 's/.*(\([A-Z0-9-]*\)).*/\1/' \
+              | head -1)
+
+          if [ -z "$SIM_ID" ]; then
+              echo "Error: $SIM_NAME Simulator not found." >&2
+              exit 1
+          fi
+
+          echo "Found $SIM_NAME Simulator with ID: $SIM_ID"
+
+          # Shutdown and erase to ensure a clean state
+          xcrun simctl shutdown "$SIM_ID" 2>/dev/null || true
+          xcrun simctl erase "$SIM_ID" 2>/dev/null || true
+
+          # Boot the simulator
+          xcrun simctl boot "$SIM_ID" || true
+          # Give it a moment to fully boot
+          sleep 10
 
           # Find and boot an iPhone 17 Pro simulator
           SIM_NAME="iPhone 17 Pro"
