@@ -52,6 +52,7 @@ run = '''
         exit 1
     fi
     xcrun simctl shutdown "$SIM" 2>/dev/null || true
+    xcrun simctl erase "$SIM" 2>/dev/null || true
     xcrun simctl boot "$SIM"
     mkdir -p .build/DerivedData/ui-ios
     xcodebuild test \
