@@ -119,7 +119,3 @@ See `specs/001-family-command-center/tasks.md` for full details.
 - **T086** — Run the quickstart checklist.
 - **T091** — Memory profiling with Instruments. Once you have a real device, profile the app with Leaks + Allocations
   while all six panels are active. Target: ≤150 MB peak RSS.
-
-### watchOS Support
-
-- Add via speckit.

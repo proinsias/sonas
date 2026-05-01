@@ -27,49 +27,51 @@ extension View {
         #endif
     }
 
-    @ViewBuilder
-    private func locationMenuItems(coordinate: CLLocationCoordinate2D?) -> some View {
-        if let coordinate {
-            Button {
-                let urlString = "http://maps.apple.com/?daddr=\(coordinate.latitude),\(coordinate.longitude)"
-                if let url = URL(string: urlString) {
-                    #if os(macOS)
-                        NSWorkspace.shared.open(url)
-                    #else
-                        UIApplication.shared.open(url)
-                    #endif
+    #if !os(watchOS)
+        @ViewBuilder
+        private func locationMenuItems(coordinate: CLLocationCoordinate2D?) -> some View {
+            if let coordinate {
+                Button {
+                    let urlString = "http://maps.apple.com/?daddr=\(coordinate.latitude),\(coordinate.longitude)"
+                    if let url = URL(string: urlString) {
+                        #if os(macOS)
+                            NSWorkspace.shared.open(url)
+                        #else
+                            UIApplication.shared.open(url)
+                        #endif
+                    }
+                } label: {
+                    Label("Get Directions", systemImage: "arrow.triangle.turn.up.right.circle")
                 }
-            } label: {
-                Label("Get Directions", systemImage: "arrow.triangle.turn.up.right.circle")
-            }
 
-            Button {
-                let urlString = "http://maps.apple.com/?q=\(coordinate.latitude),\(coordinate.longitude)"
-                if let url = URL(string: urlString) {
-                    #if os(macOS)
-                        NSWorkspace.shared.open(url)
-                    #else
-                        UIApplication.shared.open(url)
-                    #endif
+                Button {
+                    let urlString = "http://maps.apple.com/?q=\(coordinate.latitude),\(coordinate.longitude)"
+                    if let url = URL(string: urlString) {
+                        #if os(macOS)
+                            NSWorkspace.shared.open(url)
+                        #else
+                            UIApplication.shared.open(url)
+                        #endif
+                    }
+                } label: {
+                    Label("Open in Maps", systemImage: "map")
                 }
-            } label: {
-                Label("Open in Maps", systemImage: "map")
-            }
 
-            Button {
-                let lat = String(format: "%.5f", coordinate.latitude)
-                let lon = String(format: "%.5f", coordinate.longitude)
-                #if os(macOS)
-                    NSPasteboard.general.clearContents()
-                    NSPasteboard.general.setString("\(lat), \(lon)", forType: .string)
-                #elseif !os(tvOS)
-                    UIPasteboard.general.string = "\(lat), \(lon)"
-                #endif
-            } label: {
-                Label("Copy Location", systemImage: "doc.on.doc")
+                Button {
+                    let lat = String(format: "%.5f", coordinate.latitude)
+                    let lon = String(format: "%.5f", coordinate.longitude)
+                    #if os(macOS)
+                        NSPasteboard.general.clearContents()
+                        NSPasteboard.general.setString("\(lat), \(lon)", forType: .string)
+                    #elseif !os(tvOS)
+                        UIPasteboard.general.string = "\(lat), \(lon)"
+                    #endif
+                } label: {
+                    Label("Copy Location", systemImage: "doc.on.doc")
+                }
             }
         }
-    }
+    #endif
 
     /// Adds an event row context menu: Copy Event Title, Add Reminder.
     func eventRowContextMenu(event: CalendarEvent) -> some View {
