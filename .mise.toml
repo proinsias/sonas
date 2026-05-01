@@ -168,6 +168,9 @@ run = '''
         echo "No iOS Simulator runtime found. Install one via Xcode > Settings > Components." >&2
         exit 1
     fi
+    xcrun simctl shutdown "$SIM" 2>/dev/null || true
+    xcrun simctl erase "$SIM" 2>/dev/null || true
+    xcrun simctl boot "$SIM"
     mkdir -p .build/DerivedData/unit-ios
     xcodebuild test \
         -scheme SonasTests \
@@ -175,9 +178,14 @@ run = '''
         -derivedDataPath "$(pwd)/.build/DerivedData/unit-ios" \
         -configuration Debug \
         -enableCodeCoverage YES \
-        CODE_SIGN_IDENTITY="" \
-        CODE_SIGNING_REQUIRED=NO \
-        CODE_SIGNING_ALLOWED=NO \
+        CODE_SIGN_IDENTITY="-" \
+        CODE_SIGNING_REQUIRED=YES \
+        CODE_SIGNING_ALLOWED=YES \
+        AD_HOC_CODE_SIGNING_ALLOWED=YES \
+        ENABLE_HARDENED_RUNTIME=NO \
+        PROVISIONING_PROFILE_SPECIFIER="" \
+        ALLOW_PROVISIONING_DEVICE_REGISTRATION=NO \
+        ALLOW_PROVISIONING_UPDATES=NO \
         SWIFT_TESTING_ENABLED=YES
 '''
 
