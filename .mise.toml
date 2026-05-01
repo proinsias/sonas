@@ -78,7 +78,8 @@ run = '''
         -configuration Debug \
         CODE_SIGN_IDENTITY="-" \
         CODE_SIGNING_REQUIRED=NO \
-        AD_HOC_CODE_SIGNING_ALLOWED=YES
+        AD_HOC_CODE_SIGNING_ALLOWED=YES \
+        ENABLE_HARDENED_RUNTIME=NO
 '''
 
 [tasks.tests-ui-tv]
@@ -87,7 +88,7 @@ run = '''
     set -euo pipefail
     mkdir -p .build/DerivedData/ui-tv
     xcodebuild test \
-        -scheme TVSonas \
+        -scheme TVSonasUITests \
         -destination 'platform=tvOS Simulator,name=Apple TV 4K (3rd generation)' \
         -derivedDataPath "$(pwd)/.build/DerivedData/ui-tv" \
         -enableCodeCoverage YES \
