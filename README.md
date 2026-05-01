@@ -101,6 +101,13 @@ All test tasks are managed via [`mise`](https://mise.jdx.dev/). Run `mise instal
 
 <!-- editorconfig-checker-enable -->
 
+There is no `tests-ui-watch`: Apple's XCUITest framework is unavailable on watchOS, so UI automation is not possible on
+that platform.
+
+There is no `tests-unit-tv`: all shared business logic is exercised by `tests-unit-ios`. The tvOS-specific layer
+(authentication flow, Spotify read service, calendar service) is covered by the UI tests in `tests-ui-tv`, which run
+`TVSonasUITests` on a simulator and include functional tests for those components.
+
 ## Per-family data isolation
 
 <!-- editorconfig-checker-disable -->
