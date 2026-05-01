@@ -143,7 +143,7 @@ run = '''
     set -euo pipefail
     xcodebuild build \
         -scheme WatchSonas \
-        -destination 'platform=watchOS Simulator,name=Apple Watch Series 10 (46mm)' \
+        -destination 'platform=watchOS Simulator,name=Apple Watch Series 11 (46mm)' \
         -derivedDataPath "$(pwd)/.build/DerivedData/unit-watch" \
         -configuration Debug \
         CODE_SIGN_IDENTITY="" \

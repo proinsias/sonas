@@ -3,7 +3,7 @@ import Network
 import Observation
 
 @Observable
-final class MenuBarState: Sendable {
+final class MenuBarState: @unchecked Sendable {
     private(set) var familyLocations: [FamilyMember] = []
     private(set) var nextEvent: CalendarEvent?
     private(set) var weatherSummary: WeatherSnapshot?

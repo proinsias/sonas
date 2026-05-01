@@ -2,13 +2,12 @@ import AppKit
 import Foundation
 import UserNotifications
 
-protocol UserNotificationCenterProtocol: Sendable {
+protocol UserNotificationCenterProtocol {
     var delegate: UNUserNotificationCenterDelegate? { get set }
     func requestAuthorization(options: UNAuthorizationOptions) async throws -> Bool
     func setNotificationCategories(_ categories: Set<UNNotificationCategory>)
     func notificationSettings() async -> UNNotificationSettings
     func add(_ request: UNNotificationRequest) async throws
-    func getNotificationCategories() async -> Set<UNNotificationCategory>
 }
 
 extension UNUserNotificationCenter: UserNotificationCenterProtocol {}
@@ -19,7 +18,7 @@ protocol MacNotificationServiceProtocol: Sendable {
     func scheduleCalendarReminder(eventTitle: String, startDate: Date) async
 }
 
-final class MacNotificationService: NSObject, MacNotificationServiceProtocol {
+final class MacNotificationService: NSObject, MacNotificationServiceProtocol, @unchecked Sendable {
     static let shared = MacNotificationService()
 
     private var center: UserNotificationCenterProtocol

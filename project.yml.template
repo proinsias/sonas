@@ -284,6 +284,7 @@ targets:
       - path: Sonas/Shared
         excludes:
           - '**/*.md'
+          - 'Mocks/TVSpotifyReadServiceMock.swift'
       - path: MacSonas/Assets.xcassets
     info:
       path: MacSonas/Info.plist
