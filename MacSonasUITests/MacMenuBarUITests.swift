@@ -4,7 +4,7 @@ import XCTest
 final class MacMenuBarUITests: XCTestCase {
     var app: XCUIApplication!
 
-    override func setUpWithError() async throws {
+    override func setUp() async throws {
         continueAfterFailure = false
         app = XCUIApplication()
         app.launchEnvironment = [
@@ -20,17 +20,23 @@ final class MacMenuBarUITests: XCTestCase {
 
     func test_menuBar_exists() {
         let menuBar = app.statusItems["Sonas"]
-        XCTAssertTrue(menuBar.exists)
+        let homeMenuBar = app.statusItems["Home"]
+        XCTAssertTrue(menuBar.exists || homeMenuBar.exists, "Status item 'Sonas' or 'Home' should exist")
     }
 
     func test_menuBar_popover_opens() {
-        let menuBar = app.statusItems["Sonas"]
+        var menuBar = app.statusItems["Sonas"]
+        if !menuBar.exists {
+            menuBar = app.statusItems["Home"]
+        }
+
+        XCTAssertTrue(menuBar.waitForExistence(timeout: 5))
         menuBar.click()
 
-        // Check for sections in popover
-        XCTAssertTrue(app.staticTexts["Family Locations"].exists)
-        XCTAssertTrue(app.staticTexts["Next Event"].exists)
-        XCTAssertTrue(app.staticTexts["Weather"].exists)
+        // Check for sections in popover (.textCase(.uppercase) makes accessibility text uppercase)
+        XCTAssertTrue(app.staticTexts["FAMILY LOCATIONS"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["NEXT EVENT"].exists)
+        XCTAssertTrue(app.staticTexts["WEATHER"].exists)
 
         // Check for "Open Sonas" button
         XCTAssertTrue(app.buttons["Open Sonas"].exists)

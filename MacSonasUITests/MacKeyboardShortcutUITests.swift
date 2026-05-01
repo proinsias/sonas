@@ -4,7 +4,7 @@ import XCTest
 final class MacKeyboardShortcutUITests: XCTestCase {
     var app: XCUIApplication!
 
-    override func setUpWithError() async throws {
+    override func setUp() async throws {
         continueAfterFailure = false
         app = XCUIApplication()
         app.launchEnvironment = [
@@ -21,15 +21,15 @@ final class MacKeyboardShortcutUITests: XCTestCase {
     func test_keyboardShortcut_navigation() {
         // Cmd+2 -> Location
         app.typeKey("2", modifierFlags: .command)
-        XCTAssertTrue(app.staticTexts["Location"].exists)
+        XCTAssertTrue(app.staticTexts["Location"].waitForExistence(timeout: 5))
 
         // Cmd+3 -> Calendar
         app.typeKey("3", modifierFlags: .command)
-        XCTAssertTrue(app.staticTexts["Calendar"].exists)
+        XCTAssertTrue(app.staticTexts["Calendar"].waitForExistence(timeout: 5))
 
         // Cmd+1 -> Dashboard
         app.typeKey("1", modifierFlags: .command)
-        XCTAssertTrue(app.staticTexts["Sonas"].exists)
+        XCTAssertTrue(app.staticTexts["Sonas"].waitForExistence(timeout: 5))
     }
 
     func test_keyboardShortcut_refresh() {

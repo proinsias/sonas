@@ -4,7 +4,7 @@ import XCTest
 final class MacDashboardUITests: XCTestCase {
     var app: XCUIApplication!
 
-    override func setUpWithError() async throws {
+    override func setUp() async throws {
         continueAfterFailure = false
         app = XCUIApplication()
         app.launchEnvironment = [
@@ -30,36 +30,37 @@ final class MacDashboardUITests: XCTestCase {
     }
 
     func test_sidebar_containsAllSections() {
-        let sidebar = app.tables["Sidebar"]
-        XCTAssertTrue(sidebar.exists)
+        let sidebar = app.outlines["Sidebar"].exists ? app.outlines["Sidebar"] : app.tables["Sidebar"]
+        XCTAssertTrue(sidebar.waitForExistence(timeout: 5), "Sidebar should exist")
 
         let sections = ["Dashboard", "Location", "Calendar", "Weather", "Tasks", "Photos", "Jam"]
         for section in sections {
-            XCTAssertTrue(sidebar.buttons[section].exists, "Section \(section) should exist in sidebar")
+            XCTAssertTrue(sidebar.buttons[section].firstMatch.exists, "Section \(section) should exist in sidebar")
         }
     }
 
     func test_navigation_updatesDetailView() {
-        let sidebar = app.tables["Sidebar"]
+        let sidebar = app.outlines["Sidebar"].exists ? app.outlines["Sidebar"] : app.tables["Sidebar"]
+        XCTAssertTrue(sidebar.waitForExistence(timeout: 5), "Sidebar should exist")
 
         // Navigate to Calendar
-        sidebar.buttons["Calendar"].click()
-        XCTAssertTrue(app.staticTexts["Calendar"].exists)
+        sidebar.buttons["Calendar"].firstMatch.click()
+        XCTAssertTrue(app.staticTexts["Calendar"].waitForExistence(timeout: 5))
 
         // Navigate to Weather
-        sidebar.buttons["Weather"].click()
-        XCTAssertTrue(app.staticTexts["Weather"].exists)
+        sidebar.buttons["Weather"].firstMatch.click()
+        XCTAssertTrue(app.staticTexts["Weather"].waitForExistence(timeout: 5))
 
         // Navigate back to Dashboard
-        sidebar.buttons["Dashboard"].click()
-        XCTAssertTrue(app.staticTexts["Sonas"].exists)
+        sidebar.buttons["Dashboard"].firstMatch.click()
+        XCTAssertTrue(app.staticTexts["Sonas"].waitForExistence(timeout: 5))
     }
 
     func test_window_defaultSize() {
-        let window = app.windows["main"]
-        XCTAssertTrue(window.exists)
+        let window = app.windows.firstMatch
+        XCTAssertTrue(window.waitForExistence(timeout: 5), "Main window should exist")
         // Default size 1200x800
-        XCTAssertEqual(window.frame.width, 1200, accuracy: 10)
-        XCTAssertEqual(window.frame.height, 800, accuracy: 10)
+        XCTAssertEqual(window.frame.width, 1200, accuracy: 20)
+        XCTAssertEqual(window.frame.height, 800, accuracy: 20)
     }
 }

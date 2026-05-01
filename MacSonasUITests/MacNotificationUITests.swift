@@ -4,7 +4,7 @@ import XCTest
 final class MacNotificationUITests: XCTestCase {
     var app: XCUIApplication!
 
-    override func setUpWithError() async throws {
+    override func setUp() async throws {
         continueAfterFailure = false
         app = XCUIApplication()
         app.launchEnvironment = [

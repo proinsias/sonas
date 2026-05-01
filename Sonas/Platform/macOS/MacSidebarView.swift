@@ -18,6 +18,7 @@ struct MacSidebarView: View {
                 }
             }
         }
+        .accessibilityIdentifier("Sidebar")
         .listStyle(.sidebar)
         .navigationTitle("Sonas")
         .safeAreaInset(edge: .bottom) {

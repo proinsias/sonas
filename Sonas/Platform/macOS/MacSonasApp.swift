@@ -16,6 +16,7 @@ struct MacSonasApp: App {
         WindowGroup(id: "main") {
             MacShell()
                 .environment(menuBarState)
+                .accessibilityIdentifier("main")
                 .onReceive(NotificationCenter.default.publisher(for: .sonasWindowOpenRequested)) { _ in
                     openWindow(id: "main")
                 }

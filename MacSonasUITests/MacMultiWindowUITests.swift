@@ -4,7 +4,7 @@ import XCTest
 final class MacMultiWindowUITests: XCTestCase {
     var app: XCUIApplication!
 
-    override func setUpWithError() async throws {
+    override func setUp() async throws {
         continueAfterFailure = false
         app = XCUIApplication()
         app.launchEnvironment = [
@@ -20,8 +20,8 @@ final class MacMultiWindowUITests: XCTestCase {
 
     func test_multiWindow_independence() {
         // First window is open
-        let window1 = app.windows["main"]
-        XCTAssertTrue(window1.exists)
+        let window1 = app.windows.firstMatch
+        XCTAssertTrue(window1.waitForExistence(timeout: 5))
 
         // Open second window via File > New Window (Cmd+N)
         app.typeKey("n", modifierFlags: .command)
