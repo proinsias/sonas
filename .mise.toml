@@ -51,6 +51,8 @@ run = '''
         echo "No iOS Simulator runtime found. Install one via Xcode > Settings > Components." >&2
         exit 1
     fi
+    xcrun simctl shutdown "$SIM" 2>/dev/null || true
+    xcrun simctl boot "$SIM"
     mkdir -p .build/DerivedData/ui-ios
     xcodebuild test \
         -scheme SonasUITests \
