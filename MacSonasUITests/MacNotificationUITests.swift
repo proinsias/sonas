@@ -1,5 +1,6 @@
 import XCTest
 
+@MainActor
 final class MacNotificationUITests: XCTestCase {
     let app = XCUIApplication()
 

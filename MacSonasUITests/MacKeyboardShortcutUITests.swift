@@ -1,5 +1,6 @@
 import XCTest
 
+@MainActor
 final class MacKeyboardShortcutUITests: XCTestCase {
     let app = XCUIApplication()
 

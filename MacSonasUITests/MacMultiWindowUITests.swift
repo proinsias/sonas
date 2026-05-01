@@ -1,5 +1,6 @@
 import XCTest
 
+@MainActor
 final class MacMultiWindowUITests: XCTestCase {
     let app = XCUIApplication()
 

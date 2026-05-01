@@ -1,5 +1,6 @@
 import XCTest
 
+@MainActor
 final class MacMenuBarUITests: XCTestCase {
     let app = XCUIApplication()
 

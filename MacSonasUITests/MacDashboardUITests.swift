@@ -1,5 +1,6 @@
 import XCTest
 
+@MainActor
 final class MacDashboardUITests: XCTestCase {
     let app = XCUIApplication()
 
@@ -9,7 +10,7 @@ final class MacDashboardUITests: XCTestCase {
     }
 
     func test_sidebar_containsAllSections() {
-        let sidebar = app.lists["Sidebar"]
+        let sidebar = app.tables["Sidebar"]
         XCTAssertTrue(sidebar.exists)
 
         let sections = ["Dashboard", "Location", "Calendar", "Weather", "Tasks", "Photos", "Jam"]
@@ -19,7 +20,7 @@ final class MacDashboardUITests: XCTestCase {
     }
 
     func test_navigation_updatesDetailView() {
-        let sidebar = app.lists["Sidebar"]
+        let sidebar = app.tables["Sidebar"]
 
         // Navigate to Calendar
         sidebar.buttons["Calendar"].click()
