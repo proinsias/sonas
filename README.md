@@ -18,8 +18,11 @@ uvx --from md-toc md_toc --in-place github -- README.md
   - [Platform Support](#platform-support)
   - [Service integrations](#service-integrations)
   - [Developer Guides](#developer-guides)
+    - [Running tests](#running-tests)
   - [Per-family data isolation](#per-family-data-isolation)
+  - [Use of speckit](#use-of-speckit)
   - [What to build next](#what-to-build-next)
+    - [iOS Support](#ios-support)
 
 <!--TOC-->
 
@@ -77,6 +80,26 @@ There is no custom backend. All data is fetched on-device directly from Apple fr
 ## Developer Guides
 
 See the [Quickstart](specs/001-family-command-center/quickstart.md) guide for how to build and modify this application.
+
+### Running tests
+
+All test tasks are managed via [`mise`](https://mise.jdx.dev/). Run `mise install` once to install all tools, then:
+
+<!-- editorconfig-checker-disable -->
+
+| Command                     | What it does                                                |
+| --------------------------- | ----------------------------------------------------------- |
+| `mise run tests-unit-ios`   | Unit & contract tests on iOS Simulator                      |
+| `mise run tests-unit-mac`   | macOS compilation check (shared logic covered by iOS tests) |
+| `mise run tests-unit-watch` | watchOS compilation check (no XCTest runner on watchOS)     |
+| `mise run tests-ui-ios`     | UI tests on iOS Simulator                                   |
+| `mise run tests-ui-mac`     | UI tests on macOS (native)                                  |
+| `mise run tests-ui-tv`      | UI tests on tvOS Simulator                                  |
+| `mise run tests-unit`       | All unit tests                                              |
+| `mise run tests-ui`         | All UI tests                                                |
+| `mise run tests`            | Everything                                                  |
+
+<!-- editorconfig-checker-enable -->
 
 ## Per-family data isolation
 
