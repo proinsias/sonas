@@ -52,7 +52,6 @@ run = '''
         exit 1
     fi
     xcrun simctl shutdown "$SIM" 2>/dev/null || true
-    xcrun simctl erase "$SIM" 2>/dev/null || true
     xcrun simctl boot "$SIM"
     mkdir -p .build/DerivedData/ui-ios
     xcodebuild test \
@@ -88,15 +87,6 @@ run = '''
         ALLOW_PROVISIONING_DEVICE_REGISTRATION=NO \
         ALLOW_PROVISIONING_UPDATES=NO
 
-    # Pre-authorize Xcode for Accessibility so macOS doesn't show the
-    # "XCTest is trying to Enable UI Automation" popup during test runs.
-    # This writes to the user TCC store — no SIP change required.
-    TCC_DB="$HOME/Library/Application Support/com.apple.TCC/TCC.db"
-    TCC_SQL="INSERT OR REPLACE INTO access"
-    TCC_SQL="$TCC_SQL (service,client,client_type,auth_value,auth_reason,auth_version)"
-    TCC_SQL="$TCC_SQL VALUES ('kTCCServiceAccessibility','com.apple.dt.Xcode',0,2,4,1);"
-    sqlite3 "$TCC_DB" "$TCC_SQL" 2>/dev/null || true
-
     # Remove all extended attributes and re-sign ad-hoc everything in Products
     # This is critical for running native macOS UI tests on Apple Silicon without a dev cert
     find "$(pwd)/.build/DerivedData/ui-mac/Build/Products" -depth -name "*.*" -exec xattr -cr {} + || true
@@ -123,36 +113,16 @@ run = '''
 description = 'Run UI tests on tvOS (Apple TV 4K)'
 run = '''
     set -euo pipefail
-    # Clean previous builds to avoid stale bundles
-    rm -rf .build/DerivedData/ui-tv
     mkdir -p .build/DerivedData/ui-tv
-
-    # Boot the simulator explicitly so the test runner installs cleanly
-    SIM=$(xcrun simctl list devices available \
-        | grep 'Apple TV 4K (3rd generation)' \
-        | grep -v '1080p' \
-        | sed 's/.*(\([A-Z0-9-]*\)).*/\1/' \
-        | head -1)
-    if [ -z "$SIM" ]; then
-        echo "No Apple TV 4K (3rd generation) Simulator found. Install one via Xcode > Settings > Components." >&2
-        exit 1
-    fi
-    xcrun simctl boot "$SIM" 2>/dev/null || true
-
     xcodebuild test \
         -scheme TVSonasUITests \
-        -destination "platform=tvOS Simulator,id=$SIM" \
+        -destination 'platform=tvOS Simulator,name=Apple TV 4K (3rd generation)' \
         -derivedDataPath "$(pwd)/.build/DerivedData/ui-tv" \
         -enableCodeCoverage YES \
         -configuration Debug \
-        CODE_SIGN_IDENTITY="-" \
-        CODE_SIGNING_REQUIRED=YES \
-        CODE_SIGNING_ALLOWED=YES \
-        AD_HOC_CODE_SIGNING_ALLOWED=YES \
-        ENABLE_HARDENED_RUNTIME=NO \
-        PROVISIONING_PROFILE_SPECIFIER="" \
-        ALLOW_PROVISIONING_DEVICE_REGISTRATION=NO \
-        ALLOW_PROVISIONING_UPDATES=NO
+        CODE_SIGN_IDENTITY="" \
+        CODE_SIGNING_REQUIRED=NO \
+        CODE_SIGNING_ALLOWED=NO
 '''
 
 [tasks.tests-ui]
@@ -168,9 +138,6 @@ run = '''
         echo "No iOS Simulator runtime found. Install one via Xcode > Settings > Components." >&2
         exit 1
     fi
-    xcrun simctl shutdown "$SIM" 2>/dev/null || true
-    xcrun simctl erase "$SIM" 2>/dev/null || true
-    xcrun simctl boot "$SIM"
     mkdir -p .build/DerivedData/unit-ios
     xcodebuild test \
         -scheme SonasTests \
@@ -178,14 +145,9 @@ run = '''
         -derivedDataPath "$(pwd)/.build/DerivedData/unit-ios" \
         -configuration Debug \
         -enableCodeCoverage YES \
-        CODE_SIGN_IDENTITY="-" \
-        CODE_SIGNING_REQUIRED=YES \
-        CODE_SIGNING_ALLOWED=YES \
-        AD_HOC_CODE_SIGNING_ALLOWED=YES \
-        ENABLE_HARDENED_RUNTIME=NO \
-        PROVISIONING_PROFILE_SPECIFIER="" \
-        ALLOW_PROVISIONING_DEVICE_REGISTRATION=NO \
-        ALLOW_PROVISIONING_UPDATES=NO \
+        CODE_SIGN_IDENTITY="" \
+        CODE_SIGNING_REQUIRED=NO \
+        CODE_SIGNING_ALLOWED=NO \
         SWIFT_TESTING_ENABLED=YES
 '''
 
