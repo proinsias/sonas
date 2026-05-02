@@ -37,7 +37,7 @@ struct WeatherContractTests {
     // MARK: - T048.3: forecast[0].id equals today midnight (ISO date prefix)
 
     @Test
-    func `given mock weather service when fetchWeather called then forecast[0].id equals today's date`() async throws {
+    func `given mock weather service when fetchWeather called then forecast first id equals today date`() async throws {
         let mock = WeatherServiceMock()
         let (_, forecast) = try await mock.fetchWeather(
             for: CLLocationCoordinate2D(latitude: 53.35, longitude: -6.26)

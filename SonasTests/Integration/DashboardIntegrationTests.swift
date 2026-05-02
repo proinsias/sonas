@@ -14,7 +14,7 @@ struct DashboardIntegrationTests {
     // MARK: - T043.1: All panels render with mock services within 500ms
 
     @Test
-    func `given all mock services when dashboard loads then all US1 panels render within 500ms`() async {
+    func `given all mock services when dashboard loads then all US1 panels render within 500 ms`() async {
         let start = Date.now
 
         let vm = DashboardViewModel(

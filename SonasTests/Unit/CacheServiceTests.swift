@@ -21,7 +21,7 @@ struct CacheServiceTests {
     // MARK: - T085.1: loadWeather returns nil after TTL eviction
 
     @Test
-    func `given weather saved more than 1h ago when evictStaleEntries called then loadWeather returns nil`(
+    func `given weather saved more than 1 hour ago when evictStaleEntries called then loadWeather returns nil`(
     ) async throws {
         let sut = try makeInMemoryService()
         let staleSnapshot = WeatherSnapshot(

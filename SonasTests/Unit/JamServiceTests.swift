@@ -11,7 +11,7 @@ struct JamServiceTests {
     // MARK: - T075.1: joinURL string encodes correctly as QR CIImage data
 
     @Test
-    func `given Spotify jam joinURL when QR generated then CIImage is non-nil`() {
+    func `given Spotify jam joinURL when QR generated then CIImage is non nil`() {
         guard let url = URL(string: "https://spotify.com/jam/abc123") else {
             #expect(Bool(false), "Failed to create URL")
             return
@@ -31,7 +31,7 @@ struct JamServiceTests {
     // MARK: - T075.2: State machine none → active → ending → ended
 
     @Test
-    func `given startJam then endJam status transitions none→active→ended`() async throws {
+    func `given startJam then endJam status transitions none to active to ended`() async throws {
         let service = JamServiceMock()
         #expect(service.currentSession == nil, "Initial status must be .none (nil session)")
 

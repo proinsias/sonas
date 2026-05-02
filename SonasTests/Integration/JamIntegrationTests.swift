@@ -13,7 +13,7 @@ struct JamIntegrationTests {
     // MARK: - T076-I.1: JamPanelView renders non-nil QR Image within 500ms of startJam resolving
 
     @Test
-    func `given JamServiceMock when startJam called then QR CIImage is non-nil within 500ms`() async throws {
+    func `given JamServiceMock when startJam called then QR CIImage is non nil within 500 ms`() async throws {
         let start = Date.now
         let service = JamServiceMock()
         let session = try await service.startJam()
