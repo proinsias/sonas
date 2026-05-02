@@ -14,14 +14,11 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Select Xcode 16.3 (if available)
+      - name: Select Xcode 16.4 (if available)
         run: |
-          if [ -d /Applications/Xcode_16.3.app ]; then
-            echo "DEVELOPER_DIR=/Applications/Xcode_16.3.app/Contents/Developer" >> "$GITHUB_ENV"
+          if [ -d /Applications/Xcode_16.4.app ]; then
+            echo "DEVELOPER_DIR=/Applications/Xcode_16.4.app/Contents/Developer" >> "$GITHUB_ENV"
           fi
-
-      - name: Install iOS Simulator runtime
-        run: xcodebuild -downloadPlatform iOS
 
       - name: Generate project.yml from template
         run: |
@@ -59,10 +56,10 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Select Xcode 16.3 (if available)
+      - name: Select Xcode 16.4 (if available)
         run: |
-          if [ -d /Applications/Xcode_16.3.app ]; then
-            echo "DEVELOPER_DIR=/Applications/Xcode_16.3.app/Contents/Developer" >> "$GITHUB_ENV"
+          if [ -d /Applications/Xcode_16.4.app ]; then
+            echo "DEVELOPER_DIR=/Applications/Xcode_16.4.app/Contents/Developer" >> "$GITHUB_ENV"
           fi
 
       - name: Generate project.yml from template
@@ -101,10 +98,10 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Select Xcode 16.3 (if available)
+      - name: Select Xcode 16.4 (if available)
         run: |
-          if [ -d /Applications/Xcode_16.3.app ]; then
-            echo "DEVELOPER_DIR=/Applications/Xcode_16.3.app/Contents/Developer" >> "$GITHUB_ENV"
+          if [ -d /Applications/Xcode_16.4.app ]; then
+            echo "DEVELOPER_DIR=/Applications/Xcode_16.4.app/Contents/Developer" >> "$GITHUB_ENV"
           fi
 
       - name: Install tvOS Simulator runtime
@@ -146,14 +143,11 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Select Xcode 16.3 (if available)
+      - name: Select Xcode 16.4 (if available)
         run: |
-          if [ -d /Applications/Xcode_16.3.app ]; then
-            echo "DEVELOPER_DIR=/Applications/Xcode_16.3.app/Contents/Developer" >> "$GITHUB_ENV"
+          if [ -d /Applications/Xcode_16.4.app ]; then
+            echo "DEVELOPER_DIR=/Applications/Xcode_16.4.app/Contents/Developer" >> "$GITHUB_ENV"
           fi
-
-      - name: Install iOS Simulator runtime
-        run: xcodebuild -downloadPlatform iOS
 
       - name: Generate project.yml from template
         run: |
@@ -179,10 +173,10 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Select Xcode 16.3 (if available)
+      - name: Select Xcode 16.4 (if available)
         run: |
-          if [ -d /Applications/Xcode_16.3.app ]; then
-            echo "DEVELOPER_DIR=/Applications/Xcode_16.3.app/Contents/Developer" >> "$GITHUB_ENV"
+          if [ -d /Applications/Xcode_16.4.app ]; then
+            echo "DEVELOPER_DIR=/Applications/Xcode_16.4.app/Contents/Developer" >> "$GITHUB_ENV"
           fi
 
       - name: Generate project.yml from template
@@ -209,13 +203,13 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Select Xcode 16.3 (if available)
+      - name: Select Xcode 16.4 (if available)
         run: |
-          if [ -d /Applications/Xcode_16.3.app ]; then
-            echo "DEVELOPER_DIR=/Applications/Xcode_16.3.app/Contents/Developer" >> "$GITHUB_ENV"
+          if [ -d /Applications/Xcode_16.4.app ]; then
+            echo "DEVELOPER_DIR=/Applications/Xcode_16.4.app/Contents/Developer" >> "$GITHUB_ENV"
           fi
 
-      - name: Install watchOS 11.4 Simulator runtime
+      - name: Install watchOS Simulator runtime
         run: xcodebuild -downloadPlatform watchOS
 
       - name: Generate project.yml from template
