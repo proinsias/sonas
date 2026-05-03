@@ -94,7 +94,7 @@ struct TodoistContractTests {
     // MARK: - T056.3: completeTask throws rateLimitExceeded on 429
 
     @Test
-    func `given close endpoint returns 429 with Retry-After when completeTask called then throws rateLimitExceeded`(
+    func `given close endpoint returns 429 with Retry After when completeTask called then throws rateLimitExceeded`(
     ) async throws {
         let taskID = "task-xyz"
         TodoistURLProtocolStub.responses["/api/v1/tasks/\(taskID)/close"] = .init(

@@ -51,7 +51,7 @@ struct CalendarModelsTests {
     }
 
     @Test
-    func `given timed event when formattedTime then returns non-empty time string`() {
+    func `given timed event when formattedTime then returns non empty time string`() {
         let event = makeEvent(
             startDate: Date(),
             endDate: Date().addingTimeInterval(3600),

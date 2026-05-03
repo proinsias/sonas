@@ -47,7 +47,7 @@ struct SpotifyContractTests {
     // MARK: - T072.4: QR code can be generated from joinURL
 
     @Test
-    func `given jam session joinURL when CIFilter.qrCodeGenerator then produces non-nil CIImage`() async throws {
+    func `given jam session joinURL when CIFilter qrCodeGenerator then produces non nil CIImage`() async throws {
         let service = JamServiceMock()
         let session = try await service.startJam()
 

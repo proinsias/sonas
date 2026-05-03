@@ -55,7 +55,7 @@ struct GoogleCalendarContractTests {
     // MARK: - T034.1: Stub returns Google Calendar JSON → events include Google-sourced events
 
     @Test
-    func `given Google Calendar JSON stub when fetchEvents called then returns Google-sourced CalendarEvent`(
+    func `given Google Calendar JSON stub when fetchEvents called then returns Google sourced CalendarEvent`(
     ) async throws {
         GoogleCalendarURLProtocolStub.statusCode = 200
         GoogleCalendarURLProtocolStub.responseData = Data("""

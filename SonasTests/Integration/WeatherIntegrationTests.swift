@@ -11,7 +11,7 @@ import Testing
 @Suite("Weather Integration Tests", .disabled("Requires WeatherKit entitlement"))
 struct WeatherIntegrationTests {
     @Test
-    func `given hard-coded Dublin coordinate when fetchWeather called then snapshot is non-nil with 7-day forecast`(
+    func `given hard coded Dublin coordinate when fetchWeather called then snapshot is non nil with 7 day forecast`(
     ) async throws {
         let service = WeatherService()
         let dublinCoord = CLLocationCoordinate2D(latitude: 53.3498, longitude: -6.2603)

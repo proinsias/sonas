@@ -30,7 +30,7 @@ struct WeatherServiceTests {
     // MARK: - T051.2: airQualityIndex is nil when AQI fetch fails (non-fatal)
 
     @Test
-    func `given WeatherServiceMock when fetchWeather called then airQualityIndex is non-nil from fixture`(
+    func `given WeatherServiceMock when fetchWeather called then airQualityIndex is non nil from fixture`(
     ) async throws {
         // WeatherServiceMock fixture has airQualityIndex = 42
         let service = WeatherServiceMock()

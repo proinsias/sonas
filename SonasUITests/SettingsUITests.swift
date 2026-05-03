@@ -8,8 +8,8 @@ import XCTest
 final class SettingsUITests: XCTestCase {
     var app: XCUIApplication!
 
-    override func setUp() async throws {
-        try await super.setUp()
+    override func setUp() {
+        super.setUp()
         continueAfterFailure = false
         app = XCUIApplication()
         app.launchEnvironment = [
