@@ -41,7 +41,7 @@ struct CalendarModelsTests {
     }
 
     @Test
-    func `given all-day event when formattedTime then returns all day`() {
+    func `given all day event when formattedTime then returns all day`() {
         let event = makeEvent(
             startDate: Date(),
             endDate: Date().addingTimeInterval(86400),
@@ -62,7 +62,7 @@ struct CalendarModelsTests {
     }
 
     @Test
-    func `given all-day event when formattedDateRange then returns weekday month day`() {
+    func `given all day event when formattedDateRange then returns weekday month day`() {
         let event = makeEvent(
             startDate: Date(),
             endDate: Date().addingTimeInterval(86400),

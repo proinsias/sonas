@@ -47,7 +47,7 @@ struct LocationContractTests {
     // MARK: - T031.2: placeName is populated correctly from the record
 
     @Test
-    func `given a CloudKit record with placeName when parsed then FamilyMember.location.placeName matches`() {
+    func `given a CloudKit record with placeName when parsed then FamilyMember location placeName matches`() {
         let record = Self.makeFamilyLocationRecord(
             name: "Alice",
             lat: 53.3498,
@@ -65,7 +65,7 @@ struct LocationContractTests {
     // MARK: - T031.3: recordedAt is populated correctly
 
     @Test
-    func `given a CloudKit record with recordedAt when parsed then FamilyMember.location.recordedAt is recent`() {
+    func `given a CloudKit record with recordedAt when parsed then FamilyMember location recordedAt is recent`() {
         let now = Date.now
         let record = Self.makeFamilyLocationRecord(
             name: "Bob", lat: 51.5, lon: -0.1, placeName: "London",
