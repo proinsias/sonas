@@ -196,17 +196,11 @@ run = '''
 description = 'Build WatchSonas to verify watchOS compilation (no XCTest runner on watchOS)'
 run = '''
     set -euo pipefail
-    SIM=$(xcrun simctl list devices available | grep -m1 'Apple Watch' | sed 's/.*(\([A-Z0-9-]*\)).*/\1/')
-    if [ -z "$SIM" ]; then
-        echo "No Apple Watch Simulator found. Install one via Xcode > Settings > Components." >&2
-        exit 1
-    fi
-    xcrun simctl shutdown "$SIM" 2>/dev/null || true
-    xcrun simctl boot "$SIM"
-    xcrun simctl bootstatus "$SIM" -b
+    # generic/platform avoids needing a booted simulator — the SDK (bundled with Xcode)
+    # is all that is required for a compile-only check.
     xcodebuild build \
         -scheme WatchSonas \
-        -destination "platform=watchOS Simulator,id=$SIM" \
+        -destination "generic/platform=watchOS Simulator" \
         -derivedDataPath "$(pwd)/.build/DerivedData/unit-watch" \
         -configuration Debug \
         CODE_SIGN_IDENTITY="" \

@@ -105,7 +105,7 @@ jobs:
           fi
 
       - name: Install tvOS Simulator runtime
-        run: xcodebuild -downloadPlatform tvOS
+        run: xcodebuild -downloadPlatform tvOS || true
 
       - name: Generate project.yml from template
         run: |
@@ -210,7 +210,7 @@ jobs:
           fi
 
       - name: Install watchOS Simulator runtime
-        run: xcodebuild -downloadPlatform watchOS
+        run: xcodebuild -downloadPlatform watchOS || true
 
       - name: Generate project.yml from template
         run: |
