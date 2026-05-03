@@ -4,23 +4,24 @@ import XCTest
 
 // Constitution §II: every user-facing feature MUST have at least one acceptance/integration test.
 
-@MainActor
 final class SettingsUITests: XCTestCase {
     var app: XCUIApplication!
 
     override func setUp() {
         super.setUp()
         continueAfterFailure = false
-        app = XCUIApplication()
-        app.launchEnvironment = [
-            "USE_MOCK_LOCATION": "1",
-            "USE_MOCK_WEATHER": "1",
-            "USE_MOCK_CALENDAR": "1",
-            "USE_MOCK_TASKS": "1",
-            "USE_MOCK_PHOTOS": "1",
-            "USE_MOCK_JAM": "1"
-        ]
-        app.launch()
+        MainActor.assumeIsolated {
+            app = XCUIApplication()
+            app.launchEnvironment = [
+                "USE_MOCK_LOCATION": "1",
+                "USE_MOCK_WEATHER": "1",
+                "USE_MOCK_CALENDAR": "1",
+                "USE_MOCK_TASKS": "1",
+                "USE_MOCK_PHOTOS": "1",
+                "USE_MOCK_JAM": "1"
+            ]
+            app.launch()
+        }
     }
 
     // MARK: - T094.1: Home location picker saves coordinate and reflects in WeatherPanel
@@ -96,8 +97,10 @@ final class SettingsUITests: XCTestCase {
         XCTAssertTrue(app.otherElements["PhotosPanel"].waitForExistence(timeout: 3))
 
         // Restart app and verify panel still visible
-        app.terminate()
-        app.launch()
+        MainActor.assumeIsolated {
+            app.terminate()
+            app.launch()
+        }
         XCTAssertTrue(app.otherElements["PhotosPanel"].waitForExistence(timeout: 5))
     }
 }
