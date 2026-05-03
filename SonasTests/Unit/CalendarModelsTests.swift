@@ -2,6 +2,7 @@ import Foundation
 @testable import Sonas
 import Testing
 
+@MainActor
 @Suite("CalendarEvent computed properties")
 struct CalendarModelsTests {
     private func makeEvent(

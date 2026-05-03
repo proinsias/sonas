@@ -2,6 +2,7 @@
 import SwiftUI
 import Testing
 
+@MainActor
 @Suite("AppSection Unit Tests")
 struct AppSectionTests {
     @Test

@@ -6,34 +6,29 @@ import XCTest
 // Constitution §II: every user-facing feature MUST have at least one acceptance/integration test.
 // Run with all USE_MOCK_*=1 environment variables set in the SonasUITests scheme.
 
+@MainActor
 final class DashboardUITests: XCTestCase {
     var app: XCUIApplication!
 
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws {
+        try await super.setUp()
         continueAfterFailure = false
-        // XCTest always calls setUp on the main thread; assumeIsolated satisfies the
-        // @MainActor annotations on XCUIApplication.launch() / launchEnvironment.
-        MainActor.assumeIsolated {
-            app = XCUIApplication()
-            // Enable all mocks for deterministic UI tests
-            app.launchEnvironment = [
-                "USE_MOCK_LOCATION": "1",
-                "USE_MOCK_WEATHER": "1",
-                "USE_MOCK_CALENDAR": "1",
-                "USE_MOCK_TASKS": "1",
-                "USE_MOCK_PHOTOS": "1",
-                "USE_MOCK_JAM": "1"
-            ]
-            app.launch()
-        }
+        app = XCUIApplication()
+        app.launchEnvironment = [
+            "USE_MOCK_LOCATION": "1",
+            "USE_MOCK_WEATHER": "1",
+            "USE_MOCK_CALENDAR": "1",
+            "USE_MOCK_TASKS": "1",
+            "USE_MOCK_PHOTOS": "1",
+            "USE_MOCK_JAM": "1"
+        ]
+        app.launch()
     }
 
     // MARK: - T080.1: iPad Pro 3-column grid renders all panels with accessibility identifiers
 
     func testIPadThreeColumnLayoutRendersAllPanels() throws {
-        // UIDevice.current.userInterfaceIdiom is @MainActor in iOS 18; XCTest runs on main thread.
-        let idiom = MainActor.assumeIsolated { UIDevice.current.userInterfaceIdiom }
+        let idiom = UIDevice.current.userInterfaceIdiom
         guard idiom == .pad else {
             throw XCTSkip("This test requires an iPad simulator")
         }

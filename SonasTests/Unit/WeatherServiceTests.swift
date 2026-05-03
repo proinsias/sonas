@@ -10,19 +10,19 @@ struct WeatherServiceTests {
     // MARK: - T051.1: MoonPhase from WeatherKit fraction value
 
     @Test
-    func `given fraction 0.0 when MoonPhase initialised then returns newMoon`() {
+    func `given fraction 0 0 when MoonPhase initialised then returns newMoon`() {
         let phase = MoonPhase(fraction: 0.0)
         #expect(phase == .newMoon)
     }
 
     @Test
-    func `given fraction 0.49 when MoonPhase initialised then returns fullMoon`() {
+    func `given fraction 0 49 when MoonPhase initialised then returns fullMoon`() {
         let phase = MoonPhase(fraction: 0.49)
         #expect(phase == .fullMoon)
     }
 
     @Test
-    func `given fraction 0.95 when MoonPhase initialised then returns waningCrescent`() {
+    func `given fraction 0 95 when MoonPhase initialised then returns waningCrescent`() {
         let phase = MoonPhase(fraction: 0.95)
         #expect(phase == .waningCrescent)
     }
