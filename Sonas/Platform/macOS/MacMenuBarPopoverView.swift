@@ -27,6 +27,7 @@ struct MacMenuBarPopoverView: View {
         }
         .padding()
         .frame(width: 280)
+        .accessibilityIdentifier("MenuBarPopover")
         .task {
             await state.refresh()
         }

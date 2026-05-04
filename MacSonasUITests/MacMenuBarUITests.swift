@@ -33,12 +33,17 @@ final class MacMenuBarUITests: XCTestCase {
         XCTAssertTrue(menuBar.waitForExistence(timeout: 5))
         menuBar.click()
 
+        // On macOS 26 the MenuBarExtra(.window) popup may not surface children
+        // via app.staticTexts directly — anchor to the container element first.
+        let popover = app.otherElements["MenuBarPopover"]
+        XCTAssertTrue(popover.waitForExistence(timeout: 5), "MenuBarPopover container must appear")
+
         // .textCase(.uppercase) is visual only; accessibility labels stay mixed-case
-        XCTAssertTrue(app.staticTexts["Family Locations"].waitForExistence(timeout: 5))
-        XCTAssertTrue(app.staticTexts["Next Event"].exists)
-        XCTAssertTrue(app.staticTexts["Weather"].exists)
+        XCTAssertTrue(popover.staticTexts["Family Locations"].exists)
+        XCTAssertTrue(popover.staticTexts["Next Event"].exists)
+        XCTAssertTrue(popover.staticTexts["Weather"].exists)
 
         // Check for "Open Sonas" button
-        XCTAssertTrue(app.buttons["Open Sonas"].exists)
+        XCTAssertTrue(popover.buttons["Open Sonas"].exists)
     }
 }
