@@ -8,22 +8,18 @@ import XCTest
 final class SettingsUITests: XCTestCase {
     var app: XCUIApplication!
 
-    override func setUp() async throws {
-        // XCUIApplication operations must be @MainActor-isolated
-        await MainActor.assumeIsolated {
-            try await super.setUp()
-            continueAfterFailure = false
-            app = XCUIApplication()
-            app.launchEnvironment = [
-                "USE_MOCK_LOCATION": "1",
-                "USE_MOCK_WEATHER": "1",
-                "USE_MOCK_CALENDAR": "1",
-                "USE_MOCK_TASKS": "1",
-                "USE_MOCK_PHOTOS": "1",
-                "USE_MOCK_JAM": "1"
-            ]
-            app.launch()
-        }
+    override func setUp() {
+        continueAfterFailure = false
+        app = XCUIApplication()
+        app.launchEnvironment = [
+            "USE_MOCK_LOCATION": "1",
+            "USE_MOCK_WEATHER": "1",
+            "USE_MOCK_CALENDAR": "1",
+            "USE_MOCK_TASKS": "1",
+            "USE_MOCK_PHOTOS": "1",
+            "USE_MOCK_JAM": "1"
+        ]
+        app.launch()
     }
 
     // MARK: - T094.1: Home location picker saves coordinate and reflects in WeatherPanel
@@ -100,7 +96,7 @@ final class SettingsUITests: XCTestCase {
 
         // Restart app and verify panel still visible
         // XCUIApplication operations must be @MainActor-isolated
-        await MainActor.assumeIsolated {
+        MainActor.assumeIsolated {
             app.terminate()
             app.launch()
         }

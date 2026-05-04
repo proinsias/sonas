@@ -10,8 +10,8 @@ import XCTest
 final class DashboardUITests: XCTestCase {
     var app: XCUIApplication!
 
-    override func setUp() async throws {
-        try await super.setUp()
+    override func setUp() {
+        // XCUIApplication operations must be @MainActor-isolated
         continueAfterFailure = false
         app = XCUIApplication()
         app.launchEnvironment = [
