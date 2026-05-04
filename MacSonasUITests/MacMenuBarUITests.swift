@@ -33,18 +33,15 @@ final class MacMenuBarUITests: XCTestCase {
         XCTAssertTrue(menuBar.waitForExistence(timeout: 5))
         menuBar.click()
 
-        // MenuBarExtra(.window) opens a separate window. Try finding it across
-        // all windows of the app, not just descendants of the main app element.
-        var found = false
-        for windowIdx in 0 ..< app.windows.count {
-            let window = app.windows.element(boundBy: windowIdx)
-            let texts = window.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] 'family loc'"))
-            if !texts.isEmpty {
-                found = true
-                print("Found 'family loc' in window \(windowIdx)")
-                break
-            }
-        }
-        XCTAssertTrue(found, "Family Locations should appear in at least one window after menu bar click")
+        // Search across all accessibility elements in the app — MenuBarExtra(.window)
+        // creates a panel whose descendants are reachable via the app root even though
+        // it may not appear in app.windows.
+        let label = app.staticTexts
+            .matching(NSPredicate(format: "label CONTAINS[c] 'family loc'"))
+            .firstMatch
+        XCTAssertTrue(
+            label.waitForExistence(timeout: 10),
+            "Family Locations should appear after menu bar click"
+        )
     }
 }
