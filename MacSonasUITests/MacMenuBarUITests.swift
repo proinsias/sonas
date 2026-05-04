@@ -33,10 +33,10 @@ final class MacMenuBarUITests: XCTestCase {
         XCTAssertTrue(menuBar.waitForExistence(timeout: 5))
         menuBar.click()
 
-        // Check for sections in popover (.textCase(.uppercase) makes accessibility text uppercase)
-        XCTAssertTrue(app.staticTexts["FAMILY LOCATIONS"].waitForExistence(timeout: 5))
-        XCTAssertTrue(app.staticTexts["NEXT EVENT"].exists)
-        XCTAssertTrue(app.staticTexts["WEATHER"].exists)
+        // .textCase(.uppercase) is visual only; accessibility labels stay mixed-case
+        XCTAssertTrue(app.staticTexts["Family Locations"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["Next Event"].exists)
+        XCTAssertTrue(app.staticTexts["Weather"].exists)
 
         // Check for "Open Sonas" button
         XCTAssertTrue(app.buttons["Open Sonas"].exists)

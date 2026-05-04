@@ -53,11 +53,15 @@ final class LocationViewModel {
                     }
                 #endif
 
-                await MainActor.run {
-                    self?.members = sorted
-                    self?.isLoading = false
-                }
+                // Task inherits @MainActor from start(); no hop needed.
+                self?.members = sorted
+                self?.isLoading = false
             }
+        }
+        // Yield until the stream task has delivered the first value so that
+        // callers can rely on `members` being populated when this returns.
+        while isLoading {
+            await Task.yield()
         }
     }
 

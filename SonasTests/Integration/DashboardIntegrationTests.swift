@@ -24,10 +24,6 @@ struct DashboardIntegrationTests {
 
         await vm.locationVM.start()
         await vm.eventsVM.load()
-        // Allow background stream task to process the first yield
-        for _ in 0 ..< 10 {
-            await Task.yield()
-        }
 
         let elapsed = Date.now.timeIntervalSince(start)
 
@@ -50,10 +46,6 @@ struct DashboardIntegrationTests {
         )
 
         await vm.locationVM.start()
-        // Allow background stream task to process the first yield
-        for _ in 0 ..< 10 {
-            await Task.yield()
-        }
 
         // LocationServiceMock.fixtures includes Carol with nil location (see LocationServiceMock.swift)
         let carolMember = vm.locationVM.members.first { $0.displayName == "Carol" }
