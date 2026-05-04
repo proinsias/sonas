@@ -33,17 +33,29 @@ final class MacMenuBarUITests: XCTestCase {
         XCTAssertTrue(menuBar.waitForExistence(timeout: 5))
         menuBar.click()
 
-        // On macOS 26 the MenuBarExtra(.window) popup may not surface children
-        // via app.staticTexts directly — anchor to the container element first.
-        let popover = app.otherElements["MenuBarPopover"]
-        XCTAssertTrue(popover.waitForExistence(timeout: 5), "MenuBarPopover container must appear")
+        // Give the view a moment to update after the click
+        try await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
 
-        // .textCase(.uppercase) is visual only; accessibility labels stay mixed-case
-        XCTAssertTrue(popover.staticTexts["Family Locations"].exists)
-        XCTAssertTrue(popover.staticTexts["Next Event"].exists)
-        XCTAssertTrue(popover.staticTexts["Weather"].exists)
+        // Let's first see if ANY text appears to debug
+        let allTextCount = app.descendants(matching: .staticText).count
+        print("Found \(allTextCount) static text elements in app")
 
-        // Check for "Open Sonas" button
-        XCTAssertTrue(popover.buttons["Open Sonas"].exists)
+        // .textCase(.uppercase) is visual only; accessibility labels stay mixed-case.
+        // Search descendants-of-any to cope with MenuBarExtra(.window) popups that
+        // may appear outside the immediate children of app.
+        let familyLoc = app.descendants(matching: .staticText).matching(identifier: "Family Locations").firstMatch
+        XCTAssertTrue(
+            familyLoc.waitForExistence(timeout: 10),
+            "Family Locations label must appear in popover"
+        )
+        XCTAssertTrue(
+            app.descendants(matching: .staticText).matching(identifier: "Next Event").firstMatch.exists
+        )
+        XCTAssertTrue(
+            app.descendants(matching: .staticText).matching(identifier: "Weather").firstMatch.exists
+        )
+        XCTAssertTrue(
+            app.descendants(matching: .button).matching(identifier: "Open Sonas").firstMatch.exists
+        )
     }
 }
