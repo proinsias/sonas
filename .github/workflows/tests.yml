@@ -4,22 +4,20 @@ on:
   push:
     branches: [main]
   pull_request:
+env:
+  XCODE_VERSION: '26.4.1'
 jobs:
   ui-ios:
     name: UI Tests (iOS Simulator)
-    runs-on: macos-15
+    runs-on: macos-26
     steps:
       - uses: actions/checkout@v6
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: ${{ env.XCODE_VERSION }}
       - uses: jdx/mise-action@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Select Xcode 16.4 (if available)
-        run: |
-          if [ -d /Applications/Xcode_16.4.app ]; then
-            echo "DEVELOPER_DIR=/Applications/Xcode_16.4.app/Contents/Developer" >> "$GITHUB_ENV"
-          fi
-
       - name: Generate project.yml from template
         run: |
           sed \
@@ -28,7 +26,6 @@ jobs:
             -e 's/YOUR_SPOTIFY_CLIENT_ID/placeholder/' \
             -e 's/YOUR_GOOGLE_CLIENT_ID/placeholder/' \
             project.yml.template > project.yml
-
       - name: Patch mock flags into scheme environment
         run: |
           python3 - <<'PYEOF'
@@ -40,28 +37,22 @@ jobs:
           text = re.sub(r"(USE_MOCK_\w+: )'0'", r"\g<1>'1'", text)
           scheme.write_text(text)
           PYEOF
-
       - name: Generate Xcode project
         run: xcodegen generate
-
       - name: Run UI tests on iOS Simulator
         run: mise run tests-ui-ios
 
   ui-mac:
     name: UI Tests (Mac)
-    runs-on: macos-15
+    runs-on: macos-26
     steps:
       - uses: actions/checkout@v6
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: ${{ env.XCODE_VERSION }}
       - uses: jdx/mise-action@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Select Xcode 16.4 (if available)
-        run: |
-          if [ -d /Applications/Xcode_16.4.app ]; then
-            echo "DEVELOPER_DIR=/Applications/Xcode_16.4.app/Contents/Developer" >> "$GITHUB_ENV"
-          fi
-
       - name: Generate project.yml from template
         run: |
           sed \
@@ -70,7 +61,6 @@ jobs:
             -e 's/YOUR_SPOTIFY_CLIENT_ID/placeholder/' \
             -e 's/YOUR_GOOGLE_CLIENT_ID/placeholder/' \
             project.yml.template > project.yml
-
       - name: Patch mock flags into scheme environment
         run: |
           python3 - <<'PYEOF'
@@ -82,31 +72,24 @@ jobs:
           text = re.sub(r"(USE_MOCK_\w+: )'0'", r"\g<1>'1'", text)
           scheme.write_text(text)
           PYEOF
-
       - name: Generate Xcode project
         run: xcodegen generate
-
       - name: Run UI tests
         run: mise run tests-ui-mac
 
   ui-tv:
     name: UI Tests (tvOS Simulator)
-    runs-on: macos-15
+    runs-on: macos-26
     steps:
       - uses: actions/checkout@v6
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: ${{ env.XCODE_VERSION }}
       - uses: jdx/mise-action@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Select Xcode 16.4 (if available)
-        run: |
-          if [ -d /Applications/Xcode_16.4.app ]; then
-            echo "DEVELOPER_DIR=/Applications/Xcode_16.4.app/Contents/Developer" >> "$GITHUB_ENV"
-          fi
-
       - name: Install tvOS Simulator runtime
         run: xcodebuild -downloadPlatform tvOS || true
-
       - name: Generate project.yml from template
         run: |
           sed \
@@ -115,7 +98,6 @@ jobs:
             -e 's/YOUR_SPOTIFY_CLIENT_ID/placeholder/' \
             -e 's/YOUR_GOOGLE_CLIENT_ID/placeholder/' \
             project.yml.template > project.yml
-
       - name: Patch mock flags into scheme environment
         run: |
           python3 - <<'PYEOF'
@@ -127,28 +109,22 @@ jobs:
           text = re.sub(r"(USE_MOCK_\w+: )'0'", r"\g<1>'1'", text)
           scheme.write_text(text)
           PYEOF
-
       - name: Generate Xcode project
         run: xcodegen generate
-
       - name: Run UI tests on tvOS Simulator
         run: mise run tests-ui-tv
 
   unit-contract-ios:
     name: Unit & Contract Tests (iOS Simulator)
-    runs-on: macos-15
+    runs-on: macos-26
     steps:
       - uses: actions/checkout@v6
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: ${{ env.XCODE_VERSION }}
       - uses: jdx/mise-action@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Select Xcode 16.4 (if available)
-        run: |
-          if [ -d /Applications/Xcode_16.4.app ]; then
-            echo "DEVELOPER_DIR=/Applications/Xcode_16.4.app/Contents/Developer" >> "$GITHUB_ENV"
-          fi
-
       - name: Generate project.yml from template
         run: |
           sed \
@@ -157,28 +133,22 @@ jobs:
             -e 's/YOUR_SPOTIFY_CLIENT_ID/placeholder/' \
             -e 's/YOUR_GOOGLE_CLIENT_ID/placeholder/' \
             project.yml.template > project.yml
-
       - name: Generate Xcode project
         run: xcodegen generate
-
       - name: Run unit and contract tests on iOS Simulator
         run: mise run tests-unit-ios
 
   unit-contract-mac:
     name: Unit & Contract Tests (Mac)
-    runs-on: macos-15
+    runs-on: macos-26
     steps:
       - uses: actions/checkout@v6
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: ${{ env.XCODE_VERSION }}
       - uses: jdx/mise-action@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Select Xcode 16.4 (if available)
-        run: |
-          if [ -d /Applications/Xcode_16.4.app ]; then
-            echo "DEVELOPER_DIR=/Applications/Xcode_16.4.app/Contents/Developer" >> "$GITHUB_ENV"
-          fi
-
       - name: Generate project.yml from template
         run: |
           sed \
@@ -187,31 +157,24 @@ jobs:
             -e 's/YOUR_SPOTIFY_CLIENT_ID/placeholder/' \
             -e 's/YOUR_GOOGLE_CLIENT_ID/placeholder/' \
             project.yml.template > project.yml
-
       - name: Generate Xcode project
         run: xcodegen generate
-
       - name: Run unit and contract tests
         run: mise run tests-unit-mac
 
   unit-watch:
     name: Unit Tests (watchOS build check)
-    runs-on: macos-15
+    runs-on: macos-26
     steps:
       - uses: actions/checkout@v6
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: ${{ env.XCODE_VERSION }}
       - uses: jdx/mise-action@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Select Xcode 16.4 (if available)
-        run: |
-          if [ -d /Applications/Xcode_16.4.app ]; then
-            echo "DEVELOPER_DIR=/Applications/Xcode_16.4.app/Contents/Developer" >> "$GITHUB_ENV"
-          fi
-
       - name: Install watchOS Simulator runtime
         run: xcodebuild -downloadPlatform watchOS || true
-
       - name: Generate project.yml from template
         run: |
           sed \
@@ -220,9 +183,7 @@ jobs:
             -e 's/YOUR_SPOTIFY_CLIENT_ID/placeholder/' \
             -e 's/YOUR_GOOGLE_CLIENT_ID/placeholder/' \
             project.yml.template > project.yml
-
       - name: Generate Xcode project
         run: xcodegen generate
-
       - name: Build WatchSonas (watchOS compilation check)
         run: mise run tests-unit-watch
