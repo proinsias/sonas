@@ -10,19 +10,19 @@ struct WeatherServiceTests {
     // MARK: - T051.1: MoonPhase from WeatherKit fraction value
 
     @Test
-    func `given fraction 0 0 when MoonPhase initialised then returns newMoon`() {
+    func `given fraction 0 0 when moon phase initialised then returns new moon`() {
         let phase = MoonPhase(fraction: 0.0)
         #expect(phase == .newMoon)
     }
 
     @Test
-    func `given fraction 0 49 when MoonPhase initialised then returns fullMoon`() {
+    func `given fraction 0 49 when moon phase initialised then returns full moon`() {
         let phase = MoonPhase(fraction: 0.49)
         #expect(phase == .fullMoon)
     }
 
     @Test
-    func `given fraction 0 95 when MoonPhase initialised then returns waningCrescent`() {
+    func `given fraction 0 95 when moon phase initialised then returns waning crescent`() {
         let phase = MoonPhase(fraction: 0.95)
         #expect(phase == .waningCrescent)
     }
@@ -30,7 +30,7 @@ struct WeatherServiceTests {
     // MARK: - T051.2: airQualityIndex is nil when AQI fetch fails (non-fatal)
 
     @Test
-    func `given WeatherServiceMock when fetchWeather called then airQualityIndex is non nil from fixture`(
+    func `given WeatherServiceMock when fetchWeather_called_then_airQualityIndex_is_non_nil_from_fixture`(
     ) async throws {
         // WeatherServiceMock fixture has airQualityIndex = 42
         let service = WeatherServiceMock()
@@ -43,7 +43,7 @@ struct WeatherServiceTests {
     // MARK: - T051.3: WeatherServiceError.locationNotConfigured when coordinate is nil
 
     @Test
-    func `given invalid coordinate when fetchWeather called then throws locationNotConfigured`() async throws {
+    func `given invalid coordinate when fetchWeather_called_then_throws_locationNotConfigured`() async throws {
         let service = WeatherService()
         let invalidCoord = CLLocationCoordinate2D(latitude: 999, longitude: 999)
         await #expect(throws: WeatherServiceError.self) {
@@ -54,12 +54,12 @@ struct WeatherServiceTests {
     // MARK: - T051.4: AQICategory mapping
 
     @Test
-    func `given us_aqi 42 when AQICategory initialised then returns good`() {
+    func `given us aqi 42 when AQI category initialised then returns good`() {
         #expect(AQICategory(usAQI: 42) == .good)
     }
 
     @Test
-    func `given us_aqi 160 when AQICategory initialised then returns unhealthy`() {
+    func `given us aqi 160 when AQI category initialised then returns unhealthy`() {
         #expect(AQICategory(usAQI: 160) == .unhealthy)
     }
 }

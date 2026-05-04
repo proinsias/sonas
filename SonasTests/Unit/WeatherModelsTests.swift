@@ -20,7 +20,7 @@ struct AQICategoryTests {
         (301, AQICategory.hazardous),
         (500, AQICategory.hazardous)
     ])
-    func `given usAQI when init then returns correct category`(usAQI: Int, expected: AQICategory) {
+    func `given us AQI when init then returns correct category`(usAQI: Int, expected: AQICategory) {
         #expect(AQICategory(usAQI: usAQI) == expected)
     }
 
@@ -58,7 +58,7 @@ struct PressureTrendTests {
         (PressureTrend.steady, "arrow.right"),
         (PressureTrend.falling, "arrow.down.right")
     ])
-    func `given trend when symbolName then returns correct sf symbol`(trend: PressureTrend, expected: String) {
+    func `given trend when symbol name then returns correct sf symbol`(trend: PressureTrend, expected: String) {
         #expect(trend.symbolName == expected)
     }
 }
@@ -90,7 +90,7 @@ struct MoonPhaseTests {
     }
 
     @Test
-    func `given moon phase when displayName then returns rawValue`() {
+    func `given moon phase when display name then returns raw value`() {
         for phase in MoonPhase.allCases {
             #expect(phase.displayName == phase.rawValue)
         }
@@ -106,7 +106,7 @@ struct MoonPhaseTests {
         (MoonPhase.lastQuarter, "moonphase.last.quarter"),
         (MoonPhase.waningCrescent, "moonphase.waning.crescent")
     ])
-    func `given moon phase when symbolName then returns correct sf symbol`(phase: MoonPhase, expected: String) {
+    func `given moon phase when symbol name then returns correct sf symbol`(phase: MoonPhase, expected: String) {
         #expect(phase.symbolName == expected)
     }
 }

@@ -55,7 +55,7 @@ struct TodoistContractTests {
     // MARK: - T056.1: Tasks grouped by projectName
 
     @Test
-    func `given projects and tasks stubs when fetchTasks called then tasks grouped by projectName`() async throws {
+    func `given projects and tasks stubs when fetchTasks called then tasks_grouped_by_projectName`() async throws {
         TodoistURLProtocolStub.responses["/api/v1/projects"] = .init(
             data: Data("""
             {"results":[{"id":"proj1","name":"Home"},{"id":"proj2","name":"Admin"}],"next_cursor":null}
@@ -80,7 +80,7 @@ struct TodoistContractTests {
     // MARK: - T056.2: completeTask succeeds on 200 (API v1 returns 200, not 204)
 
     @Test
-    func `given close endpoint returns 200 when completeTask called then no error thrown`() async throws {
+    func `given close endpoint returns 200 when completeTask called then no_error_thrown`() async throws {
         let taskID = "task-abc"
         TodoistURLProtocolStub.responses["/api/v1/tasks/\(taskID)/close"] = .init(
             data: Data(), statusCode: 200, headers: [:],
@@ -94,7 +94,7 @@ struct TodoistContractTests {
     // MARK: - T056.3: completeTask throws rateLimitExceeded on 429
 
     @Test
-    func `given close endpoint returns 429 with Retry After when completeTask called then throws rateLimitExceeded`(
+    func `given close endpoint returns 429 with Retry_After when completeTask called then throws_rateLimitExceeded`(
     ) async throws {
         let taskID = "task-xyz"
         TodoistURLProtocolStub.responses["/api/v1/tasks/\(taskID)/close"] = .init(
@@ -110,7 +110,7 @@ struct TodoistContractTests {
     // MARK: - T095.1: fetchProjects returns TaskProject array
 
     @Test
-    func `given projects endpoint when fetchProjects called then returns array of TaskProject with correct names`(
+    func `given projects endpoint when fetchProjects called then returns_array_of_TaskProject_with_correct_names`(
     ) async throws {
         TodoistURLProtocolStub.responses["/api/v1/projects"] = .init(
             data: Data("""
@@ -132,7 +132,7 @@ struct TodoistContractTests {
     // MARK: - T095.2: fetchTasks populates projectName from project list
 
     @Test
-    func `given projects and tasks stubs when fetchTasks called then tasks have projectName populated`() async throws {
+    func `given projects and tasks stubs when fetchTasks called then tasks_have_projectName_populated`() async throws {
         TodoistURLProtocolStub.responses["/api/v1/projects"] = .init(
             data: Data("""
             {"results":[{"id":"proj1","name":"Home"}],"next_cursor":null}

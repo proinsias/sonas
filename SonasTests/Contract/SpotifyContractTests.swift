@@ -12,7 +12,7 @@ struct SpotifyContractTests {
     // MARK: - T072.1: startJam returns active session with joinURL
 
     @Test
-    func `given mock Spotify service when startJam called then returns JamSession with status active and joinURL`(
+    func `given mock Spotify service when startJam called then returns JamSession_with_status_active_and_joinURL`(
     ) async throws {
         let service = JamServiceMock()
         let session = try await service.startJam()
@@ -24,7 +24,7 @@ struct SpotifyContractTests {
     // MARK: - T072.2: startJam throws spotifyNotInstalled when isSpotifyInstalled == false
 
     @Test
-    func `given Spotify not installed when startJam called then throws spotifyNotInstalled`() async throws {
+    func `given Spotify not installed when startJam called then throws_spotifyNotInstalled`() async throws {
         let service = JamServiceMock()
         service.isSpotifyInstalled = false
 
@@ -36,7 +36,7 @@ struct SpotifyContractTests {
     // MARK: - T072.3: endJam transitions status to ended
 
     @Test
-    func `given active session when endJam then session status transitions to ended`() async throws {
+    func `given active session when endJam then session_status_transitions_to_ended`() async throws {
         let service = JamServiceMock()
         _ = try await service.startJam()
         try await service.endJam()
@@ -47,7 +47,7 @@ struct SpotifyContractTests {
     // MARK: - T072.4: QR code can be generated from joinURL
 
     @Test
-    func `given jam session joinURL when CIFilter qrCodeGenerator then produces non nil CIImage`() async throws {
+    func `given jam session joinURL when CIFilter_qrCodeGenerator then produces_non_nil_CIImage`() async throws {
         let service = JamServiceMock()
         let session = try await service.startJam()
 

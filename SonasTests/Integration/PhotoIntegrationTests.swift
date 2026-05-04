@@ -12,7 +12,7 @@ struct PhotoIntegrationTests {
     // MARK: - T068-I.1: PhotoGalleryView renders ≥1 thumbnail within 500ms
 
     @Test
-    func `given PhotoServiceMock with 5 assets when PhotoViewModel loads then photos populated within 500 ms`() async {
+    func `given PhotoServiceMock with 5 assets when PhotoViewModel loads then photos_populated_within_500_ms`() async {
         let start = Date.now
         let vm = PhotoViewModel(service: PhotoServiceMock())
         await vm.load()
@@ -25,7 +25,7 @@ struct PhotoIntegrationTests {
     // MARK: - T068-I.2: PHPhotoLibraryChangeObserver callback doesn't crash
 
     @Test
-    func `given mock service when reload called then no crash and photos refreshed`() async {
+    func `given mock service when reload called then no_crash_and_photos_refreshed`() async {
         let vm = PhotoViewModel(service: PhotoServiceMock())
         await vm.load()
         let countBefore = vm.photos.count

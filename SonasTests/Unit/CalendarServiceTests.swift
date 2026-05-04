@@ -10,7 +10,7 @@ struct CalendarServiceTests {
     // MARK: - T084.1: Deduplication removes event when title+startDate match
 
     @Test
-    func `given two events with same title and startDate when merged then only one event retained`() {
+    func `given two events with same title and start date when merged then only one event retained`() {
         let date = Date(timeIntervalSince1970: 1_744_000_000)
         let icloudEvent = CalendarEvent(
             id: "ical-1", title: "Family Meeting",
@@ -37,7 +37,7 @@ struct CalendarServiceTests {
     // MARK: - T084.2: Sort order ascending
 
     @Test
-    func `given events in reverse order when sorted then ascending by startDate`() {
+    func `given events in reverse order when sorted then ascending by start date`() {
         let base = Date(timeIntervalSince1970: 1_744_000_000)
         let events = [
             CalendarEvent(
@@ -62,7 +62,7 @@ struct CalendarServiceTests {
     // MARK: - T084.3: isGoogleConnected == false after disconnectGoogleAccount
 
     @Test
-    func `given connected Google account when disconnected then isGoogleConnected is false`() async {
+    func `given connected google account when disconnected then is google connected is false`() async {
         let service = CalendarServiceMock()
         try? await service.connectGoogleAccount()
         #expect(service.isGoogleConnected, "Must be connected after connect")

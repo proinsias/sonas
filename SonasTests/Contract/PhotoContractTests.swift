@@ -12,7 +12,7 @@ struct PhotoContractTests {
     // MARK: - T064.1: fetchRecentPhotos returns 5 photos sorted descending by creationDate
 
     @Test
-    func `given mock with 5 assets when fetch recent then 5 photos sorted descending`() async throws {
+    func `given mock with 5 assets when fetch_recent then 5 photos sorted_descending`() async throws {
         let service = PhotoServiceMock()
         let photos = try await service.fetchRecentPhotos(limit: 20)
 
@@ -29,7 +29,7 @@ struct PhotoContractTests {
     // MARK: - T064.2: albumEmpty error when album has no assets
 
     @Test
-    func `given album with no assets when fetchRecentPhotos called then throws albumEmpty`() async throws {
+    func `given album with no assets when fetchRecentPhotos called then throws_albumEmpty`() async throws {
         final class EmptyPhotoServiceMock: PhotoServiceProtocol, @unchecked Sendable {
             var selectedAlbumName: String? = "Empty Album"
             func fetchRecentPhotos(limit _: Int) async throws -> [Photo] {

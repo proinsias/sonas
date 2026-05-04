@@ -13,7 +13,7 @@ struct WeatherContractTests {
     // MARK: - T048.1: snapshot.airQualityIndex == 42 from AQI stub
 
     @Test
-    func `given AQI stub returns 42 when weather fetched then snapshot airQualityIndex is 42`() async throws {
+    func `given AQI stub returns 42 when weather fetched then snapshot_airQualityIndex_is_42`() async throws {
         // WeatherKit mock + AQI stub — WeatherServiceMock short-circuits WeatherKit entitlement
         let mock = WeatherServiceMock()
         let (snapshot, _) = try await mock.fetchWeather(
@@ -26,7 +26,7 @@ struct WeatherContractTests {
     // MARK: - T048.2: forecast.count == 7
 
     @Test
-    func `given mock weather service when fetchWeather called then forecast contains 7 days`() async throws {
+    func `given mock weather service when fetchWeather called then forecast_contains_7_days`() async throws {
         let mock = WeatherServiceMock()
         let (_, forecast) = try await mock.fetchWeather(
             for: CLLocationCoordinate2D(latitude: 53.35, longitude: -6.26)
@@ -37,7 +37,7 @@ struct WeatherContractTests {
     // MARK: - T048.3: forecast[0].id equals today midnight (ISO date prefix)
 
     @Test
-    func `given mock weather service when fetchWeather called then forecast first id equals today date`() async throws {
+    func `given mock weather service when fetchWeather called then forecast_first_id_equals_today_date`() async throws {
         let mock = WeatherServiceMock()
         let (_, forecast) = try await mock.fetchWeather(
             for: CLLocationCoordinate2D(latitude: 53.35, longitude: -6.26)
@@ -53,7 +53,7 @@ struct WeatherContractTests {
     // MARK: - T048.4: All 8 required weather attributes are non-nil/non-default
 
     @Test
-    func `given mock weather service when fetchWeather called then all 8 required attributes are populated`(
+    func `given mock weather service when fetchWeather called then all_8_required_attributes_are_populated`(
     ) async throws {
         let mock = WeatherServiceMock()
         let (snapshot, _) = try await mock.fetchWeather(

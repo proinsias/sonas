@@ -22,7 +22,7 @@ struct LocationCloudKitTests {
     // MARK: - T042a: Write record → refresh returns member
 
     @Test
-    func `given FamilyLocation record written when refresh called then service returns that member`() async throws {
+    func `given FamilyLocation record written when refresh called then service_returns_that_member`() async throws {
         let container = CKContainer(identifier: Self.cloudKitContainerID)
         let db = container.privateCloudDatabase
 
@@ -51,7 +51,7 @@ struct LocationCloudKitTests {
     // MARK: - T042b: Second device writes → AsyncStream emits within 60s (subscription latency)
 
     @Test(.timeLimit(.minutes(2)))
-    func `given CKQuerySubscription active when second record written then stream emits update within 60 seconds`(
+    func `given CKQuerySubscription active when second record written then stream_emits_update_within_60_seconds`(
     ) async throws {
         let service = LocationService()
         await service.startPublishing()

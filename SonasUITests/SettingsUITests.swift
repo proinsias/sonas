@@ -9,18 +9,21 @@ final class SettingsUITests: XCTestCase {
     var app: XCUIApplication!
 
     override func setUp() async throws {
-        try await super.setUp()
-        continueAfterFailure = false
-        app = XCUIApplication()
-        app.launchEnvironment = [
-            "USE_MOCK_LOCATION": "1",
-            "USE_MOCK_WEATHER": "1",
-            "USE_MOCK_CALENDAR": "1",
-            "USE_MOCK_TASKS": "1",
-            "USE_MOCK_PHOTOS": "1",
-            "USE_MOCK_JAM": "1"
-        ]
-        app.launch()
+        // XCUIApplication operations must be @MainActor-isolated
+        await MainActor.assumeIsolated {
+            try await super.setUp()
+            continueAfterFailure = false
+            app = XCUIApplication()
+            app.launchEnvironment = [
+                "USE_MOCK_LOCATION": "1",
+                "USE_MOCK_WEATHER": "1",
+                "USE_MOCK_CALENDAR": "1",
+                "USE_MOCK_TASKS": "1",
+                "USE_MOCK_PHOTOS": "1",
+                "USE_MOCK_JAM": "1"
+            ]
+            app.launch()
+        }
     }
 
     // MARK: - T094.1: Home location picker saves coordinate and reflects in WeatherPanel
@@ -96,8 +99,11 @@ final class SettingsUITests: XCTestCase {
         XCTAssertTrue(app.otherElements["PhotosPanel"].waitForExistence(timeout: 3))
 
         // Restart app and verify panel still visible
-        app.terminate()
-        app.launch()
+        // XCUIApplication operations must be @MainActor-isolated
+        await MainActor.assumeIsolated {
+            app.terminate()
+            app.launch()
+        }
         XCTAssertTrue(app.otherElements["PhotosPanel"].waitForExistence(timeout: 5))
     }
 }

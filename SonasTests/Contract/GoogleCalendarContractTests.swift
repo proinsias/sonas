@@ -55,7 +55,7 @@ struct GoogleCalendarContractTests {
     // MARK: - T034.1: Stub returns Google Calendar JSON → events include Google-sourced events
 
     @Test
-    func `given Google Calendar JSON stub when fetchEvents called then returns Google sourced CalendarEvent`(
+    func `given Google Calendar JSON stub when fetchEvents called then returns Google_sourced_CalendarEvent`(
     ) async throws {
         GoogleCalendarURLProtocolStub.statusCode = 200
         GoogleCalendarURLProtocolStub.responseData = Data("""
@@ -86,7 +86,7 @@ struct GoogleCalendarContractTests {
     // MARK: - T034.2: Events sorted ascending by startDate
 
     @Test
-    func `given multiple events in reverse order when fetched then events are sorted ascending by startDate`(
+    func `given multiple events in reverse order when fetched then events are sorted_ascending_by_startDate`(
     ) async throws {
         GoogleCalendarURLProtocolStub.statusCode = 200
         GoogleCalendarURLProtocolStub.responseData = Data("""
@@ -127,7 +127,7 @@ struct GoogleCalendarContractTests {
     // MARK: - T034.3: Duplicate event with same title+startDate appears only once after deduplication
 
     @Test
-    func `given duplicate events with same title and startDate when CalendarService merges then duplicate removed`() {
+    func `given duplicate events with same title and startDate when CalendarService merges then duplicate_removed`() {
         // Two events with the same title and startDate from different sources
         let date = Date(timeIntervalSince1970: 1_744_000_000)
         let event1 = CalendarEvent(
@@ -157,7 +157,7 @@ struct GoogleCalendarContractTests {
     // MARK: - T034.4: HTTP 401 → throws googleAuthFailed
 
     @Test
-    func `given HTTP 401 response when fetchEvents called then throws googleAuthFailed`() async throws {
+    func `given HTTP 401 response when fetchEvents called then throws_googleAuthFailed`() async throws {
         GoogleCalendarURLProtocolStub.statusCode = 401
         GoogleCalendarURLProtocolStub.responseData = Data()
 

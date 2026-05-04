@@ -10,7 +10,7 @@ struct PhotoServiceTests {
     // MARK: - T067.1: Sort order is creationDate descending
 
     @Test
-    func `given mock photos when fetchRecentPhotos then photos sorted by creationDate descending`() async throws {
+    func `given mock photos when fetchRecentPhotos_then_photos_sorted_by_creationDate_descending`() async throws {
         let service = PhotoServiceMock()
         let photos = try await service.fetchRecentPhotos(limit: 20)
 
@@ -24,7 +24,7 @@ struct PhotoServiceTests {
     // MARK: - T067.2: Limit of 20 is enforced
 
     @Test
-    func `given limit of 3 when fetchRecentPhotos called then at most 3 photos returned`() async throws {
+    func `given limit of 3 when fetchRecentPhotos_called_then_at_most_3_photos_returned`() async throws {
         let service = PhotoServiceMock()
         let photos = try await service.fetchRecentPhotos(limit: 3)
         // Mock returns max 5 fixtures; verify caller's limit contract
@@ -34,7 +34,7 @@ struct PhotoServiceTests {
     // MARK: - T067.3: PHPhotoLibraryChangeObserver triggers re-fetch (contract)
 
     @Test
-    func `given PHPhotoLibraryChangeObserver callback when triggered then onAlbumChanged handler invoked`() {
+    func `given PHPhotoLibraryChangeObserver_callback_when_triggered_then_onAlbumChanged_handler_invoked`() {
         // Photo service uses PHPhotoLibraryChangeObserver to react to library changes.
         // This test verifies the contract at the ViewModel level (onAlbumChanged binding).
         var reloadCalled = false

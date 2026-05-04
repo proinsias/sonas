@@ -46,7 +46,7 @@ struct AQIContractTests {
     }
 
     @Test
-    func `given AQI stub returns us_aqi 42 when fetchWeather called then snapshot airQualityIndex equals 42`() throws {
+    func `given AQI stub returns us_aqi 42 when fetchWeather called then snapshot_airQualityIndex_equals_42`() throws {
         AQIURLProtocolStub.statusCode = 200
         AQIURLProtocolStub.responseJSON = """
         {"current":{"us_aqi":42}}
@@ -61,7 +61,7 @@ struct AQIContractTests {
     }
 
     @Test
-    func `given AQI stub returns HTTP 500 when fetchWeather called then airQualityIndex is nil non fatal`() {
+    func `given AQI stub returns HTTP 500 when fetchWeather called then airQualityIndex_is_nil_non_fatal`() {
         AQIURLProtocolStub.statusCode = 500
         AQIURLProtocolStub.responseJSON = ""
         // AQI fetch failure must be non-fatal: WeatherSnapshot.airQualityIndex should be nil

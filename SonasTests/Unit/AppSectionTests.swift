@@ -6,7 +6,7 @@ import Testing
 @Suite("AppSection Unit Tests")
 struct AppSectionTests {
     @Test
-    func `all AppSection cases have valid metadata`() {
+    func `all app section cases have valid metadata`() {
         for section in AppSection.allCases {
             #expect(!section.id.isEmpty)
             #expect(!section.title.isEmpty)
@@ -16,12 +16,12 @@ struct AppSectionTests {
     }
 
     @Test
-    func `appSection default is dashboard`() {
+    func `app section default is dashboard`() {
         #expect(AppSection.dashboard.id == "dashboard")
     }
 
     @Test
-    func `appSection shortcut mapping is correct`() {
+    func `app section shortcut mapping is correct`() {
         #expect(AppSection.dashboard.keyboardShortcut?.key == "1")
         #expect(AppSection.location.keyboardShortcut?.key == "2")
         #expect(AppSection.calendar.keyboardShortcut?.key == "3")
@@ -33,7 +33,7 @@ struct AppSectionTests {
     }
 
     @Test
-    func `appSection titles are unique`() {
+    func `app section titles are unique`() {
         let titles = AppSection.allCases.map(\.title)
         #expect(Set(titles).count == titles.count)
     }

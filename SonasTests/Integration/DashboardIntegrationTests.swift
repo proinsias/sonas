@@ -14,7 +14,7 @@ struct DashboardIntegrationTests {
     // MARK: - T043.1: All panels render with mock services within 500ms
 
     @Test
-    func `given all mock services when dashboard loads then all US1 panels render within 500 ms`() async {
+    func `given all mock services when dashboard loads then all_US1_panels_render_within_500_ms`() async {
         let start = Date.now
 
         let vm = DashboardViewModel(
@@ -43,7 +43,7 @@ struct DashboardIntegrationTests {
     // MARK: - T043.2: "Location unavailable" renders when mock returns nil location
 
     @Test
-    func `given member with nil location when dashboard loads then location unavailable indicator shown`() async {
+    func `given member with nil location when dashboard loads then location_unavailable_indicator_shown`() async {
         let vm = DashboardViewModel(
             locationService: LocationServiceMock(),
             calendarService: CalendarServiceMock()
@@ -64,7 +64,7 @@ struct DashboardIntegrationTests {
     // MARK: - T082.1: Tasks panel shows cached data + lastUpdated when network unavailable
 
     @Test
-    func `given tasks in cache when network unavailable then tasks panel shows cached data with lastUpdated set`(
+    func `given tasks in cache when network unavailable then tasks_panel_shows_cached_data_with_lastUpdated_set`(
     ) async throws {
         let schema = Schema([CachedWeatherSnapshot.self, CachedLocationSnapshot.self,
                              CachedCalendarEvent.self, CachedTask.self, CachedJamSession.self])
@@ -99,7 +99,7 @@ struct DashboardIntegrationTests {
     // MARK: - T082.2: Tasks failure does not affect other panels
 
     @Test
-    func `given tasks service throws when dashboard loads then other panels remain functional`() async {
+    func `given tasks service throws when dashboard loads then other_panels_remain_functional`() async {
         final class FailingTaskService: TaskServiceProtocol, @unchecked Sendable {
             var isConnected: Bool = true
             func fetchTasks() async throws -> [TodoTask] {
@@ -128,7 +128,7 @@ struct DashboardIntegrationTests {
     // MARK: - T043.3: Empty calendar events → "Nothing scheduled" state
 
     @Test
-    func `given no upcoming events when events panel loads then shows empty state`() async {
+    func `given no upcoming events when events panel loads then shows_empty_state`() async {
         final class EmptyCalendarMock: CalendarServiceProtocol, @unchecked Sendable {
             var isGoogleConnected: Bool = false
             var needsGoogleReconnect: Bool = false

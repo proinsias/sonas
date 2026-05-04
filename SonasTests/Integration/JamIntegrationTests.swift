@@ -13,7 +13,7 @@ struct JamIntegrationTests {
     // MARK: - T076-I.1: JamPanelView renders non-nil QR Image within 500ms of startJam resolving
 
     @Test
-    func `given JamServiceMock when startJam called then QR CIImage is non nil within 500 ms`() async throws {
+    func `given JamServiceMock when startJam called then QR_CIImage_is_non_nil_within_500_ms`() async throws {
         let start = Date.now
         let service = JamServiceMock()
         let session = try await service.startJam()
@@ -32,7 +32,7 @@ struct JamIntegrationTests {
     // MARK: - T076-I.2: QR Image accessibility identifier disappears after endJam
 
     @Test
-    func `given active jam session when endJam called then session status is ended and QR should be hidden`() async {
+    func `given active jam session when endJam called then session_status_is_ended_and_QR_should_be_hidden`() async {
         let service = JamServiceMock()
         let vm = JamViewModel(service: service)
 

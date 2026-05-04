@@ -10,7 +10,7 @@ struct TodoistServiceTests {
     // MARK: - T059.1: Optimistic rollback when completeTask throws
 
     @Test
-    func `given task in list when completeTask fails then task reappears in tasksByProject`() async throws {
+    func `given task in list when completeTask_fails_then_task_reappears_in_tasksByProject`() async throws {
         final class FailingTaskService: TaskServiceProtocol, @unchecked Sendable {
             var isConnected: Bool = true
             var fetchCalled = false
@@ -48,7 +48,7 @@ struct TodoistServiceTests {
     // MARK: - T095.3: availableProjects populated after connectTodoist
 
     @Test
-    func `given service with projects when connectTodoist called then availableProjects populated on viewModel`(
+    func `given service with projects when connectTodoist_called_then_availableProjects_populated_on_viewModel`(
     ) async throws {
         final class ProjectService: TaskServiceProtocol, @unchecked Sendable {
             var isConnected: Bool = false
@@ -81,7 +81,7 @@ struct TodoistServiceTests {
     // MARK: - T095.4: availableProjects cleared on disconnect
 
     @Test
-    func `given connected viewModel when disconnectTodoist called then availableProjects is empty`() async {
+    func `given connected viewModel when disconnectTodoist_called_then_availableProjects_is_empty`() async {
         final class AlwaysConnectedService: TaskServiceProtocol, @unchecked Sendable {
             var isConnected: Bool = true
             func fetchTasks() async throws -> [TodoTask] {
@@ -110,7 +110,7 @@ struct TodoistServiceTests {
     // MARK: - T059.2: authenticationFailed on 401
 
     @Test
-    func `given Todoist service when 401 received then throws authenticationFailed`() async throws {
+    func `given Todoist service when_401_received_then_throws_authenticationFailed`() async throws {
         let config = URLSessionConfiguration.ephemeral
         config.protocolClasses = [FourOhOneProtocol.self]
         let session = URLSession(configuration: config)

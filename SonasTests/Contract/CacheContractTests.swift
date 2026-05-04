@@ -29,7 +29,7 @@ struct CacheContractTests {
     // MARK: - Weather round-trip
 
     @Test
-    func `given weather snapshot when saved then loadWeather returns matching snapshot`() async throws {
+    func `given weather snapshot when saved then loadWeather_returns_matching_snapshot`() async throws {
         let sut = try makeInMemoryService()
         let snapshot = WeatherSnapshot(
             temperature: 18.5,
@@ -63,7 +63,7 @@ struct CacheContractTests {
     // MARK: - evictStaleEntries removes weather older than TTL
 
     @Test
-    func `given weather saved more than 1 hour ago when evictStaleEntries called then loadWeather returns nil`(
+    func `given weather saved more than 1 hour ago when evictStaleEntries_called then loadWeather_returns_nil`(
     ) async throws {
         let sut = try makeInMemoryService()
 
@@ -97,7 +97,7 @@ struct CacheContractTests {
     // MARK: - Location round-trip
 
     @Test
-    func `given family members when saved then loadLocations returns matching members`() async throws {
+    func `given family members when saved then loadLocations_returns_matching_members`() async throws {
         let sut = try makeInMemoryService()
         let members = LocationServiceMock.fixtures.filter { $0.location != nil }
 
@@ -110,7 +110,7 @@ struct CacheContractTests {
     // MARK: - evictStaleEntries removes location snapshots older than 5 minutes
 
     @Test
-    func `given location older than 5 minutes when evictStaleEntries called then loadLocations returns empty`(
+    func `given location older than 5 minutes when evictStaleEntries_called then loadLocations_returns_empty`(
     ) async throws {
         // This test verifies the TTL contract (5 min) defined in research.md §Decision 9.
         // CacheService.evictStaleEntries() must delete CachedLocationSnapshot records whose

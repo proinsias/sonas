@@ -11,7 +11,7 @@ struct JamServiceTests {
     // MARK: - T075.1: joinURL string encodes correctly as QR CIImage data
 
     @Test
-    func `given Spotify jam joinURL when QR generated then CIImage is non nil`() {
+    func `given spotify jam join URL when QR generated then CI image is non nil`() {
         guard let url = URL(string: "https://spotify.com/jam/abc123") else {
             #expect(Bool(false), "Failed to create URL")
             return
@@ -31,7 +31,7 @@ struct JamServiceTests {
     // MARK: - T075.2: State machine none → active → ending → ended
 
     @Test
-    func `given startJam then endJam status transitions none to active to ended`() async throws {
+    func `given start jam then end jam status transitions none to active to ended`() async throws {
         let service = JamServiceMock()
         #expect(service.currentSession == nil, "Initial status must be .none (nil session)")
 
@@ -39,13 +39,13 @@ struct JamServiceTests {
         #expect(service.currentSession?.status == .active, "Status after startJam must be .active")
 
         try await service.endJam()
-        #expect(service.currentSession?.status == .ended, "Status after endJam must be .ended")
+        #expect(service.currentSession?.status == .ended)
     }
 
     // MARK: - T075.3: appRemoteDisconnected forces .ended from .active without calling endJam
 
     @Test
-    func `given active session when appRemoteDisconnected simulated then session transitions to ended`() async throws {
+    func `given active session when disconnected simulated then transitions to ended`() async throws {
         let service = JamServiceMock()
         _ = try await service.startJam()
 

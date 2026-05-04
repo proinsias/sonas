@@ -24,7 +24,7 @@ struct CalendarModelsTests {
     }
 
     @Test
-    func `given event ending in future when isUpcoming then returns true`() {
+    func `given event ending in future when is upcoming then returns true`() {
         let event = makeEvent(
             startDate: Date().addingTimeInterval(-3600),
             endDate: Date().addingTimeInterval(3600)
@@ -33,7 +33,7 @@ struct CalendarModelsTests {
     }
 
     @Test
-    func `given event ended in past when isUpcoming then returns false`() {
+    func `given event ended in past when is upcoming then returns false`() {
         let event = makeEvent(
             startDate: Date().addingTimeInterval(-7200),
             endDate: Date().addingTimeInterval(-3600)
@@ -42,7 +42,7 @@ struct CalendarModelsTests {
     }
 
     @Test
-    func `given all day event when formattedTime then returns all day`() {
+    func `given all day event when formatted time then returns all day`() {
         let event = makeEvent(
             startDate: Date(),
             endDate: Date().addingTimeInterval(86400),
@@ -52,7 +52,7 @@ struct CalendarModelsTests {
     }
 
     @Test
-    func `given timed event when formattedTime then returns non empty time string`() {
+    func `given timed event when formatted time then returns non empty time string`() {
         let event = makeEvent(
             startDate: Date(),
             endDate: Date().addingTimeInterval(3600),
@@ -63,7 +63,7 @@ struct CalendarModelsTests {
     }
 
     @Test
-    func `given all day event when formattedDateRange then returns weekday month day`() {
+    func `given all day event when formatted date range then returns weekday month day`() {
         let event = makeEvent(
             startDate: Date(),
             endDate: Date().addingTimeInterval(86400),
@@ -74,7 +74,7 @@ struct CalendarModelsTests {
     }
 
     @Test
-    func `given timed event when formattedDateRange then returns abbreviated weekday and time`() {
+    func `given timed event when formatted date range then returns abbreviated weekday and time`() {
         let event = makeEvent(
             startDate: Date(),
             endDate: Date().addingTimeInterval(3600),
