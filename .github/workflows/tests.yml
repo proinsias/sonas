@@ -76,9 +76,18 @@ jobs:
         run: xcodegen generate
       - name: Pre-authorize accessibility for UI tests
         run: |
-          sudo sqlite3 /Library/Application\ Support/com.apple.TCC/TCC.db \
-            "INSERT OR IGNORE INTO access(service,client,client_type,auth_value,auth_reason,auth_version) \
-            VALUES('kTCCServiceAccessibility','com.apple.dt.xctest.tool',0,2,4,1);" 2>/dev/null || true
+          TCC_DB="/Library/Application Support/com.apple.TCC/TCC.db"
+          TS=$(date +%s)
+          # INSERT OR REPLACE so any existing denied row is overwritten.
+          # Authorize both xctest.tool (the test runner binary) and the app bundle itself.
+          COLS="service,client,client_type,auth_value,auth_reason,"
+          COLS+="auth_version,csreq,policy_id,indirect_object_identifier_type,"
+          COLS+="indirect_object_identifier,indirect_object_attributes,flags,last_modified"
+          ROW_TOOL="('kTCCServiceAccessibility','com.apple.dt.xctest.tool',0,2,4,1,NULL,NULL,0,'UNUSED',NULL,0,$TS)"
+          ROW_APP="('kTCCServiceAccessibility','com.ci.sonas.mac',0,2,4,1,NULL,NULL,0,'UNUSED',NULL,0,$TS)"
+          ROW_TESTS="('kTCCServiceAccessibility','com.ci.sonas.mac.uitests',0,2,4,1,NULL,NULL,0,'UNUSED',NULL,0,$TS)"
+          sudo sqlite3 "$TCC_DB" \
+            "INSERT OR REPLACE INTO access ($COLS) VALUES $ROW_TOOL,$ROW_APP,$ROW_TESTS;"
       - name: Run UI tests
         run: mise run tests-ui-mac
 
