@@ -33,8 +33,8 @@ final class MacMenuBarUITests: XCTestCase {
         XCTAssertTrue(menuBar.waitForExistence(timeout: 5))
         menuBar.click()
 
-        // .textCase(.uppercase) is visual only; explicitly set accessibilityLabel
-        // so the labels are discoverable via the accessibility hierarchy.
+        // .textCase(.uppercase) is visual only; explicitly set accessibilityIdentifier
+        // on each section so elements are discoverable in the accessibility hierarchy.
         XCTAssertTrue(
             app.descendants(matching: .staticText)
                 .matching(identifier: "Family Locations")
