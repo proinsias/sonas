@@ -74,6 +74,11 @@ jobs:
           PYEOF
       - name: Generate Xcode project
         run: xcodegen generate
+      - name: Pre-authorize accessibility for UI tests
+        run: |
+          sudo sqlite3 /Library/Application\ Support/com.apple.TCC/TCC.db \
+            "INSERT OR IGNORE INTO access(service,client,client_type,auth_value,auth_reason,auth_version) \
+            VALUES('kTCCServiceAccessibility','com.apple.dt.xctest.tool',0,2,4,1);" 2>/dev/null || true
       - name: Run UI tests
         run: mise run tests-ui-mac
 
