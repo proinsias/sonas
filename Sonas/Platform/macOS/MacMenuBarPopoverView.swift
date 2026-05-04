@@ -51,6 +51,7 @@ struct MacMenuBarPopoverView: View {
                 .font(.caption)
                 .foregroundStyle(.secondary)
                 .textCase(.uppercase)
+                .accessibilityLabel("Family Locations")
 
             if state.familyLocations.isEmpty {
                 Text("No data yet")
@@ -78,6 +79,7 @@ struct MacMenuBarPopoverView: View {
                 .font(.caption)
                 .foregroundStyle(.secondary)
                 .textCase(.uppercase)
+                .accessibilityLabel("Next Event")
 
             if let event = state.nextEvent {
                 VStack(alignment: .leading, spacing: 2) {
@@ -102,6 +104,7 @@ struct MacMenuBarPopoverView: View {
                 .font(.caption)
                 .foregroundStyle(.secondary)
                 .textCase(.uppercase)
+                .accessibilityLabel("Weather")
 
             if let weather = state.weatherSummary {
                 HStack(spacing: 12) {
@@ -130,6 +133,7 @@ struct MacMenuBarPopoverView: View {
                 openWindow(id: "main")
             }
             .buttonStyle(.borderedProminent)
+            .accessibilityLabel("Open Sonas")
 
             Spacer()
 
