@@ -33,8 +33,8 @@ final class MacMenuBarUITests: XCTestCase {
         XCTAssertTrue(menuBar.waitForExistence(timeout: 5))
         menuBar.click()
 
-        // Give the view a moment to update after the click
-        try await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
+        // Give the popover time to animate in and update.
+        sleep(2)
 
         // Let's first see if ANY text appears to debug
         let allTextCount = app.descendants(matching: .staticText).count
@@ -43,19 +43,30 @@ final class MacMenuBarUITests: XCTestCase {
         // .textCase(.uppercase) is visual only; accessibility labels stay mixed-case.
         // Search descendants-of-any to cope with MenuBarExtra(.window) popups that
         // may appear outside the immediate children of app.
-        let familyLoc = app.descendants(matching: .staticText).matching(identifier: "Family Locations").firstMatch
         XCTAssertTrue(
-            familyLoc.waitForExistence(timeout: 10),
+            app.descendants(matching: .staticText)
+                .matching(identifier: "Family Locations")
+                .firstMatch
+                .waitForExistence(timeout: 20),
             "Family Locations label must appear in popover"
         )
         XCTAssertTrue(
-            app.descendants(matching: .staticText).matching(identifier: "Next Event").firstMatch.exists
+            app.descendants(matching: .staticText)
+                .matching(identifier: "Next Event")
+                .firstMatch
+                .exists
         )
         XCTAssertTrue(
-            app.descendants(matching: .staticText).matching(identifier: "Weather").firstMatch.exists
+            app.descendants(matching: .staticText)
+                .matching(identifier: "Weather")
+                .firstMatch
+                .exists
         )
         XCTAssertTrue(
-            app.descendants(matching: .button).matching(identifier: "Open Sonas").firstMatch.exists
+            app.descendants(matching: .button)
+                .matching(identifier: "Open Sonas")
+                .firstMatch
+                .exists
         )
     }
 }
