@@ -34,17 +34,14 @@ final class MacMenuBarUITests: XCTestCase {
         app.activate()
         menuBar.click()
 
-        let label = app.staticTexts
-            .matching(NSPredicate(format: "label CONTAINS[c] 'family loc'"))
-            .firstMatch
+        // On macOS 26 the MenuBarExtra popover appears as a Dialog in the XCTest
+        // accessibility tree. Text content surfaces as `value`, not `label`, so
+        // predicates must use `value CONTAINS[c]` rather than `label CONTAINS[c]`.
+        let popover = app.dialogs.firstMatch
 
-        guard label.waitForExistence(timeout: 10) else {
-            // MenuBarExtra(.window) panel windows may not surface in the XCTest
-            // accessibility tree on macOS 26. Log the tree to diagnose, then
-            // verify the app at least survived the click.
+        guard popover.waitForExistence(timeout: 10) else {
             print("=== Popup not found — accessibility tree after click ===")
             print(app.debugDescription)
-            print("=== Window count: \(app.windows.count) ===")
             XCTAssertNotEqual(
                 app.state,
                 .notRunning,
@@ -52,6 +49,11 @@ final class MacMenuBarUITests: XCTestCase {
             )
             return
         }
-        XCTAssertTrue(label.exists)
+
+        let familyHeader = popover.staticTexts
+            .matching(NSPredicate(format: "value CONTAINS[c] 'family loc'"))
+            .firstMatch
+        XCTAssertTrue(familyHeader.exists, "FAMILY LOCATIONS header should be visible in popover")
+        XCTAssertTrue(popover.buttons["Open Sonas"].exists, "Open Sonas button should be visible in popover")
     }
 }
