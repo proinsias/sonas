@@ -32,36 +32,44 @@ final class LocationViewModel {
         error = nil
         await service.startPublishing()
         let stream = service.familyLocations
-        streamTask = Task { [weak self] in
-            for await updated in stream {
-                guard !Task.isCancelled else { break }
-                let sorted = updated.sorted { $0.displayName < $1.displayName }
+        // withCheckedContinuation suspends start() entirely, releasing the
+        // @MainActor so streamTask can run and deliver its first value.
+        // Task.yield() spin-loops are unreliable on @MainActor in Swift Testing.
+        await withCheckedContinuation { (cont: CheckedContinuation<Void, Never>) in
+            streamTask = Task { [weak self] in
+                var signaled = false
+                for await updated in stream {
+                    guard !Task.isCancelled else { break }
+                    let sorted = updated.sorted { $0.displayName < $1.displayName }
 
-                #if os(macOS)
-                    for member in sorted {
-                        if let newPlace = member.location?.placeName,
-                           !newPlace.isEmpty,
-                           newPlace != self?.lastKnownPlaces[member.id] {
-                            self?.lastKnownPlaces[member.id] = newPlace
-                            Task {
-                                await MacNotificationService.shared.scheduleLocationArrival(
-                                    memberName: member.displayName,
-                                    placeName: newPlace
-                                )
+                    #if os(macOS)
+                        for member in sorted {
+                            if let newPlace = member.location?.placeName,
+                               !newPlace.isEmpty,
+                               newPlace != self?.lastKnownPlaces[member.id] {
+                                self?.lastKnownPlaces[member.id] = newPlace
+                                Task {
+                                    await MacNotificationService.shared.scheduleLocationArrival(
+                                        memberName: member.displayName,
+                                        placeName: newPlace
+                                    )
+                                }
                             }
                         }
-                    }
-                #endif
+                    #endif
 
-                // Task inherits @MainActor from start(); no hop needed.
-                self?.members = sorted
-                self?.isLoading = false
+                    self?.members = sorted
+                    self?.isLoading = false
+                    if !signaled {
+                        signaled = true
+                        cont.resume()
+                    }
+                }
+                // Resume in case the stream finished before yielding any value.
+                if !signaled {
+                    cont.resume()
+                }
             }
-        }
-        // Yield until the stream task has delivered the first value so that
-        // callers can rely on `members` being populated when this returns.
-        while isLoading {
-            await Task.yield()
         }
     }
 
