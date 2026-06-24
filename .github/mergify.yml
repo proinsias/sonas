@@ -1,0 +1,33 @@
+pull_request_rules:
+  - name: auto-merge when CI passes
+    conditions:
+      - base = main
+      - -draft
+      - -title ~= (?i)\bWIP\b
+      - check-success = prek
+      - check-success = UI Tests (iOS Simulator)
+      - check-success = UI Tests (Mac)
+      - check-success = UI Tests (tvOS Simulator)
+      - check-success = Unit & Contract Tests (iOS Simulator)
+      - check-success = Unit & Contract Tests (Mac)
+      - check-success = Unit Tests (watchOS build check)
+    actions:
+      merge:
+        method: squash
+
+  - name: label conflict
+    conditions:
+      - conflict
+    actions:
+      label:
+        add: [conflict]
+      comment:
+        message: 'This PR has merge conflicts. Please rebase on `main`.'
+
+  - name: remove conflict label when resolved
+    conditions:
+      - -conflict
+      - label = conflict
+    actions:
+      label:
+        remove: [conflict]
